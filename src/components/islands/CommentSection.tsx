@@ -116,7 +116,7 @@ export default function CommentSection({ problemId }: { problemId: number }) {
       )}
 
       {session ? (
-        <form className="comment-form" onSubmit={handleSubmit}>
+        <form className="comment-form comment-form-boxed" onSubmit={handleSubmit}>
           <input
             type="text"
             required

@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ProblemEditor from "../../../components/islands/ProblemEditor";
+import { splitSections } from "../../../lib/markdown/sections";
 
 export async function getStaticPaths() {
   const problems = await getCollection("problems");
@@ -12,9 +13,10 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+const sections = splitSections(entry.body ?? "");
 ---
 
-<BaseLayout title={`Suggest an edit — Problem #${entry.data.id}`}>
+<BaseLayout title={`Suggest an edit — Problem #${entry.data.id}`} maxWidth="1100px">
   <h1>Suggest an edit — Problem #{entry.data.id}</h1>
   <ProblemEditor
     problem={{
@@ -25,7 +27,13 @@ const { entry } = Astro.props;
       impact: entry.data.impact,
       canonicalReference: entry.data.canonical_reference,
     }}
-    rawBody={entry.body ?? ""}
+    sections={{
+      statement: sections.statement,
+      definitions: sections.definitions ?? "",
+      partialResults: sections.partialResults ?? "",
+      additionalReferences: sections.additionalReferences ?? "",
+      notes: sections.notes ?? "",
+    }}
     client:load
   />
 </BaseLayout>
@@ -34,12 +42,34 @@ const { entry } = Astro.props;
   /* ProblemEditor is a React island; its markup is rendered client-side, so
      Astro's scoped-style attribute never reaches it — these rules must be
      global. */
-  .problem-editor {
+  .editor-columns {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+  .editor-left {
+    flex: 1 1 50%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    max-width: 60rem;
   }
+  .editor-right {
+    flex: 1 1 50%;
+    min-width: 0;
+    position: sticky;
+    top: 1rem;
+  }
+  @media (max-width: 60rem) {
+    .editor-columns {
+      flex-direction: column;
+    }
+    .editor-right {
+      position: static;
+      width: 100%;
+    }
+  }
+
   .editor-field {
     display: flex;
     flex-direction: column;
@@ -50,34 +80,62 @@ const { entry } = Astro.props;
     font-size: 0.9rem;
   }
   .editor-field input,
-  .editor-field select {
+  .editor-field select,
+  .editor-field textarea {
     font: inherit;
     padding: 0.4rem 0.6rem;
     border-radius: 4px;
     border: 1px solid var(--color-border);
     background: var(--color-bg);
     color: var(--color-text);
+  }
+  .editor-field input,
+  .editor-field select {
     max-width: 30rem;
   }
+  .editor-field textarea {
+    font-family: ui-monospace, monospace;
+    font-size: 0.9rem;
+    resize: vertical;
+  }
+
+  .editor-inline-row {
+    display: flex;
+    gap: 1.25rem;
+  }
+  .editor-field-compact {
+    flex: 0 0 auto;
+  }
+  .editor-select-compact {
+    max-width: 12rem;
+  }
+
   .editor-status-warning {
-    margin: 0.3rem 0 0;
+    margin: -0.5rem 0 0;
     padding: 0.6rem 0.8rem;
     border: 1px solid var(--color-claimed-border);
     background: var(--color-claimed-bg);
     border-radius: 6px;
     font-size: 0.9rem;
   }
-  .editor-fieldset {
+
+  .editor-collapsible {
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+  }
+  .editor-collapsible summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .editor-collapsible[open] summary {
+    margin-bottom: 0.5rem;
+  }
+  .editor-collapsible-body {
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    padding: 1rem;
-  }
-  .editor-fieldset legend {
-    font-weight: 600;
-    padding: 0 0.4rem;
+    padding-top: 0.5rem;
   }
   .editor-area-checkboxes {
     display: flex;
@@ -91,50 +149,83 @@ const { entry } = Astro.props;
     font-weight: 400;
     font-size: 0.95rem;
   }
-  .editor-panes {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+
+  .editor-commit-message {
+    font-family: inherit;
   }
-  .editor-pane {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    min-width: 0;
-  }
-  .editor-pane label {
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-  .editor-pane textarea {
-    font-family: ui-monospace, monospace;
-    font-size: 0.9rem;
-    padding: 0.6rem;
-    border-radius: 4px;
-    border: 1px solid var(--color-border);
-    background: var(--color-bg);
-    color: var(--color-text);
-    resize: vertical;
-  }
-  .editor-preview {
-    padding: 0.6rem 0.8rem;
-    border-radius: 4px;
-    border: 1px solid var(--color-border);
-    overflow-y: auto;
-  }
-  .problem-editor > button[type="submit"] {
+  .editor-submit {
     align-self: flex-start;
-    font-size: 0.95rem;
-    padding: 0.5rem 1.1rem;
-    border-radius: 4px;
-    border: 1px solid var(--color-border);
-    background: transparent;
-    color: var(--color-text);
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 0.65rem 1.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-link);
+    background: var(--color-link);
+    color: #fff;
     cursor: pointer;
   }
-  @media (max-width: 45rem) {
-    .editor-panes {
-      grid-template-columns: 1fr;
-    }
+  .editor-submit:hover {
+    opacity: 0.92;
+  }
+  .editor-submit:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  /* Live preview — mirrors ProblemLayout.astro's markup/styles so the pane
+     actually looks like the resulting problem page. */
+  .editor-preview-page {
+    border: 1px dashed var(--color-border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+  }
+  .editor-preview-id {
+    margin: 0 0 0.1rem;
+    font-size: 0.9rem;
+  }
+  .editor-preview-title {
+    margin: 0.1rem 0 1.25rem;
+    font-size: 1.6rem;
+    line-height: 1.25;
+  }
+  .editor-preview-statement-box {
+    margin: 0 0 1.5rem;
+  }
+  .editor-preview-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .editor-preview-impact {
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: help;
+  }
+  .editor-preview-statement-body p:last-child {
+    margin-bottom: 0;
+  }
+  .editor-preview-area-row {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .editor-preview-area-row .area-tag {
+    display: inline-block;
+    padding: 0.1rem 0.55rem;
+    border-radius: 5px;
+    background: rgba(128, 128, 128, 0.15);
+    font-size: 0.85rem;
+  }
+  .editor-preview-section {
+    margin-bottom: 1.5rem;
+  }
+  .editor-preview-section h3 {
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
   }
 </style>

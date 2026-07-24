@@ -130,3 +130,31 @@ pre code {
   background: var(--color-claimed-bg);
   border-color: var(--color-claimed-border);
 }
+
+/* Shared across the comment section and the suggest-an-edit form, which live
+   under different layouts (ProblemLayout vs BaseLayout). */
+.comment-error {
+  color: #c0392b;
+  font-size: 0.85rem;
+  margin: 0;
+}
+.link-button {
+  font: inherit;
+  color: var(--color-link);
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.comment-signin-prompt {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 1.02rem;
+  font-weight: 500;
+}
+.comment-signin-prompt .link-button {
+  font-weight: 700;
+}

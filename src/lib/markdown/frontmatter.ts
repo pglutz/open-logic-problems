@@ -29,8 +29,7 @@ const q = (s: string) => JSON.stringify(s);
 
 export function serializeProblemFile(frontmatter: ProblemFrontmatter, body: string): string {
   const fm = problemFrontmatterSchema.parse(frontmatter);
-  const lines: string[] = [`id: ${fm.id}`];
-  if (fm.name) lines.push(`name: ${q(fm.name)}`);
+  const lines: string[] = [`id: ${fm.id}`, `name: ${q(fm.name)}`];
   lines.push(`status: ${fm.status}`);
   lines.push(`area: [${fm.area.join(", ")}]`);
   lines.push(`impact: ${fm.impact}`);
@@ -40,6 +39,7 @@ export function serializeProblemFile(frontmatter: ProblemFrontmatter, body: stri
   if (fm.canonical_reference.venue) lines.push(`  venue: ${q(fm.canonical_reference.venue)}`);
   if (fm.canonical_reference.year) lines.push(`  year: ${fm.canonical_reference.year}`);
   if (fm.canonical_reference.link) lines.push(`  link: ${q(fm.canonical_reference.link)}`);
+  if (fm.canonical_reference.doi) lines.push(`  doi: ${q(fm.canonical_reference.doi)}`);
 
   return `---\n${lines.join("\n")}\n---\n\n${body.trim()}\n`;
 }

@@ -7,9 +7,10 @@ interface Props {
   title: string;
   description?: string;
   excludeFromSearch?: boolean;
+  maxWidth?: string;
 }
 
-const { title, description, excludeFromSearch } = Astro.props;
+const { title, description, excludeFromSearch, maxWidth } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,7 +24,10 @@ const { title, description, excludeFromSearch } = Astro.props;
   </head>
   <body>
     <Nav />
-    <main data-pagefind-body={excludeFromSearch ? undefined : true}>
+    <main
+      data-pagefind-body={excludeFromSearch ? undefined : true}
+      style={maxWidth ? `--max-width: ${maxWidth}` : undefined}
+    >
       <slot />
     </main>
   </body>

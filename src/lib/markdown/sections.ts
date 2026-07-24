@@ -53,3 +53,30 @@ export function splitSections(markdown: string): ProblemSections {
     notes: get("notes") || undefined,
   };
 }
+
+const SECTION_ORDER: SectionKey[] = [
+  "statement",
+  "definitions",
+  "partialResults",
+  "additionalReferences",
+  "notes",
+];
+
+const SECTION_HEADINGS: Record<SectionKey, string> = {
+  statement: "Statement",
+  definitions: "Definitions",
+  partialResults: "Known Partial Results",
+  additionalReferences: "Additional References",
+  notes: "Notes",
+};
+
+/** Inverse of splitSections: reassembles named sections into one Markdown body. */
+export function joinSections(sections: ProblemSections): string {
+  const parts: string[] = [];
+  for (const key of SECTION_ORDER) {
+    const content = sections[key]?.trim();
+    if (!content) continue;
+    parts.push(`## ${SECTION_HEADINGS[key]}\n\n${content}`);
+  }
+  return parts.join("\n\n") + "\n";
+}

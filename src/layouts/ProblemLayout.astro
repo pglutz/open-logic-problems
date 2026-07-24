@@ -12,11 +12,12 @@ interface CanonicalReference {
   venue?: string;
   year?: number;
   link?: string;
+  doi?: string;
 }
 
 interface Props {
   id: number;
-  name?: string;
+  name: string;
   status: "open" | "closed" | "claimed-proof-no-consensus";
   area: Area[];
   impact: 1 | 2 | 3;
@@ -42,15 +43,12 @@ const {
   notesHtml,
 } = Astro.props;
 
-const title = name ? `${name} (#${id})` : `Problem #${id}`;
+const title = `${name} (#${id})`;
 ---
 
 <BaseLayout title={title}>
   <p class="muted problem-id">Problem #{id}</p>
-  {name && <h1>{name}</h1>}
-  {!name && <h1>Problem #{id}</h1>}
-
-  <p class="muted"><a href={`/problems/${id}/edit`}>Suggest an edit to this problem</a></p>
+  <h1>{name}</h1>
 
   <div class:list={["status-box", "statement-box", `status-${status}`]}>
     <div class="meta-row">
@@ -60,10 +58,11 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
     <div class="statement-body" set:html={statementHtml} />
     <div class="area-row">
       <AreaTags areas={area} />
+      <a class="suggest-edit-link muted" href={`/problems/${id}/edit`}>Suggest an edit</a>
     </div>
   </div>
 
-  <section class="reference">
+  <section class="reference-box">
     <h2>Reference</h2>
     <p>
       {canonicalReference.author}, <em>{canonicalReference.title}</em>
@@ -73,6 +72,12 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
         <>
           {" "}
           (<a href={canonicalReference.link}>link</a>)
+        </>
+      )}
+      {canonicalReference.doi && (
+        <>
+          {" "}
+          (DOI: <a href={`https://doi.org/${canonicalReference.doi}`}>{canonicalReference.doi}</a>)
         </>
       )}
     </p>
@@ -142,6 +147,14 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
   }
   .area-row {
     margin-top: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .suggest-edit-link {
+    margin-left: auto;
+    font-size: 0.85rem;
   }
   section {
     margin-bottom: 2rem;
@@ -150,6 +163,19 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
     font-size: 1.15rem;
     border-bottom: 1px solid var(--color-border);
     padding-bottom: 0.25rem;
+  }
+  .reference-box {
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+  }
+  .reference-box h2 {
+    margin-top: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .reference-box p {
+    margin-bottom: 0;
   }
 </style>
 
@@ -204,6 +230,11 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
     gap: 0.5rem;
     max-width: 32rem;
   }
+  .comment-form-boxed {
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+  }
   .comment-form input,
   .comment-form textarea {
     font: inherit;
@@ -215,36 +246,20 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
   }
   .comment-form button {
     align-self: flex-start;
-    font-size: 0.9rem;
-    padding: 0.35rem 0.9rem;
-    border-radius: 4px;
-    border: 1px solid var(--color-border);
-    background: transparent;
-    cursor: pointer;
-  }
-  .comment-error {
-    color: #c0392b;
-    font-size: 0.85rem;
-    margin: 0;
-  }
-  .link-button {
-    font: inherit;
-    color: var(--color-link);
-    background: none;
-    border: none;
-    padding: 0;
-    text-decoration: underline;
-    cursor: pointer;
-  }
-  .comment-signin-prompt {
-    margin: 0;
-    padding: 0.8rem 1rem;
-    border: 2px solid var(--color-border);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.45rem 1.1rem;
     border-radius: 6px;
-    font-size: 1.02rem;
-    font-weight: 500;
+    border: 1px solid var(--color-link);
+    background: var(--color-link);
+    color: #fff;
+    cursor: pointer;
   }
-  .comment-signin-prompt .link-button {
-    font-weight: 700;
+  .comment-form button:hover {
+    opacity: 0.92;
+  }
+  .comment-form button:disabled {
+    opacity: 0.6;
+    cursor: default;
   }
 </style>

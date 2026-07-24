@@ -1,7 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AREAS, type Area } from "../../lib/areas";
 import type { ProblemIndexEntry, ProblemStatus } from "../../lib/problems";
-import { STATUS_LABELS, IMPACTS, IMPACT_LABELS, IMPACT_RUBRIC, formatArea } from "../../lib/problems";
+import {
+  STATUS_LABELS,
+  IMPACTS,
+  IMPACT_LABELS,
+  IMPACT_SHORT_LABELS,
+  IMPACT_RUBRIC,
+  formatArea,
+} from "../../lib/problems";
 
 interface Props {
   problems: ProblemIndexEntry[];
@@ -31,9 +38,17 @@ interface FilterGroupProps<T extends string | number> {
   labels: Record<T, string>;
   selected: Set<T>;
   onChange: (next: Set<T>) => void;
+  renderLabel?: (item: T) => React.ReactNode;
 }
 
-function FilterGroup<T extends string | number>({ title, items, labels, selected, onChange }: FilterGroupProps<T>) {
+function FilterGroup<T extends string | number>({
+  title,
+  items,
+  labels,
+  selected,
+  onChange,
+  renderLabel,
+}: FilterGroupProps<T>) {
   const allSelected = selected.size === items.length;
   const someSelected = selected.size > 0 && !allSelected;
   const allRef = useRef<HTMLInputElement>(null);
@@ -61,7 +76,7 @@ function FilterGroup<T extends string | number>({ title, items, labels, selected
             checked={selected.has(item)}
             onChange={() => onChange(toggle(selected, item))}
           />
-          {labels[item]}
+          {renderLabel ? renderLabel(item) : labels[item]}
         </label>
       ))}
     </div>
@@ -74,7 +89,6 @@ export default function ProblemListFilter({ problems }: Props) {
   const [selectedImpacts, setSelectedImpacts] = useState<Set<Impact>>(new Set(IMPACTS));
   const [sortKey, setSortKey] = useState<SortKey>("id");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
-  const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -118,10 +132,6 @@ export default function ProblemListFilter({ problems }: Props) {
     () => Object.fromEntries(AREAS.map((a) => [a, formatArea(a)])) as Record<Area, string>,
     [],
   );
-
-  function toggleExpanded(id: number) {
-    setExpandedIds((prev) => toggle(prev, id));
-  }
 
   return (
     <div className="listing">
@@ -183,9 +193,14 @@ export default function ProblemListFilter({ problems }: Props) {
         <FilterGroup
           title="Impact"
           items={IMPACTS}
-          labels={IMPACT_LABELS}
+          labels={IMPACT_SHORT_LABELS}
           selected={selectedImpacts}
           onChange={setSelectedImpacts}
+          renderLabel={(n) => (
+            <>
+              <span className="impact-pill">{IMPACT_LABELS[n]}</span> {IMPACT_SHORT_LABELS[n]}
+            </>
+          )}
         />
       </aside>
 
@@ -195,41 +210,27 @@ export default function ProblemListFilter({ problems }: Props) {
         </p>
 
         <div className="cards">
-          {sorted.map((p) => {
-            const expanded = expandedIds.has(p.id);
-            return (
-              <div className={`status-box card status-${p.status}`} key={p.id}>
-                <div className="meta-row">
-                  <span className="problem-id muted">#{p.id}</span>
-                  <h3>
-                    <a href={`/problems/${p.id}`}>{p.name ?? `Problem #${p.id}`}</a>
-                  </h3>
-                  <span className={`badge status-${p.status}`}>{STATUS_LABELS[p.status]}</span>
-                  <span className="impact" title={IMPACT_RUBRIC[p.impact]}>
-                    {"!".repeat(p.impact)}
-                  </span>
-                </div>
-                <div className="area-row">
-                  {p.area.map((a) => (
-                    <a className="area-tag" href={`/problems?area=${encodeURIComponent(a)}`} key={a}>
-                      {formatArea(a)}
-                    </a>
-                  ))}
-                  <button
-                    type="button"
-                    className="expand-toggle"
-                    onClick={() => toggleExpanded(p.id)}
-                    aria-expanded={expanded}
-                  >
-                    {expanded ? "Hide statement ▲" : "Show statement ▼"}
-                  </button>
-                </div>
-                {expanded && (
-                  <div className="statement-preview" dangerouslySetInnerHTML={{ __html: p.statementHtml }} />
-                )}
+          {sorted.map((p) => (
+            <div className={`status-box card status-${p.status}`} key={p.id}>
+              <div className="meta-row">
+                <span className="problem-id muted">#{p.id}</span>
+                <h3>
+                  <a href={`/problems/${p.id}`}>{p.name}</a>
+                </h3>
+                <span className="impact" title={IMPACT_RUBRIC[p.impact]}>
+                  {"!".repeat(p.impact)}
+                </span>
               </div>
-            );
-          })}
+              <div className="area-row">
+                {p.area.map((a) => (
+                  <a className="area-tag" href={`/problems?area=${encodeURIComponent(a)}`} key={a}>
+                    {formatArea(a)}
+                  </a>
+                ))}
+                <span className={`badge status-${p.status} status-badge-end`}>{STATUS_LABELS[p.status]}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -282,6 +283,18 @@ export default function ProblemListFilter({ problems }: Props) {
           border-bottom: 1px solid var(--color-border);
           padding-bottom: 0.35rem;
           margin-bottom: 0.35rem;
+        }
+        .impact-pill {
+          display: inline-block;
+          min-width: 1.8rem;
+          text-align: center;
+          padding: 0.05rem 0.35rem;
+          border-radius: 999px;
+          border: 1px solid var(--color-border);
+          background: rgba(128, 128, 128, 0.15);
+          font-weight: 700;
+          font-size: 0.75rem;
+          letter-spacing: 0.03em;
         }
         .button-row {
           display: flex;
@@ -343,6 +356,9 @@ export default function ProblemListFilter({ problems }: Props) {
           align-items: center;
           gap: 0.4rem;
         }
+        .card .status-badge-end {
+          margin-left: auto;
+        }
         .card .area-tag {
           display: inline-block;
           padding: 0.1rem 0.55rem;
@@ -353,29 +369,6 @@ export default function ProblemListFilter({ problems }: Props) {
         }
         .card .area-tag:hover {
           text-decoration: underline;
-        }
-        .expand-toggle {
-          margin-left: auto;
-          font: inherit;
-          font-size: 0.8rem;
-          padding: 0.15rem 0.5rem;
-          border-radius: 6px;
-          border: 1px solid var(--color-border);
-          background: transparent;
-          color: var(--color-text-muted);
-          cursor: pointer;
-        }
-        .expand-toggle:hover {
-          color: var(--color-text);
-        }
-        .statement-preview {
-          margin-top: 0.75rem;
-          padding-top: 0.75rem;
-          border-top: 1px solid var(--color-border);
-          font-size: 0.95rem;
-        }
-        .statement-preview p:last-child {
-          margin-bottom: 0;
         }
       `}</style>
     </div>
