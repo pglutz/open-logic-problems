@@ -1,4 +1,6 @@
 ---
+import AuthWidget from "./islands/AuthWidget";
+
 const links = [
   { href: "/", label: "Home" },
   { href: "/faq", label: "FAQ" },
@@ -41,6 +43,7 @@ const currentPath = Astro.url.pathname;
         </li>
       </ul>
     </nav>
+    <AuthWidget client:load />
   </div>
 </header>
 
@@ -94,5 +97,42 @@ const currentPath = Astro.url.pathname;
   nav a.icon-link:hover,
   nav a.icon-link[aria-current="page"] {
     text-decoration: none;
+  }
+</style>
+
+<style is:global>
+  /* AuthWidget is a React island; its markup is rendered client-side, so
+     Astro's scoped-style attribute never reaches it — these rules must be
+     global. */
+  .auth-widget {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .auth-widget input[type="email"] {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+  }
+  .auth-widget button {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-nav-text);
+    background: transparent;
+    color: var(--color-nav-text);
+    cursor: pointer;
+  }
+  .auth-widget button:hover {
+    opacity: 0.85;
+  }
+  .auth-status {
+    color: var(--color-nav-text);
+    opacity: 0.85;
+  }
+  .auth-error {
+    color: #ffb4b4;
   }
 </style>

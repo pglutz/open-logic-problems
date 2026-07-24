@@ -3,6 +3,7 @@ import BaseLayout from "./BaseLayout.astro";
 import StatusBadge from "../components/StatusBadge.astro";
 import AreaTags from "../components/AreaTags.astro";
 import ImpactMarks from "../components/ImpactMarks.astro";
+import CommentSection from "../components/islands/CommentSection";
 import type { Area } from "../lib/areas";
 
 interface CanonicalReference {
@@ -110,6 +111,11 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
       </section>
     )
   }
+
+  <section>
+    <h2>Comments</h2>
+    <CommentSection problemId={id} client:load />
+  </section>
 </BaseLayout>
 
 <style>
@@ -142,5 +148,81 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
     font-size: 1.15rem;
     border-bottom: 1px solid var(--color-border);
     padding-bottom: 0.25rem;
+  }
+</style>
+
+<style is:global>
+  /* CommentSection is a React island; its markup is rendered client-side, so
+     Astro's scoped-style attribute never reaches it — these rules must be
+     global. */
+  .comment-list {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+  }
+  .comment {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+  }
+  .comment-number {
+    color: var(--color-text-muted);
+  }
+  .comment-author {
+    font-weight: 600;
+  }
+  .comment-date {
+    color: var(--color-text-muted);
+  }
+  .comment-body p {
+    margin: 0.5rem 0;
+  }
+  .comment-body p:first-child {
+    margin-top: 0;
+  }
+  .comment-body p:last-child {
+    margin-bottom: 0;
+  }
+  .comment-pending-badge {
+    background: var(--color-border);
+  }
+  .comment-rejected-badge {
+    background: var(--color-closed-bg);
+    border-color: var(--color-closed-border);
+  }
+  .comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 32rem;
+  }
+  .comment-form input,
+  .comment-form textarea {
+    font: inherit;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+  .comment-form button {
+    align-self: flex-start;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    background: transparent;
+    cursor: pointer;
+  }
+  .comment-error {
+    color: #c0392b;
+    font-size: 0.85rem;
+    margin: 0;
   }
 </style>
