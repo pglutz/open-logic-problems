@@ -31,15 +31,17 @@ function describeChange(entry: ChangelogEntry): string {
 ---
 
 <BaseLayout title="Home" description="A collection of open problems in mathematical logic.">
-  <img class="hero" src="/hero.svg" alt="" />
+  <div class="intro">
+    <img class="hero" src="/hero.svg" alt="" />
 
-  <h1>Open Problems in Logic</h1>
-  <p>
-    This site collects open problems in mathematical logic &mdash; set theory, model theory,
-    proof theory, computability, and beyond &mdash; each with its own page giving a precise
-    statement, its current status, known partial results, and relevant references. Anyone can
-    suggest edits or propose a new problem; see the <a href="/faq">FAQ</a> for how it works.
-  </p>
+    <h1>Open Problems in Mathematical Logic</h1>
+    <p>
+      This site collects open problems in mathematical logic &mdash; set theory, model theory,
+      proof theory, computability, and beyond &mdash; each with its own page giving a precise
+      statement, its current status, known partial results, and relevant references. Anyone can
+      suggest edits or propose a new problem; see the <a href="/faq">FAQ</a> for how it works.
+    </p>
+  </div>
 
   <section>
     <h2>Recent Changes</h2>
@@ -76,11 +78,15 @@ function describeChange(entry: ChangelogEntry): string {
 </BaseLayout>
 
 <style>
+  .intro {
+    overflow: auto;
+  }
   .hero {
-    width: 100%;
+    float: left;
+    width: min(220px, 40%);
     height: auto;
     border-radius: 8px;
-    margin-bottom: 1.5rem;
+    margin: 0.25rem 1.25rem 1rem 0;
   }
   .changes {
     list-style: none;

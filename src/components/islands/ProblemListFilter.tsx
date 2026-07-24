@@ -1,50 +1,53 @@
 import { useEffect, useMemo, useState } from "react";
+import { AREAS, type Area } from "../../lib/areas";
 import type { ProblemIndexEntry, ProblemStatus } from "../../lib/problems";
-import { STATUS_LABELS, formatArea } from "../../lib/problems";
+import { STATUS_LABELS, IMPACT_RUBRIC, formatArea } from "../../lib/problems";
 
 interface Props {
   problems: ProblemIndexEntry[];
 }
 
-type SortKey = "id" | "difficulty" | "status" | "area";
+type SortKey = "id" | "impact" | "status" | "area";
 
-const STATUS_OPTIONS: (ProblemStatus | "all")[] = [
-  "all",
-  "open",
-  "closed",
-  "claimed-proof-no-consensus",
+const STATUSES: ProblemStatus[] = ["open", "closed", "claimed-proof-no-consensus"];
+
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+  { key: "id", label: "ID" },
+  { key: "impact", label: "Impact" },
+  { key: "status", label: "Status" },
+  { key: "area", label: "Area" },
 ];
 
-export default function ProblemListFilter({ problems }: Props) {
-  const allAreas = useMemo(
-    () => Array.from(new Set(problems.flatMap((p) => p.area))).sort(),
-    [problems],
-  );
+function toggle<T>(set: Set<T>, value: T): Set<T> {
+  const next = new Set(set);
+  if (next.has(value)) next.delete(value);
+  else next.add(value);
+  return next;
+}
 
-  const [status, setStatus] = useState<ProblemStatus | "all">("all");
-  const [area, setArea] = useState<string>("all");
+export default function ProblemListFilter({ problems }: Props) {
+  const [selectedStatuses, setSelectedStatuses] = useState<Set<ProblemStatus>>(new Set());
+  const [selectedAreas, setSelectedAreas] = useState<Set<Area>>(new Set());
   const [sortKey, setSortKey] = useState<SortKey>("id");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const statusParam = params.get("status");
-    const areaParam = params.get("area");
-    if (statusParam && STATUS_OPTIONS.includes(statusParam as ProblemStatus)) {
-      setStatus(statusParam as ProblemStatus);
-    }
-    if (areaParam && allAreas.includes(areaParam)) {
-      setArea(areaParam);
-    }
-  }, [allAreas]);
+    const statusParams = params.getAll("status").filter((s): s is ProblemStatus =>
+      STATUSES.includes(s as ProblemStatus),
+    );
+    const areaParams = params.getAll("area").filter((a): a is Area => AREAS.includes(a as Area));
+    if (statusParams.length > 0) setSelectedStatuses(new Set(statusParams));
+    if (areaParams.length > 0) setSelectedAreas(new Set(areaParams));
+  }, []);
 
   const filtered = useMemo(() => {
     return problems.filter((p) => {
-      if (status !== "all" && p.status !== status) return false;
-      if (area !== "all" && !p.area.includes(area)) return false;
-      return true;
+      const statusOk = selectedStatuses.size === 0 || selectedStatuses.has(p.status);
+      const areaOk = selectedAreas.size === 0 || p.area.some((a) => selectedAreas.has(a));
+      return statusOk && areaOk;
     });
-  }, [problems, status, area]);
+  }, [problems, selectedStatuses, selectedAreas]);
 
   const sorted = useMemo(() => {
     const dir = sortDir === "asc" ? 1 : -1;
@@ -52,8 +55,8 @@ export default function ProblemListFilter({ problems }: Props) {
       switch (sortKey) {
         case "id":
           return (a.id - b.id) * dir;
-        case "difficulty":
-          return (a.difficulty - b.difficulty) * dir;
+        case "impact":
+          return (a.impact - b.impact) * dir;
         case "status":
           return a.status.localeCompare(b.status) * dir;
         case "area":
@@ -63,90 +66,203 @@ export default function ProblemListFilter({ problems }: Props) {
   }, [filtered, sortKey, sortDir]);
 
   return (
-    <div>
-      <div className="controls">
-        <label>
-          Status
-          <select value={status} onChange={(e) => setStatus(e.target.value as ProblemStatus | "all")}>
-            {STATUS_OPTIONS.map((s) => (
-              <option key={s} value={s}>
-                {s === "all" ? "All" : STATUS_LABELS[s]}
-              </option>
+    <div className="listing">
+      <aside className="sidebar">
+        <div className="filter-group">
+          <h3>Status</h3>
+          {STATUSES.map((s) => (
+            <label className="checkbox-row" key={s}>
+              <input
+                type="checkbox"
+                checked={selectedStatuses.has(s)}
+                onChange={() => setSelectedStatuses((prev) => toggle(prev, s))}
+              />
+              {STATUS_LABELS[s]}
+            </label>
+          ))}
+        </div>
+
+        <div className="filter-group">
+          <h3>Area</h3>
+          {AREAS.map((a) => (
+            <label className="checkbox-row" key={a}>
+              <input
+                type="checkbox"
+                checked={selectedAreas.has(a)}
+                onChange={() => setSelectedAreas((prev) => toggle(prev, a))}
+              />
+              {formatArea(a)}
+            </label>
+          ))}
+        </div>
+
+        <div className="filter-group">
+          <h3>Sort by</h3>
+          <div className="button-row">
+            {SORT_OPTIONS.map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                className={sortKey === opt.key ? "active" : ""}
+                onClick={() => setSortKey(opt.key)}
+              >
+                {opt.label}
+              </button>
             ))}
-          </select>
-        </label>
+          </div>
+        </div>
 
-        <label>
-          Area
-          <select value={area} onChange={(e) => setArea(e.target.value)}>
-            <option value="all">All</option>
-            {allAreas.map((a) => (
-              <option key={a} value={a}>
-                {formatArea(a)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="filter-group">
+          <h3>Direction</h3>
+          <div className="button-row">
+            <button
+              type="button"
+              className={sortDir === "asc" ? "active" : ""}
+              onClick={() => setSortDir("asc")}
+            >
+              Ascending
+            </button>
+            <button
+              type="button"
+              className={sortDir === "desc" ? "active" : ""}
+              onClick={() => setSortDir("desc")}
+            >
+              Descending
+            </button>
+          </div>
+        </div>
+      </aside>
 
-        <label>
-          Sort by
-          <select value={sortKey} onChange={(e) => setSortKey(e.target.value as SortKey)}>
-            <option value="id">ID</option>
-            <option value="difficulty">Difficulty</option>
-            <option value="status">Status</option>
-            <option value="area">Area</option>
-          </select>
-        </label>
+      <div className="results">
+        <p className="count muted">
+          {sorted.length} problem{sorted.length === 1 ? "" : "s"}
+        </p>
 
-        <button type="button" onClick={() => setSortDir(sortDir === "asc" ? "desc" : "asc")}>
-          {sortDir === "asc" ? "↑ Ascending" : "↓ Descending"}
-        </button>
+        <div className="cards">
+          {sorted.map((p) => (
+            <div className={`status-box card status-${p.status}`} key={p.id}>
+              <div className="meta-row">
+                <h3>
+                  <a href={`/problems/${p.id}`}>{p.name ?? `Problem #${p.id}`}</a>
+                </h3>
+                <span className="impact" title={IMPACT_RUBRIC[p.impact]}>
+                  {"!".repeat(p.impact)}
+                </span>
+              </div>
+              <span className={`badge status-${p.status}`}>{STATUS_LABELS[p.status]}</span>
+              <div className="area-row">
+                {p.area.map((a) => (
+                  <a className="area-tag" href={`/problems?area=${encodeURIComponent(a)}`} key={a}>
+                    {formatArea(a)}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <p className="count muted">
-        {sorted.length} problem{sorted.length === 1 ? "" : "s"}
-      </p>
-
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Area</th>
-            <th>Difficulty</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((p) => (
-            <tr key={p.id}>
-              <td>{p.id}</td>
-              <td>
-                <a href={`/problems/${p.id}`}>{p.name ?? `Problem #${p.id}`}</a>
-              </td>
-              <td>{STATUS_LABELS[p.status]}</td>
-              <td>{p.area.map(formatArea).join(", ")}</td>
-              <td>{"!".repeat(p.difficulty)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
       <style>{`
-        .controls {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1.25rem;
-          margin-bottom: 1rem;
-        }
-        .controls label {
+        .listing {
           display: flex;
           flex-direction: column;
+          gap: 2rem;
+        }
+        @media (min-width: 800px) {
+          .listing {
+            flex-direction: row;
+            align-items: flex-start;
+          }
+          .sidebar {
+            flex: 0 0 200px;
+            position: sticky;
+            top: 1rem;
+          }
+          .results {
+            flex: 1;
+            min-width: 0;
+          }
+        }
+        .filter-group {
+          margin-bottom: 1.5rem;
+        }
+        .filter-group h3 {
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: var(--color-text-muted);
+          margin: 0 0 0.5rem;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.9rem;
+          margin-bottom: 0.3rem;
+        }
+        .button-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+        }
+        .button-row button {
+          font: inherit;
           font-size: 0.85rem;
-          gap: 0.25rem;
+          padding: 0.3rem 0.65rem;
+          border-radius: 6px;
+          border: 1px solid var(--color-border);
+          background: transparent;
+          color: var(--color-text);
+          cursor: pointer;
+        }
+        .button-row button.active {
+          background: var(--color-link);
+          border-color: var(--color-link);
+          color: #fff;
         }
         .count {
           margin-top: 0;
+        }
+        .cards {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .card {
+          padding: 0.85rem 1.1rem;
+        }
+        .card .meta-row {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          gap: 0.75rem;
+        }
+        .card h3 {
+          margin: 0;
+          font-size: 1.05rem;
+        }
+        .card .impact {
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          cursor: help;
+          white-space: nowrap;
+        }
+        .card .area-row {
+          margin-top: 0.6rem;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+        }
+        .card .area-tag {
+          display: inline-block;
+          padding: 0.1rem 0.55rem;
+          border-radius: 5px;
+          background: rgba(128, 128, 128, 0.15);
+          font-size: 0.85rem;
+          text-decoration: none;
+        }
+        .card .area-tag:hover {
+          text-decoration: underline;
         }
       `}</style>
     </div>

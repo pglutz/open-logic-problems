@@ -2,7 +2,8 @@
 import BaseLayout from "./BaseLayout.astro";
 import StatusBadge from "../components/StatusBadge.astro";
 import AreaTags from "../components/AreaTags.astro";
-import DifficultyMarks from "../components/DifficultyMarks.astro";
+import ImpactMarks from "../components/ImpactMarks.astro";
+import type { Area } from "../lib/areas";
 
 interface CanonicalReference {
   title: string;
@@ -16,8 +17,8 @@ interface Props {
   id: number;
   name?: string;
   status: "open" | "closed" | "claimed-proof-no-consensus";
-  area: string[];
-  difficulty: 1 | 2 | 3;
+  area: Area[];
+  impact: 1 | 2 | 3;
   canonicalReference: CanonicalReference;
   statementHtml: string;
   definitionsHtml?: string;
@@ -31,7 +32,7 @@ const {
   name,
   status,
   area,
-  difficulty,
+  impact,
   canonicalReference,
   statementHtml,
   definitionsHtml,
@@ -48,13 +49,15 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
   {name && <h1>{name}</h1>}
   {!name && <h1>Problem #{id}</h1>}
 
-  <div class:list={["statement-box", `status-${status}`]}>
+  <div class:list={["status-box", "statement-box", `status-${status}`]}>
     <div class="meta-row">
       <StatusBadge status={status} />
-      <DifficultyMarks difficulty={difficulty} />
-      <AreaTags areas={area} />
+      <ImpactMarks impact={impact} />
     </div>
     <div class="statement-body" set:html={statementHtml} />
+    <div class="area-row">
+      <AreaTags areas={area} />
+    </div>
   </div>
 
   <section class="reference">
@@ -91,19 +94,19 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
   }
 
   {
-    additionalReferencesHtml && (
+    notesHtml && (
       <section>
-        <h2>Additional References</h2>
-        <div set:html={additionalReferencesHtml} />
+        <h2>Notes</h2>
+        <div set:html={notesHtml} />
       </section>
     )
   }
 
   {
-    notesHtml && (
+    additionalReferencesHtml && (
       <section>
-        <h2>Notes</h2>
-        <div set:html={notesHtml} />
+        <h2>Additional References</h2>
+        <div set:html={additionalReferencesHtml} />
       </section>
     )
   }
@@ -117,33 +120,20 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
     margin-top: 0.1rem;
   }
   .statement-box {
-    border: 1px solid var(--color-border);
-    border-left-width: 6px;
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
     margin: 1.25rem 0 2rem;
-  }
-  .statement-box.status-open {
-    background: var(--color-open-bg);
-    border-left-color: var(--color-open-border);
-  }
-  .statement-box.status-closed {
-    background: var(--color-closed-bg);
-    border-left-color: var(--color-closed-border);
-  }
-  .statement-box.status-claimed-proof-no-consensus {
-    background: var(--color-claimed-bg);
-    border-left-color: var(--color-claimed-border);
   }
   .meta-row {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
     gap: 0.75rem;
     margin-bottom: 0.75rem;
   }
   .statement-body :global(p:last-child) {
     margin-bottom: 0;
+  }
+  .area-row {
+    margin-top: 0.85rem;
   }
   section {
     margin-bottom: 2rem;

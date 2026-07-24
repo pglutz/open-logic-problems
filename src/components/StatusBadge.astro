@@ -12,26 +12,3 @@ const LABELS: Record<Props["status"], string> = {
 ---
 
 <span class:list={["badge", `status-${status}`]}>{LABELS[status]}</span>
-
-<style>
-  .badge {
-    display: inline-block;
-    padding: 0.15rem 0.6rem;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border: 1px solid transparent;
-  }
-  .status-open {
-    background: var(--color-open-bg);
-    border-color: var(--color-open-border);
-  }
-  .status-closed {
-    background: var(--color-closed-bg);
-    border-color: var(--color-closed-border);
-  }
-  .status-claimed-proof-no-consensus {
-    background: var(--color-claimed-bg);
-    border-color: var(--color-claimed-border);
-  }
-</style>

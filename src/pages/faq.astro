@@ -28,14 +28,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </section>
 
   <section>
-    <h2>What do the exclamation marks (difficulty/importance) mean?</h2>
+    <h2>What do the exclamation marks (impact) mean?</h2>
+    <p>
+      They rate expected <strong>impact</strong> &mdash; roughly, how much the community would be
+      expected to care if the problem were resolved &mdash; rather than pure difficulty. Difficulty
+      plays a role, but a problem can be very hard without being especially consequential, or
+      important without necessarily being the hardest thing in its area.
+    </p>
     <ul>
-      <li><strong>!</strong> &mdash; notable, but below the bar for !! or !!!.</li>
       <li>
-        <strong>!!</strong> &mdash; substantial: the kind of result that could be published in a
+        <strong>!</strong> &mdash; notable. Every problem listed on this site, including
+        single-exclamation-mark ones, is a genuine, worthwhile open problem &mdash; this rating is
+        not a judgment that a problem is trivial or unimportant.
+      </li>
+      <li>
+        <strong>!!</strong> &mdash; substantial: resolution would likely be publishable in a
         strong journal (Advances-level or above).
       </li>
-      <li><strong>!!!</strong> &mdash; award-level significance.</li>
+      <li><strong>!!!</strong> &mdash; landmark: resolution would be of award-level significance.</li>
     </ul>
     <p class="muted">This rubric is inherently subjective &mdash; treat it as a rough guide, not a strict rule.</p>
   </section>
@@ -63,7 +73,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <h2>How do I propose a new problem?</h2>
     <p>
       Use <a href="/problems/new">Submit a New Problem</a>. You'll fill in the same kind of
-      structured details (area, difficulty, reference, etc.) plus a note on where the problem was
+      structured details (area, impact, reference, etc.) plus a note on where the problem was
       published. It goes through the same review process as edits before appearing on the site.
     </p>
   </section>
