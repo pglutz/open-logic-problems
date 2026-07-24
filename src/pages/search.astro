@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Search" description="Search open problems in mathematical logic.">
+  <h1>Search</h1>
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <div id="search"></div>
+
+  <script>
+    // Pagefind's index is generated into dist/pagefind/ at build time (see
+    // package.json's build script), so this only works against a built site
+    // (npm run build && npm run preview) — it has nothing to query under
+    // `astro dev`, since dev serves source files directly, not the build output.
+    import(/* @vite-ignore */ "/pagefind/pagefind-ui.js").then(() => {
+      // @ts-expect-error - PagefindUI is loaded onto window by the script above
+      new PagefindUI({ element: "#search", showSubResults: true });
+    });
+  </script>
+</BaseLayout>
+
+<style>
+  #search {
+    margin-top: 1rem;
+  }
+</style>
