@@ -2,18 +2,23 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProblemListFilter from "../../components/islands/ProblemListFilter";
+import { renderMarkdown } from "../../lib/markdown/pipeline";
+import { splitSections } from "../../lib/markdown/sections";
 import type { ProblemIndexEntry } from "../../lib/problems";
 
 const problems = await getCollection("problems");
-const index: ProblemIndexEntry[] = problems
-  .map((p) => ({
-    id: p.data.id,
-    name: p.data.name,
-    status: p.data.status,
-    area: p.data.area,
-    impact: p.data.impact,
-  }))
-  .sort((a, b) => a.id - b.id);
+const index: ProblemIndexEntry[] = (
+  await Promise.all(
+    problems.map(async (p) => ({
+      id: p.data.id,
+      name: p.data.name,
+      status: p.data.status,
+      area: p.data.area,
+      impact: p.data.impact,
+      statementHtml: await renderMarkdown(splitSections(p.body ?? "").statement),
+    })),
+  )
+).sort((a, b) => a.id - b.id);
 ---
 
 <BaseLayout title="List of Problems" description="Browse all open problems in mathematical logic, filterable by area, status, and impact.">

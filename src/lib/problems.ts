@@ -8,12 +8,21 @@ export interface ProblemIndexEntry {
   status: ProblemStatus;
   area: Area[];
   impact: 1 | 2 | 3;
+  statementHtml: string;
 }
+
+export const IMPACTS = [1, 2, 3] as const;
+
+export const IMPACT_LABELS: Record<1 | 2 | 3, string> = {
+  1: "!",
+  2: "!!",
+  3: "!!!",
+};
 
 export const STATUS_LABELS: Record<ProblemStatus, string> = {
   open: "Open",
   closed: "Closed",
-  "claimed-proof-no-consensus": "Claimed proof, no consensus",
+  "claimed-proof-no-consensus": "No consensus",
 };
 
 export const IMPACT_RUBRIC: Record<1 | 2 | 3, string> = {
