@@ -26,3 +26,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     margin-top: 1rem;
   }
 </style>
+
+<style is:global>
+  /* PagefindUI's markup is injected client-side, so this override must be
+     global (unscoped) rather than tied to this component via Astro's
+     default scoped-style attribute. It reserves a thumbnail-image column on
+     the left of every result even when no page has an image — none of our
+     pages do, so that space is just empty; hide it. */
+  .pagefind-ui__result-thumb {
+    display: none !important;
+  }
+</style>
