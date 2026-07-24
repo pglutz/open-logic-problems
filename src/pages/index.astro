@@ -1,0 +1,93 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import changelogData from "../../data/changelog.json";
+import featuredIds from "../../data/featured.json";
+
+interface ChangelogEntry {
+  date: string;
+  type: "new-problem" | "status-change";
+  id: number;
+  name?: string;
+  old_status?: string;
+  new_status?: string;
+}
+
+const recentChanges = (changelogData as ChangelogEntry[])
+  .slice()
+  .sort((a, b) => b.date.localeCompare(a.date))
+  .slice(0, 10);
+
+const featuredProblems =
+  (featuredIds as number[]).length > 0
+    ? (await getCollection("problems")).filter((p) => (featuredIds as number[]).includes(p.data.id))
+    : [];
+
+function describeChange(entry: ChangelogEntry): string {
+  const label = entry.name ?? `Problem #${entry.id}`;
+  if (entry.type === "new-problem") return `${label} was added.`;
+  return `${label} changed status: ${entry.old_status} → ${entry.new_status}.`;
+}
+---
+
+<BaseLayout title="Home" description="A collection of open problems in mathematical logic.">
+  <img class="hero" src="/hero.svg" alt="" />
+
+  <h1>Open Problems in Logic</h1>
+  <p>
+    This site collects open problems in mathematical logic &mdash; set theory, model theory,
+    proof theory, computability, and beyond &mdash; each with its own page giving a precise
+    statement, its current status, known partial results, and relevant references. Anyone can
+    suggest edits or propose a new problem; see the <a href="/faq">FAQ</a> for how it works.
+  </p>
+
+  <section>
+    <h2>Recent Changes</h2>
+    {
+      recentChanges.length === 0 ? (
+        <p class="muted">No changes recorded yet.</p>
+      ) : (
+        <ul class="changes">
+          {recentChanges.map((entry) => (
+            <li>
+              <span class="muted">{entry.date}</span> &mdash;{" "}
+              <a href={`/problems/${entry.id}`}>{describeChange(entry)}</a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+
+  {
+    featuredProblems.length > 0 && (
+      <section>
+        <h2>Featured Problems</h2>
+        <ul>
+          {featuredProblems.map((p) => (
+            <li>
+              <a href={`/problems/${p.data.id}`}>{p.data.name ?? `Problem #${p.data.id}`}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .hero {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+  .changes {
+    list-style: none;
+    padding: 0;
+  }
+  .changes li {
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+</style>

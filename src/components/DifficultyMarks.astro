@@ -1,0 +1,33 @@
+---
+interface Props {
+  difficulty: 1 | 2 | 3;
+}
+const { difficulty } = Astro.props;
+
+const RUBRIC: Record<1 | 2 | 3, string> = {
+  1: "Difficulty 1: notable, but below the bar for 2–3",
+  2: "Difficulty 2: could be published in a strong journal (Advances-level or above)",
+  3: "Difficulty 3: award-level significance",
+};
+---
+
+<span class="difficulty" title={RUBRIC[difficulty]}>
+  {"!".repeat(difficulty)}
+  <span class="visually-hidden">{RUBRIC[difficulty]}</span>
+</span>
+
+<style>
+  .difficulty {
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: help;
+  }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+</style>

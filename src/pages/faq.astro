@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="FAQ" description="How this site works and how to contribute.">
+  <h1>FAQ</h1>
+
+  <section>
+    <h2>What is this site?</h2>
+    <p>
+      A collection of open problems in mathematical logic &mdash; set theory, model theory, proof
+      theory, computability theory, and related areas. Each problem has its own page with a precise
+      statement, its current status, definitions of the terms it uses, known partial results, and
+      references.
+    </p>
+  </section>
+
+  <section>
+    <h2>What do the statuses mean?</h2>
+    <ul>
+      <li><strong>Open</strong> &mdash; unresolved, as far as we know.</li>
+      <li><strong>Closed</strong> &mdash; resolved, with a generally accepted proof.</li>
+      <li>
+        <strong>Claimed proof, no consensus</strong> &mdash; a proof has been claimed but is not yet
+        broadly verified or accepted.
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What do the exclamation marks (difficulty/importance) mean?</h2>
+    <ul>
+      <li><strong>!</strong> &mdash; notable, but below the bar for !! or !!!.</li>
+      <li>
+        <strong>!!</strong> &mdash; substantial: the kind of result that could be published in a
+        strong journal (Advances-level or above).
+      </li>
+      <li><strong>!!!</strong> &mdash; award-level significance.</li>
+    </ul>
+    <p class="muted">This rubric is inherently subjective &mdash; treat it as a rough guide, not a strict rule.</p>
+  </section>
+
+  <section>
+    <h2>What problems can be included?</h2>
+    <p>
+      As a rule of thumb, a problem should have appeared in a published paper or book. We make
+      exceptions for problems appearing only in preprints or other unpublished sources, provided a
+      brief justification is given &mdash; this is asked for directly when you
+      <a href="/problems/new">submit a new problem</a>.
+    </p>
+  </section>
+
+  <section>
+    <h2>How do I suggest an edit to a problem?</h2>
+    <p>
+      Every problem page has an editor where you can revise its details and prose, add a short
+      description of your change, and submit it for review. You do not need a GitHub account.
+      Changes are reviewed by the maintainer before they go live.
+    </p>
+  </section>
+
+  <section>
+    <h2>How do I propose a new problem?</h2>
+    <p>
+      Use <a href="/problems/new">Submit a New Problem</a>. You'll fill in the same kind of
+      structured details (area, difficulty, reference, etc.) plus a note on where the problem was
+      published. It goes through the same review process as edits before appearing on the site.
+    </p>
+  </section>
+
+  <section>
+    <h2>Can I comment on a problem?</h2>
+    <p>
+      Yes &mdash; each problem page has a comment section. A lightweight sign-up (no GitHub account
+      needed) is required to post.
+    </p>
+  </section>
+</BaseLayout>

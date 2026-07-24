@@ -1,0 +1,156 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import StatusBadge from "../components/StatusBadge.astro";
+import AreaTags from "../components/AreaTags.astro";
+import DifficultyMarks from "../components/DifficultyMarks.astro";
+
+interface CanonicalReference {
+  title: string;
+  author: string;
+  venue?: string;
+  year?: number;
+  link?: string;
+}
+
+interface Props {
+  id: number;
+  name?: string;
+  status: "open" | "closed" | "claimed-proof-no-consensus";
+  area: string[];
+  difficulty: 1 | 2 | 3;
+  canonicalReference: CanonicalReference;
+  statementHtml: string;
+  definitionsHtml?: string;
+  partialResultsHtml?: string;
+  additionalReferencesHtml?: string;
+  notesHtml?: string;
+}
+
+const {
+  id,
+  name,
+  status,
+  area,
+  difficulty,
+  canonicalReference,
+  statementHtml,
+  definitionsHtml,
+  partialResultsHtml,
+  additionalReferencesHtml,
+  notesHtml,
+} = Astro.props;
+
+const title = name ? `${name} (#${id})` : `Problem #${id}`;
+---
+
+<BaseLayout title={title}>
+  <p class="muted problem-id">Problem #{id}</p>
+  {name && <h1>{name}</h1>}
+  {!name && <h1>Problem #{id}</h1>}
+
+  <div class:list={["statement-box", `status-${status}`]}>
+    <div class="meta-row">
+      <StatusBadge status={status} />
+      <DifficultyMarks difficulty={difficulty} />
+      <AreaTags areas={area} />
+    </div>
+    <div class="statement-body" set:html={statementHtml} />
+  </div>
+
+  <section class="reference">
+    <h2>Reference</h2>
+    <p>
+      {canonicalReference.author}, <em>{canonicalReference.title}</em>
+      {canonicalReference.venue && <>, {canonicalReference.venue}</>}
+      {canonicalReference.year && <>, {canonicalReference.year}</>}
+      {canonicalReference.link && (
+        <>
+          {" "}
+          (<a href={canonicalReference.link}>link</a>)
+        </>
+      )}
+    </p>
+  </section>
+
+  {
+    definitionsHtml && (
+      <section>
+        <h2>Definitions</h2>
+        <div set:html={definitionsHtml} />
+      </section>
+    )
+  }
+
+  {
+    partialResultsHtml && (
+      <section>
+        <h2>Known Partial Results</h2>
+        <div set:html={partialResultsHtml} />
+      </section>
+    )
+  }
+
+  {
+    additionalReferencesHtml && (
+      <section>
+        <h2>Additional References</h2>
+        <div set:html={additionalReferencesHtml} />
+      </section>
+    )
+  }
+
+  {
+    notesHtml && (
+      <section>
+        <h2>Notes</h2>
+        <div set:html={notesHtml} />
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .problem-id {
+    margin-bottom: 0;
+  }
+  h1 {
+    margin-top: 0.1rem;
+  }
+  .statement-box {
+    border: 1px solid var(--color-border);
+    border-left-width: 6px;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0 2rem;
+  }
+  .statement-box.status-open {
+    background: var(--color-open-bg);
+    border-left-color: var(--color-open-border);
+  }
+  .statement-box.status-closed {
+    background: var(--color-closed-bg);
+    border-left-color: var(--color-closed-border);
+  }
+  .statement-box.status-claimed-proof-no-consensus {
+    background: var(--color-claimed-bg);
+    border-left-color: var(--color-claimed-border);
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .statement-body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  section {
+    margin-bottom: 2rem;
+  }
+  section h2 {
+    font-size: 1.15rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.25rem;
+  }
+</style>

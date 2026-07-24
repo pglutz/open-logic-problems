@@ -1,0 +1,22 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProblemListFilter from "../../components/islands/ProblemListFilter";
+import type { ProblemIndexEntry } from "../../lib/problems";
+
+const problems = await getCollection("problems");
+const index: ProblemIndexEntry[] = problems
+  .map((p) => ({
+    id: p.data.id,
+    name: p.data.name,
+    status: p.data.status,
+    area: p.data.area,
+    difficulty: p.data.difficulty,
+  }))
+  .sort((a, b) => a.id - b.id);
+---
+
+<BaseLayout title="List of Problems" description="Browse all open problems in mathematical logic, filterable by area, status, and difficulty.">
+  <h1>List of Problems</h1>
+  <ProblemListFilter problems={index} client:load />
+</BaseLayout>

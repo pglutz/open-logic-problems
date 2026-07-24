@@ -1,0 +1,73 @@
+---
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/problems", label: "List of Problems" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/problems/new", label: "Submit a New Problem" },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/">Open Problems in Logic</a>
+    <nav>
+      <ul>
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                aria-current={currentPath === link.href ? "page" : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    background: var(--color-nav-bg);
+    color: var(--color-nav-text);
+  }
+  .nav-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .brand {
+    color: var(--color-nav-text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+  }
+  nav a {
+    color: var(--color-nav-text);
+    text-decoration: none;
+    opacity: 0.85;
+    font-size: 0.95rem;
+  }
+  nav a:hover,
+  nav a[aria-current="page"] {
+    opacity: 1;
+    text-decoration: underline;
+  }
+</style>
