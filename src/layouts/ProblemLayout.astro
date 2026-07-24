@@ -50,6 +50,8 @@ const title = name ? `${name} (#${id})` : `Problem #${id}`;
   {name && <h1>{name}</h1>}
   {!name && <h1>Problem #{id}</h1>}
 
+  <p class="muted"><a href={`/problems/${id}/edit`}>Suggest an edit to this problem</a></p>
+
   <div class:list={["status-box", "statement-box", `status-${status}`]}>
     <div class="meta-row">
       <StatusBadge status={status} />

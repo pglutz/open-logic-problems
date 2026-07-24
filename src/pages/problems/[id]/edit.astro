@@ -1,0 +1,140 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ProblemEditor from "../../../components/islands/ProblemEditor";
+
+export async function getStaticPaths() {
+  const problems = await getCollection("problems");
+  return problems.map((entry) => ({
+    params: { id: String(entry.data.id) },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+---
+
+<BaseLayout title={`Suggest an edit — Problem #${entry.data.id}`}>
+  <h1>Suggest an edit — Problem #{entry.data.id}</h1>
+  <ProblemEditor
+    problem={{
+      id: entry.data.id,
+      name: entry.data.name,
+      status: entry.data.status,
+      area: entry.data.area,
+      impact: entry.data.impact,
+      canonicalReference: entry.data.canonical_reference,
+    }}
+    rawBody={entry.body ?? ""}
+    client:load
+  />
+</BaseLayout>
+
+<style is:global>
+  /* ProblemEditor is a React island; its markup is rendered client-side, so
+     Astro's scoped-style attribute never reaches it — these rules must be
+     global. */
+  .problem-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 60rem;
+  }
+  .editor-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .editor-field label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .editor-field input,
+  .editor-field select {
+    font: inherit;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+    max-width: 30rem;
+  }
+  .editor-status-warning {
+    margin: 0.3rem 0 0;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--color-claimed-border);
+    background: var(--color-claimed-bg);
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  .editor-fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .editor-fieldset legend {
+    font-weight: 600;
+    padding: 0 0.4rem;
+  }
+  .editor-area-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+  }
+  .editor-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 400;
+    font-size: 0.95rem;
+  }
+  .editor-panes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .editor-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+  .editor-pane label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .editor-pane textarea {
+    font-family: ui-monospace, monospace;
+    font-size: 0.9rem;
+    padding: 0.6rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+    resize: vertical;
+  }
+  .editor-preview {
+    padding: 0.6rem 0.8rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    overflow-y: auto;
+  }
+  .problem-editor > button[type="submit"] {
+    align-self: flex-start;
+    font-size: 0.95rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+  }
+  @media (max-width: 45rem) {
+    .editor-panes {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
