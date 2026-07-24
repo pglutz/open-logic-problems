@@ -6,9 +6,10 @@ import "../styles/global.css";
 interface Props {
   title: string;
   description?: string;
+  excludeFromSearch?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, excludeFromSearch } = Astro.props;
 ---
 
 <!doctype html>
@@ -22,7 +23,7 @@ const { title, description } = Astro.props;
   </head>
   <body>
     <Nav />
-    <main data-pagefind-body>
+    <main data-pagefind-body={excludeFromSearch ? undefined : true}>
       <slot />
     </main>
   </body>
