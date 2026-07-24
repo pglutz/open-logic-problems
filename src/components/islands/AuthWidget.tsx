@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase/client";
+import { OPEN_AUTH_POPOVER_EVENT } from "../../lib/authPopoverEvent";
 
 export default function AuthWidget() {
   const [session, setSession] = useState<Session | null>(null);
@@ -28,6 +29,15 @@ export default function AuthWidget() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
+
+  useEffect(() => {
+    function handleOpenRequest() {
+      setOpen(true);
+      containerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    window.addEventListener(OPEN_AUTH_POPOVER_EVENT, handleOpenRequest);
+    return () => window.removeEventListener(OPEN_AUTH_POPOVER_EVENT, handleOpenRequest);
+  }, []);
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();

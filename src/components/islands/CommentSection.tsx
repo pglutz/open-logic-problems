@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase/client";
 import { renderCommentMarkdown } from "../../lib/markdown/pipeline";
+import { OPEN_AUTH_POPOVER_EVENT } from "../../lib/authPopoverEvent";
 
 interface Comment {
   id: string;
@@ -136,7 +137,16 @@ export default function CommentSection({ problemId }: { problemId: number }) {
           {error && <p className="comment-error">{error}</p>}
         </form>
       ) : (
-        <p className="muted">Sign in (top right) to leave a comment.</p>
+        <p className="comment-signin-prompt">
+          <button
+            type="button"
+            className="link-button"
+            onClick={() => window.dispatchEvent(new CustomEvent(OPEN_AUTH_POPOVER_EVENT))}
+          >
+            Sign in
+          </button>{" "}
+          to leave a comment.
+        </p>
       )}
     </div>
   );
