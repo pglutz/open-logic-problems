@@ -224,9 +224,11 @@ export default function ProblemEditor({ problem, sections }: ProblemEditorProps)
                 value={impact}
                 onChange={(e) => setImpact(Number(e.target.value) as 1 | 2 | 3)}
               >
-                {([1, 2, 3] as const).map((n) => (
+                {([3, 2, 1] as const).map((n) => (
                   <option key={n} value={n} title={IMPACT_RUBRIC[n]}>
-                    {IMPACT_LABELS[n]} {IMPACT_SHORT_LABELS[n]}
+                    {IMPACT_LABELS[n]}
+                    {"  "}
+                    {IMPACT_SHORT_LABELS[n]}
                   </option>
                 ))}
               </select>
@@ -254,7 +256,7 @@ export default function ProblemEditor({ problem, sections }: ProblemEditorProps)
           </details>
 
           <details className="editor-collapsible">
-            <summary>Canonical reference</summary>
+            <summary>Reference</summary>
             <div className="editor-collapsible-body">
               <div className="editor-field">
                 <label>Title</label>

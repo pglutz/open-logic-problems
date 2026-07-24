@@ -19,6 +19,9 @@ type Impact = 1 | 2 | 3;
 
 const STATUSES: ProblemStatus[] = ["open", "closed", "claimed-proof-no-consensus"];
 
+// Highest impact first — filtering for the most significant problems is the more common intent.
+const impactFilterOrder: Impact[] = [...IMPACTS].reverse();
+
 const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: "id", label: "ID" },
   { key: "impact", label: "Impact" },
@@ -192,13 +195,14 @@ export default function ProblemListFilter({ problems }: Props) {
 
         <FilterGroup
           title="Impact"
-          items={IMPACTS}
+          items={impactFilterOrder}
           labels={IMPACT_SHORT_LABELS}
           selected={selectedImpacts}
           onChange={setSelectedImpacts}
           renderLabel={(n) => (
             <>
-              <span className="impact-pill">{IMPACT_LABELS[n]}</span> {IMPACT_SHORT_LABELS[n]}
+              <span className="impact-bangs">{IMPACT_LABELS[n]}</span>
+              <span>{IMPACT_SHORT_LABELS[n]}</span>
             </>
           )}
         />
@@ -284,17 +288,11 @@ export default function ProblemListFilter({ problems }: Props) {
           padding-bottom: 0.35rem;
           margin-bottom: 0.35rem;
         }
-        .impact-pill {
+        .impact-bangs {
           display: inline-block;
-          min-width: 1.8rem;
-          text-align: center;
-          padding: 0.05rem 0.35rem;
-          border-radius: 999px;
-          border: 1px solid var(--color-border);
-          background: rgba(128, 128, 128, 0.15);
+          min-width: 1.5rem;
           font-weight: 700;
-          font-size: 0.75rem;
-          letter-spacing: 0.03em;
+          letter-spacing: 0.05em;
         }
         .button-row {
           display: flex;
@@ -344,6 +342,7 @@ export default function ProblemListFilter({ problems }: Props) {
           min-width: 0;
         }
         .card .impact {
+          margin-left: auto;
           font-weight: 700;
           letter-spacing: 0.05em;
           cursor: help;
@@ -358,6 +357,7 @@ export default function ProblemListFilter({ problems }: Props) {
         }
         .card .status-badge-end {
           margin-left: auto;
+          margin-right: -0.1rem;
         }
         .card .area-tag {
           display: inline-block;
