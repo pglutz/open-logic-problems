@@ -7,13 +7,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
   <div id="search"></div>
 
-  <script>
+  <script is:inline>
     // Pagefind's index is generated into dist/pagefind/ at build time (see
     // package.json's build script), so this only works against a built site
-    // (npm run build && npm run preview) — it has nothing to query under
-    // `astro dev`, since dev serves source files directly, not the build output.
-    import(/* @vite-ignore */ "/pagefind/pagefind-ui.js").then(() => {
-      // @ts-expect-error - PagefindUI is loaded onto window by the script above
+    // (npm run build), not `astro dev`, which serves source files directly
+    // rather than the build output. `is:inline` keeps Astro/Vite from
+    // bundling this script — Vite's dynamic-import handling leaves a
+    // `__VITE_PRELOAD__` placeholder that's never substituted for a
+    // runtime-only path like this one, which throws before the import runs.
+    import("/pagefind/pagefind-ui.js").then(() => {
       new PagefindUI({ element: "#search", showSubResults: true });
     });
   </script>
