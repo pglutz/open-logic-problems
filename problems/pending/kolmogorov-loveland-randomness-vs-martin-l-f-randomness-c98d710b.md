@@ -19,7 +19,7 @@ Does Kolmogorov-Loveland randomness imply Martin-Löf randomness?
 
 ## Definitions
 
-A sequence $X \in 2^\mathbb{N}$ is *Kolmogorov-Loveland random* if no computable non-monotonic betting strategy can win infinitely much money playing against it. A sequence $X \in 2^\mathbb{N}$ is *Martin-Löf random* if no c.e. monotonic betting strategy can win infinitely much money playing against it.
+A sequence $X \in 2^\mathbb{N}$ is *Kolmogorov-Loveland random* (*KL-random* for short) if no computable non-monotonic betting strategy can win infinitely much money playing against it. A sequence $X \in 2^\mathbb{N}$ is *Martin-Löf random* (*ML-random* for short) if no c.e. monotonic betting strategy can win infinitely much money playing against it.
 
 ## Known Partial Results
 
