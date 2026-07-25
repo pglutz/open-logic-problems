@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AREAS, type Area } from "../../lib/areas";
 import type { ProblemIndexEntry, ProblemStatus } from "../../lib/problems";
 import {
@@ -27,6 +27,12 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: "impact", label: "Impact" },
   { key: "status", label: "Status" },
 ];
+
+// useLayoutEffect warns when it runs during server rendering (it's a no-op
+// there); fall back to useEffect in that environment to keep the SSR log
+// clean, while still getting layout-effect timing (before paint) in the
+// browser, where it matters for avoiding a flash.
+const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 function toggle<T>(set: Set<T>, value: T): Set<T> {
   const next = new Set(set);
@@ -92,6 +98,13 @@ export default function ProblemListFilter({ problems }: Props) {
   const [selectedImpacts, setSelectedImpacts] = useState<Set<Impact>>(new Set(IMPACTS));
   const [sortKey, setSortKey] = useState<SortKey>("id");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [filtersOpen, setFiltersOpen] = useState(true);
+
+  // useLayoutEffect (not useEffect) so this runs before the browser paints,
+  // avoiding a visible open-then-collapse flash on narrow screens.
+  useIsomorphicLayoutEffect(() => {
+    if (window.matchMedia("(max-width: 799px)").matches) setFiltersOpen(false);
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -175,37 +188,43 @@ export default function ProblemListFilter({ problems }: Props) {
           </div>
         </div>
 
-        <h2 className="sidebar-heading">Filters</h2>
+        <details
+          className="filters-details"
+          open={filtersOpen}
+          onToggle={(e) => setFiltersOpen(e.currentTarget.open)}
+        >
+          <summary className="sidebar-heading filters-summary">Filters</summary>
 
-        <FilterGroup
-          title="Status"
-          items={STATUSES}
-          labels={STATUS_LABELS}
-          selected={selectedStatuses}
-          onChange={setSelectedStatuses}
-        />
+          <FilterGroup
+            title="Status"
+            items={STATUSES}
+            labels={STATUS_LABELS}
+            selected={selectedStatuses}
+            onChange={setSelectedStatuses}
+          />
 
-        <FilterGroup
-          title="Area"
-          items={AREAS}
-          labels={areaLabels}
-          selected={selectedAreas}
-          onChange={setSelectedAreas}
-        />
+          <FilterGroup
+            title="Area"
+            items={AREAS}
+            labels={areaLabels}
+            selected={selectedAreas}
+            onChange={setSelectedAreas}
+          />
 
-        <FilterGroup
-          title="Impact"
-          items={impactFilterOrder}
-          labels={IMPACT_SHORT_LABELS}
-          selected={selectedImpacts}
-          onChange={setSelectedImpacts}
-          renderLabel={(n) => (
-            <>
-              <span className="impact-bangs">{IMPACT_LABELS[n]}</span>
-              <span>{IMPACT_SHORT_LABELS[n]}</span>
-            </>
-          )}
-        />
+          <FilterGroup
+            title="Impact"
+            items={impactFilterOrder}
+            labels={IMPACT_SHORT_LABELS}
+            selected={selectedImpacts}
+            onChange={setSelectedImpacts}
+            renderLabel={(n) => (
+              <>
+                <span className="impact-bangs">{IMPACT_LABELS[n]}</span>
+                <span>{IMPACT_SHORT_LABELS[n]}</span>
+              </>
+            )}
+          />
+        </details>
       </aside>
 
       <div className="results">
@@ -242,12 +261,13 @@ export default function ProblemListFilter({ problems }: Props) {
         .listing {
           display: flex;
           flex-direction: column;
-          gap: 2rem;
+          gap: 1rem;
         }
         @media (min-width: 800px) {
           .listing {
             flex-direction: row;
             align-items: flex-start;
+            gap: 2rem;
           }
           .sidebar {
             flex: 0 0 200px;
@@ -264,6 +284,10 @@ export default function ProblemListFilter({ problems }: Props) {
           margin: 0 0 0.75rem;
           padding-top: 0.5rem;
           border-top: 1px solid var(--color-border);
+        }
+        .filters-summary {
+          cursor: pointer;
+          font-weight: 600;
         }
         .filter-group {
           margin-bottom: 1.5rem;
