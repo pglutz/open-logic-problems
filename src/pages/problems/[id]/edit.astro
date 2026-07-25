@@ -84,8 +84,8 @@ const sections = splitSections(entry.body ?? "");
   .editor-field textarea {
     font: inherit;
     padding: 0.4rem 0.6rem;
-    border-radius: 4px;
-    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    border: var(--border-width) solid var(--color-border);
     background: var(--color-bg);
     color: var(--color-text);
   }
@@ -113,15 +113,15 @@ const sections = splitSections(entry.body ?? "");
   .editor-status-warning {
     margin: -0.5rem 0 0;
     padding: 0.6rem 0.8rem;
-    border: 1px solid var(--color-claimed-border);
+    border: var(--border-width) solid var(--color-claimed-border);
     background: var(--color-claimed-bg);
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 0.9rem;
   }
 
   .editor-collapsible {
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
     padding: 0.6rem 1rem;
   }
   .editor-collapsible summary {
@@ -158,8 +158,8 @@ const sections = splitSections(entry.body ?? "");
     font-size: 1.05rem;
     font-weight: 600;
     padding: 0.65rem 1.5rem;
-    border-radius: 6px;
-    border: 1px solid var(--color-link);
+    border-radius: var(--radius-md);
+    border: var(--border-width) solid var(--color-link);
     background: var(--color-link);
     color: #fff;
     cursor: pointer;
@@ -175,8 +175,8 @@ const sections = splitSections(entry.body ?? "");
   /* Live preview — mirrors ProblemLayout.astro's markup/styles so the pane
      actually looks like the resulting problem page. */
   .editor-preview-page {
-    border: 1px dashed var(--color-border);
-    border-radius: 8px;
+    border: var(--border-width) dashed var(--color-border);
+    border-radius: var(--radius-lg);
     padding: 1.25rem 1.5rem;
   }
   .editor-preview-id {
@@ -215,7 +215,7 @@ const sections = splitSections(entry.body ?? "");
   .editor-preview-area-row .area-tag {
     display: inline-block;
     padding: 0.1rem 0.55rem;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: rgba(128, 128, 128, 0.15);
     font-size: 0.85rem;
   }

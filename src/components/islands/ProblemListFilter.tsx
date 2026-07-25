@@ -303,8 +303,8 @@ export default function ProblemListFilter({ problems }: Props) {
           font: inherit;
           font-size: 0.85rem;
           padding: 0.3rem 0.65rem;
-          border-radius: 6px;
-          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          border: var(--border-width) solid var(--color-border);
           background: transparent;
           color: var(--color-text);
           cursor: pointer;
@@ -362,7 +362,7 @@ export default function ProblemListFilter({ problems }: Props) {
         .card .area-tag {
           display: inline-block;
           padding: 0.1rem 0.55rem;
-          border-radius: 5px;
+          border-radius: var(--radius-sm);
           background: rgba(128, 128, 128, 0.15);
           font-size: 0.85rem;
           text-decoration: none;
