@@ -4,13 +4,19 @@ import "katex/dist/katex.min.css";
 import "../styles/global.css";
 
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
   excludeFromSearch?: boolean;
   maxWidth?: string;
+  // Present when this layout is used as a Markdown page's `layout:` frontmatter
+  // field — Astro nests that page's frontmatter here instead of spreading it.
+  frontmatter?: { title?: string; description?: string };
 }
 
-const { title, description, excludeFromSearch, maxWidth } = Astro.props;
+const props = Astro.props;
+const title = props.title ?? props.frontmatter?.title;
+const description = props.description ?? props.frontmatter?.description;
+const { excludeFromSearch, maxWidth } = props;
 ---
 
 <!doctype html>
