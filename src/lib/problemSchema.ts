@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { AREAS } from "./areas";
+import { AREAS } from "./areas.ts";
 
 // Fields shared by an assigned problem and one still awaiting an id.
 const problemCoreFields = {

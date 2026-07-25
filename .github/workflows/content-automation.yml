@@ -1,0 +1,46 @@
+name: Content Automation
+
+on:
+  push:
+    branches: [main]
+    paths: ["problems/**"]
+
+concurrency:
+  group: content-automation
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  automate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Always the current tip of main at run time, not the (possibly
+          # stale) SHA that triggered this run — this is what prevents two
+          # queued runs from colliding on the same id.
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - run: npm ci
+
+      - run: node --experimental-strip-types scripts/content-automation/assign-ids.ts
+
+      - run: node --experimental-strip-types scripts/content-automation/update-changelog.ts
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Automated: assign id(s) and update changelog"
+            git push origin HEAD:main
+          else
+            echo "No changes to commit."
+          fi

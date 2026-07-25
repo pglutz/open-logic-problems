@@ -1,4 +1,4 @@
-import type { Area } from "./areas";
+import type { Area } from "./areas.ts";
 
 export type ProblemStatus = "open" | "closed" | "claimed-proof-no-consensus";
 

@@ -1,9 +1,10 @@
+import * as yaml from "js-yaml";
 import {
   problemFrontmatterSchema,
   pendingProblemSchema,
   type ProblemFrontmatter,
   type PendingProblemFrontmatter,
-} from "../problemSchema";
+} from "../problemSchema.ts";
 
 // The schema is small and fixed, so rather than relying on js-yaml's dump()
 // heuristics for the whole object (which either drops quotes from prose
@@ -46,6 +47,17 @@ export function serializeProblemFile(frontmatter: ProblemFrontmatter, body: stri
   const fm = problemFrontmatterSchema.parse(frontmatter);
   const lines = [`id: ${fm.id}`, ...coreFrontmatterLines(fm)];
   return `---\n${lines.join("\n")}\n---\n\n${body.trim()}\n`;
+}
+
+// Used only by the content-automation CI scripts, which read files after
+// they've already been through human PR review — unlike serialize*, which
+// controls the app's own output format exactly, this only needs to tolerate
+// whatever valid YAML a reviewer actually merged.
+export function parseFrontmatter(raw: string): { data: unknown; body: string } {
+  const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  if (!match) throw new Error("No frontmatter block found");
+  const [, frontmatterYaml, body] = match;
+  return { data: yaml.load(frontmatterYaml), body: body.trim() };
 }
 
 export function serializePendingProblemFile(
