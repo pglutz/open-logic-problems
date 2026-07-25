@@ -172,8 +172,9 @@ const sections = splitSections(entry.body ?? "");
     cursor: default;
   }
 
-  /* Live preview — mirrors ProblemLayout.astro's markup/styles so the pane
-     actually looks like the resulting problem page. */
+  /* Live preview wrapper only — the actual problem-body markup/styling
+     (status box, reference, named sections) now comes from ProblemBody.tsx,
+     shared with the real problem page, via the global rules in global.css. */
   .editor-preview-page {
     border: var(--border-width) dashed var(--color-border);
     border-radius: var(--radius-lg);
@@ -187,45 +188,5 @@ const sections = splitSections(entry.body ?? "");
     margin: 0.1rem 0 1.25rem;
     font-size: 1.6rem;
     line-height: 1.25;
-  }
-  .editor-preview-statement-box {
-    margin: 0 0 1.5rem;
-  }
-  .editor-preview-meta-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-  .editor-preview-impact {
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    cursor: help;
-  }
-  .editor-preview-statement-body p:last-child {
-    margin-bottom: 0;
-  }
-  .editor-preview-area-row {
-    margin-top: 0.85rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-  .editor-preview-area-row .area-tag {
-    display: inline-block;
-    padding: 0.1rem 0.55rem;
-    border-radius: var(--radius-sm);
-    background: rgba(128, 128, 128, 0.15);
-    font-size: 0.85rem;
-  }
-  .editor-preview-section {
-    margin-bottom: 1.5rem;
-  }
-  .editor-preview-section h3 {
-    font-size: 1.1rem;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 0.25rem;
-    margin-bottom: 0.5rem;
   }
 </style>

@@ -167,3 +167,74 @@ pre code {
 .comment-signin-prompt .link-button {
   font-weight: 700;
 }
+
+/* ProblemBody.tsx — the shared "problem body" markup rendered both by the
+   real problem page (statically, via ProblemLayout.astro) and by the
+   suggest-an-edit live preview (a hydrated React island), so it must be
+   global to reach both. Scoped to these specific classes rather than bare
+   `section`/`h2`/`h3` selectors so it doesn't bleed into unrelated
+   <section> elements on other pages (e.g. the homepage). */
+.statement-box {
+  margin: 1.25rem 0 2rem;
+}
+.meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.impact {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: help;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.statement-body p:last-child {
+  margin-bottom: 0;
+}
+.area-tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+}
+.area-tags a {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: var(--radius-sm);
+  background: rgba(128, 128, 128, 0.15);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.area-tags a:hover {
+  text-decoration: underline;
+}
+.area-row {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.suggest-edit-link {
+  margin-left: auto;
+  font-size: 0.9rem;
+}
+.problem-section {
+  margin-bottom: 2rem;
+}
+.section-heading {
+  font-size: 1.15rem;
+  border-bottom: var(--border-width) solid var(--color-border);
+  padding-bottom: 0.25rem;
+}

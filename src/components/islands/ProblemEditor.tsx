@@ -13,6 +13,7 @@ import {
   type ProblemStatus,
 } from "../../lib/problems";
 import { formatArea } from "../../lib/problems";
+import ProblemBody from "../react/ProblemBody";
 
 interface CanonicalReference {
   title: string;
@@ -333,69 +334,25 @@ export default function ProblemEditor({ problem, sections }: ProblemEditorProps)
             <p className="muted editor-preview-id">Problem #{problem.id}</p>
             <h2 className="editor-preview-title">{title}</h2>
 
-            <div className={`status-box editor-preview-statement-box status-${status}`}>
-              <div className="editor-preview-meta-row">
-                <span className={`badge status-${status}`}>{STATUS_LABELS[status]}</span>
-                <span className="editor-preview-impact" title={IMPACT_RUBRIC[impact]}>
-                  {"!".repeat(impact)}
-                </span>
-              </div>
-              <div
-                className="editor-preview-statement-body"
-                dangerouslySetInnerHTML={{ __html: previewHtml.statement }}
-              />
-              <div className="editor-preview-area-row">
-                {area.map((a) => (
-                  <span className="area-tag" key={a}>
-                    {formatArea(a)}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <section className="editor-preview-section">
-              <h3>Reference for the problem statement</h3>
-              <p>
-                {refAuthor}, <em>{refTitle}</em>
-                {refVenue && <>, {refVenue}</>}
-                {refYear && <>, {refYear}</>}
-                {refLink && (
-                  <>
-                    {" "}
-                    (<a href={refLink}>link</a>)
-                  </>
-                )}
-                {refDoi && <> (DOI: {refDoi})</>}
-              </p>
-            </section>
-
-            {previewHtml.definitions && (
-              <section className="editor-preview-section">
-                <h3>Definitions</h3>
-                <div dangerouslySetInnerHTML={{ __html: previewHtml.definitions }} />
-              </section>
-            )}
-
-            {previewHtml.partialResults && (
-              <section className="editor-preview-section">
-                <h3>Known Partial Results</h3>
-                <div dangerouslySetInnerHTML={{ __html: previewHtml.partialResults }} />
-              </section>
-            )}
-
-            {previewHtml.notes && (
-              <section className="editor-preview-section">
-                <h3>Notes</h3>
-                <div dangerouslySetInnerHTML={{ __html: previewHtml.notes }} />
-              </section>
-            )}
-
-            {previewHtml.additionalReferences && (
-              <section className="editor-preview-section">
-                <h3>Additional References</h3>
-                <div dangerouslySetInnerHTML={{ __html: previewHtml.additionalReferences }} />
-              </section>
-            )}
+            <ProblemBody
+              status={status}
+              impact={impact}
+              area={area}
+              canonicalReference={{
+                title: refTitle,
+                author: refAuthor,
+                venue: refVenue || undefined,
+                year: refYear ? Number(refYear) : undefined,
+                link: refLink || undefined,
+                doi: refDoi || undefined,
+              }}
+              statementHtml={previewHtml.statement}
+              definitionsHtml={previewHtml.definitions}
+              partialResultsHtml={previewHtml.partialResults}
+              additionalReferencesHtml={previewHtml.additionalReferences}
+              notesHtml={previewHtml.notes}
+              sectionHeadingTag="h3"
+            />
           </div>
         </div>
       </div>
