@@ -147,7 +147,7 @@ pre code {
 /* Shared across the comment section and the suggest-an-edit form, which live
    under different layouts (ProblemLayout vs BaseLayout). */
 .comment-error {
-  color: #c0392b;
+  color: var(--color-error-border);
   font-size: 0.85rem;
   margin: 0;
 }

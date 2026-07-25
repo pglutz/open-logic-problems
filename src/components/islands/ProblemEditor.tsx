@@ -238,7 +238,6 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
     );
   }
 
-  const title = name;
   const nameInvalid = invalidFields.has("name") && missingName;
   const areaInvalid = invalidFields.has("area") && missingArea;
   const statementInvalid = invalidFields.has("statement") && missingStatement;
@@ -394,7 +393,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             ) : (
               <p className="muted editor-preview-id">Problem #{problem!.id}</p>
             )}
-            <h2 className="editor-preview-title">{title}</h2>
+            <h2 className="editor-preview-title">{name}</h2>
 
             <ProblemBody
               status={status}

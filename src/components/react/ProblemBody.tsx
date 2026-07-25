@@ -52,7 +52,8 @@ export default function ProblemBody({
   if (canonicalReference.title) referenceParts.push(<em key="title">{canonicalReference.title}</em>);
   if (canonicalReference.venue) referenceParts.push(canonicalReference.venue);
   if (canonicalReference.year) referenceParts.push(String(canonicalReference.year));
-  const hasReference = referenceParts.length > 0 || canonicalReference.link || canonicalReference.doi;
+  const hasReference =
+    referenceParts.length > 0 || !!canonicalReference.link || !!canonicalReference.doi;
 
   return (
     <>
