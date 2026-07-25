@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "date": "2026-07-25",
+    "type": "new-problem",
+    "id": 7,
+    "name": "Automation Test Problem"
+  }
+]
