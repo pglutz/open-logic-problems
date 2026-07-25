@@ -1,0 +1,14 @@
+---
+id: null
+name: "Automation Test Problem"
+status: open
+area: [set-theory]
+impact: 1
+canonical_reference:
+  title: "A Test Reference"
+  author: "Someone"
+---
+
+## Statement
+
+This is a throwaway file to verify the content-automation GitHub Action runs correctly end-to-end. Safe to ignore/delete.
