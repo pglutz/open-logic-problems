@@ -44,6 +44,16 @@ export default function ProblemBody({
 }: ProblemBodyProps) {
   const SectionHeading = sectionHeadingTag;
 
+  // Author/title/venue/year join with ", " only between parts that are
+  // actually present, so a partially- or fully-blank reference never leaves
+  // a stray comma. Link/DOI stay as unconditional parenthetical suffixes.
+  const referenceParts: React.ReactNode[] = [];
+  if (canonicalReference.author) referenceParts.push(canonicalReference.author);
+  if (canonicalReference.title) referenceParts.push(<em key="title">{canonicalReference.title}</em>);
+  if (canonicalReference.venue) referenceParts.push(canonicalReference.venue);
+  if (canonicalReference.year) referenceParts.push(String(canonicalReference.year));
+  const hasReference = referenceParts.length > 0 || canonicalReference.link || canonicalReference.doi;
+
   return (
     <>
       <div className={`status-box statement-box status-${status}`}>
@@ -62,27 +72,32 @@ export default function ProblemBody({
         </div>
       </div>
 
-      <section className="problem-section">
-        <SectionHeading className="section-heading">Reference for the problem statement</SectionHeading>
-        <p>
-          {canonicalReference.author}, <em>{canonicalReference.title}</em>
-          {canonicalReference.venue && <>, {canonicalReference.venue}</>}
-          {canonicalReference.year && <>, {canonicalReference.year}</>}
-          {canonicalReference.link && (
-            <>
-              {" "}
-              (<a href={canonicalReference.link}>link</a>)
-            </>
-          )}
-          {canonicalReference.doi && (
-            <>
-              {" "}
-              (DOI:{" "}
-              <a href={`https://doi.org/${canonicalReference.doi}`}>{canonicalReference.doi}</a>)
-            </>
-          )}
-        </p>
-      </section>
+      {hasReference && (
+        <section className="problem-section">
+          <SectionHeading className="section-heading">Reference for the problem statement</SectionHeading>
+          <p>
+            {referenceParts.map((part, i) => (
+              <span key={i}>
+                {i > 0 && ", "}
+                {part}
+              </span>
+            ))}
+            {canonicalReference.link && (
+              <>
+                {" "}
+                (<a href={canonicalReference.link}>link</a>)
+              </>
+            )}
+            {canonicalReference.doi && (
+              <>
+                {" "}
+                (DOI:{" "}
+                <a href={`https://doi.org/${canonicalReference.doi}`}>{canonicalReference.doi}</a>)
+              </>
+            )}
+          </p>
+        </section>
+      )}
 
       {definitionsHtml && (
         <section className="problem-section">

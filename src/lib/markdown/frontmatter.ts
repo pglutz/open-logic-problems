@@ -1,4 +1,9 @@
-import { problemFrontmatterSchema, type ProblemFrontmatter } from "../problemSchema";
+import {
+  problemFrontmatterSchema,
+  pendingProblemSchema,
+  type ProblemFrontmatter,
+  type PendingProblemFrontmatter,
+} from "../problemSchema";
 
 // The schema is small and fixed, so rather than relying on js-yaml's dump()
 // heuristics for the whole object (which either drops quotes from prose
@@ -11,19 +16,43 @@ import { problemFrontmatterSchema, type ProblemFrontmatter } from "../problemSch
 // YAML's double-quote escaping).
 const q = (s: string) => JSON.stringify(s);
 
-export function serializeProblemFile(frontmatter: ProblemFrontmatter, body: string): string {
-  const fm = problemFrontmatterSchema.parse(frontmatter);
-  const lines: string[] = [`id: ${fm.id}`, `name: ${q(fm.name)}`];
-  lines.push(`status: ${fm.status}`);
-  lines.push(`area: [${fm.area.join(", ")}]`);
-  lines.push(`impact: ${fm.impact}`);
-  lines.push(`canonical_reference:`);
-  lines.push(`  title: ${q(fm.canonical_reference.title)}`);
-  lines.push(`  author: ${q(fm.canonical_reference.author)}`);
+// Lines shared by an assigned problem and one still awaiting an id: name,
+// status, area, impact, canonical_reference. Excludes `id` (bare int vs.
+// literal `null`) — callers assemble that around this.
+function coreFrontmatterLines(fm: {
+  name: string;
+  status: string;
+  area: readonly string[];
+  impact: number;
+  canonical_reference: ProblemFrontmatter["canonical_reference"];
+}): string[] {
+  const lines = [
+    `name: ${q(fm.name)}`,
+    `status: ${fm.status}`,
+    `area: [${fm.area.join(", ")}]`,
+    `impact: ${fm.impact}`,
+    `canonical_reference:`,
+    `  title: ${q(fm.canonical_reference.title)}`,
+    `  author: ${q(fm.canonical_reference.author)}`,
+  ];
   if (fm.canonical_reference.venue) lines.push(`  venue: ${q(fm.canonical_reference.venue)}`);
   if (fm.canonical_reference.year) lines.push(`  year: ${fm.canonical_reference.year}`);
   if (fm.canonical_reference.link) lines.push(`  link: ${q(fm.canonical_reference.link)}`);
   if (fm.canonical_reference.doi) lines.push(`  doi: ${q(fm.canonical_reference.doi)}`);
+  return lines;
+}
 
+export function serializeProblemFile(frontmatter: ProblemFrontmatter, body: string): string {
+  const fm = problemFrontmatterSchema.parse(frontmatter);
+  const lines = [`id: ${fm.id}`, ...coreFrontmatterLines(fm)];
+  return `---\n${lines.join("\n")}\n---\n\n${body.trim()}\n`;
+}
+
+export function serializePendingProblemFile(
+  frontmatter: PendingProblemFrontmatter,
+  body: string,
+): string {
+  const fm = pendingProblemSchema.parse(frontmatter);
+  const lines = [`id: null`, ...coreFrontmatterLines(fm)];
   return `---\n${lines.join("\n")}\n---\n\n${body.trim()}\n`;
 }

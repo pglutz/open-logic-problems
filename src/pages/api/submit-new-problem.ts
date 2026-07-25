@@ -2,17 +2,26 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { z } from "zod";
-import { problemFrontmatterSchema } from "../../lib/problemSchema";
-import { serializeProblemFile } from "../../lib/markdown/frontmatter";
-import { submitProblemEditPR } from "../../lib/github";
+import { pendingProblemSchema } from "../../lib/problemSchema";
+import { serializePendingProblemFile } from "../../lib/markdown/frontmatter";
+import { submitNewProblemPR } from "../../lib/github";
 import { jsonResponse, authenticateRequest, checkSubmissionRateLimit } from "../../lib/api/submission";
 
 const requestSchema = z.object({
-  problemId: z.number().int().positive(),
-  frontmatter: problemFrontmatterSchema,
+  frontmatter: pendingProblemSchema,
   body: z.string().min(1),
   commitMessage: z.string().min(1).max(500),
 });
+
+function slugify(name: string): string {
+  return (
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "problem"
+  );
+}
 
 export const POST: APIRoute = async ({ request }) => {
   const auth = await authenticateRequest(request);
@@ -25,24 +34,22 @@ export const POST: APIRoute = async ({ request }) => {
   } catch {
     return jsonResponse(400, { error: "invalid_request", message: "Malformed submission." });
   }
-  if (payload.frontmatter.id !== payload.problemId) {
-    return jsonResponse(400, { error: "invalid_request", message: "Problem id mismatch." });
-  }
 
   const rateLimited = await checkSubmissionRateLimit(userClient, user.id);
   if (rateLimited) return rateLimited;
 
-  const newFileContent = serializeProblemFile(payload.frontmatter, payload.body);
+  const slug = `${slugify(payload.frontmatter.name)}-${crypto.randomUUID().slice(0, 8)}`;
+  const newFileContent = serializePendingProblemFile(payload.frontmatter, payload.body);
 
   let prResult;
   try {
-    prResult = await submitProblemEditPR({
-      problemId: payload.problemId,
-      path: `problems/${payload.problemId}.md`,
+    prResult = await submitNewProblemPR({
+      slug,
+      path: `problems/pending/${slug}.md`,
       newFileContent,
       commitMessage: payload.commitMessage,
-      prTitle: `Suggest edit: Problem #${payload.problemId} — ${payload.commitMessage}`,
-      prBody: `Suggested by ${user.email ?? "a signed-in user"} via the website's edit form.\n\n${payload.commitMessage}`,
+      prTitle: `New problem proposal: ${payload.frontmatter.name}`,
+      prBody: `Proposed by ${user.email ?? "a signed-in user"} via the website's new-problem form.\n\n${payload.commitMessage}`,
     });
   } catch {
     return jsonResponse(502, { error: "github_error", message: "Failed to open a pull request. Please try again." });
@@ -50,8 +57,8 @@ export const POST: APIRoute = async ({ request }) => {
 
   await userClient.from("problem_edit_submissions").insert({
     author_id: user.id,
-    problem_id: payload.problemId,
-    kind: "edit",
+    problem_id: null,
+    kind: "new_problem",
     pr_url: prResult.prUrl,
   });
 

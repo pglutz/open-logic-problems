@@ -15,6 +15,8 @@
   --color-closed-border: #3aa361;
   --color-claimed-bg: #fdf3e3;
   --color-claimed-border: #d99a2b;
+  --color-error-bg: #fdf2f2;
+  --color-error-border: #d9776c;
 
   --max-width: 860px;
 
@@ -42,6 +44,8 @@
     --color-closed-border: #3aa361;
     --color-claimed-bg: #3a2c10;
     --color-claimed-border: #d99a2b;
+    --color-error-bg: #33201f;
+    --color-error-border: #c97b70;
   }
 }
 
@@ -237,4 +241,176 @@ pre code {
   font-size: 1.15rem;
   border-bottom: var(--border-width) solid var(--color-border);
   padding-bottom: 0.25rem;
+}
+
+/* ProblemEditor.tsx — shared by the suggest-an-edit and propose-a-new-problem
+   pages (a React island, so Astro's scoped-style attribute never reaches
+   it — these rules must be global regardless). */
+.editor-columns {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+.editor-left {
+  flex: 1 1 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.editor-right {
+  flex: 1 1 50%;
+  min-width: 0;
+  position: sticky;
+  top: 1rem;
+}
+@media (max-width: 60rem) {
+  .editor-columns {
+    flex-direction: column;
+  }
+  .editor-right {
+    position: static;
+    width: 100%;
+  }
+}
+
+.editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.editor-field label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.editor-field input,
+.editor-field select,
+.editor-field textarea {
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+.editor-field input,
+.editor-field select {
+  max-width: 30rem;
+}
+.editor-field-full-width input {
+  max-width: none;
+}
+.editor-field textarea {
+  font-family: ui-monospace, monospace;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+.editor-field-invalid input,
+.editor-field-invalid select,
+.editor-field-invalid textarea {
+  border: var(--border-width) solid var(--color-error-border);
+  background: var(--color-error-bg);
+}
+
+.editor-inline-row {
+  display: flex;
+  gap: 1.25rem;
+}
+.editor-field-compact {
+  flex: 0 0 auto;
+}
+.editor-select-compact {
+  max-width: 12rem;
+}
+
+.editor-status-warning {
+  margin: -0.5rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border: var(--border-width) solid var(--color-claimed-border);
+  background: var(--color-claimed-bg);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+}
+.editor-error-box {
+  padding: 0.6rem 0.8rem;
+  border: var(--border-width) solid var(--color-error-border);
+  background: var(--color-error-bg);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+}
+
+.editor-collapsible {
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+}
+.editor-collapsible-invalid {
+  border: var(--border-width) solid var(--color-error-border);
+  background: var(--color-error-bg);
+}
+.editor-collapsible summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.editor-collapsible[open] summary {
+  margin-bottom: 0.5rem;
+}
+.editor-collapsible-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding-top: 0.5rem;
+}
+.editor-area-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+}
+.editor-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 400;
+  font-size: 0.95rem;
+}
+
+.editor-commit-message {
+  font-family: inherit;
+}
+.editor-submit {
+  align-self: flex-start;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0.65rem 1.5rem;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-link);
+  background: var(--color-link);
+  color: #fff;
+  cursor: pointer;
+}
+.editor-submit:hover {
+  opacity: 0.92;
+}
+.editor-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Live preview wrapper only — the actual problem-body markup/styling
+   (status box, reference, named sections) comes from ProblemBody.tsx,
+   shared with the real problem page, via the .problem-section/.section-heading
+   rules above. */
+.editor-preview-page {
+  border: var(--border-width) dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+}
+.editor-preview-id {
+  margin: 0 0 0.1rem;
+  font-size: 0.9rem;
+}
+.editor-preview-title {
+  margin: 0.1rem 0 1.25rem;
+  font-size: 1.6rem;
+  line-height: 1.25;
 }

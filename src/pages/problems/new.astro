@@ -1,11 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProblemEditor from "../../components/islands/ProblemEditor";
 ---
 
-<BaseLayout title="Submit a New Problem">
+<BaseLayout title="Submit a New Problem" maxWidth="1100px">
   <h1>Submit a New Problem</h1>
-  <p>
-    This form is still being built. Check back soon &mdash; see the <a href="/faq">FAQ</a> for how
-    problem submissions will work.
-  </p>
+  <ProblemEditor mode="new" client:load />
 </BaseLayout>
