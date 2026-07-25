@@ -256,6 +256,20 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
 
+          <details className={`editor-collapsible${areaInvalid ? " editor-collapsible-invalid" : ""}`}>
+            <summary>Area ({area.length} selected)</summary>
+            <div className="editor-collapsible-body">
+              <div className="editor-area-checkboxes">
+                {AREAS.map((a) => (
+                  <label key={a} className="editor-checkbox-label">
+                    <input type="checkbox" checked={area.includes(a)} onChange={() => toggleArea(a)} />
+                    {formatArea(a)}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </details>
+
           <div className="editor-inline-row">
             <div className="editor-field editor-field-compact">
               <label>Status</label>
@@ -297,24 +311,14 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             </p>
           )}
 
-          <details className={`editor-collapsible${areaInvalid ? " editor-collapsible-invalid" : ""}`}>
-            <summary>Area ({area.length} selected)</summary>
-            <div className="editor-collapsible-body">
-              <div className="editor-area-checkboxes">
-                {AREAS.map((a) => (
-                  <label key={a} className="editor-checkbox-label">
-                    <input type="checkbox" checked={area.includes(a)} onChange={() => toggleArea(a)} />
-                    {formatArea(a)}
-                  </label>
-                ))}
-              </div>
-            </div>
-          </details>
+          <div className={`editor-field${statementInvalid ? " editor-field-invalid" : ""}`}>
+            <label>Statement</label>
+            <textarea value={statement} onChange={(e) => setStatement(e.target.value)} rows={8} />
+          </div>
 
           <details className="editor-collapsible">
-            <summary>Reference{referenceWarning ? " (incomplete)" : ""}</summary>
+            <summary>Reference for the problem statement</summary>
             <div className="editor-collapsible-body">
-              {referenceWarning && <p className="editor-status-warning">{referenceWarning}</p>}
               <div className="editor-field">
                 <label>Title (optional)</label>
                 <input type="text" value={refTitle} onChange={(e) => setRefTitle(e.target.value)} />
@@ -341,11 +345,8 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               </div>
             </div>
           </details>
+          {referenceWarning && <p className="editor-status-warning">{referenceWarning}</p>}
 
-          <div className={`editor-field${statementInvalid ? " editor-field-invalid" : ""}`}>
-            <label>Statement</label>
-            <textarea value={statement} onChange={(e) => setStatement(e.target.value)} rows={8} />
-          </div>
           <div className="editor-field">
             <label>Definitions (optional)</label>
             <textarea value={definitions} onChange={(e) => setDefinitions(e.target.value)} rows={5} />
@@ -355,16 +356,16 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             <textarea value={partialResults} onChange={(e) => setPartialResults(e.target.value)} rows={5} />
           </div>
           <div className="editor-field">
+            <label>Notes (optional)</label>
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} />
+          </div>
+          <div className="editor-field">
             <label>Additional References (optional)</label>
             <textarea
               value={additionalReferences}
               onChange={(e) => setAdditionalReferences(e.target.value)}
               rows={4}
             />
-          </div>
-          <div className="editor-field">
-            <label>Notes (optional)</label>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} />
           </div>
 
           {mode === "edit" && (
