@@ -354,7 +354,7 @@ export default function ProblemEditor({ problem, sections }: ProblemEditorProps)
             </div>
 
             <section className="editor-preview-section">
-              <h3>Reference</h3>
+              <h3>Reference for the problem statement</h3>
               <p>
                 {refAuthor}, <em>{refTitle}</em>
                 {refVenue && <>, {refVenue}</>}
