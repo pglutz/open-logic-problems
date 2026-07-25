@@ -2,6 +2,8 @@ import type { Area } from "./areas";
 
 export type ProblemStatus = "open" | "closed" | "claimed-proof-no-consensus";
 
+export const STATUSES: ProblemStatus[] = ["open", "closed", "claimed-proof-no-consensus"];
+
 export interface ProblemIndexEntry {
   id: number;
   name: string;

@@ -18,3 +18,4 @@ export const problemFrontmatterSchema = z.object({
 });
 
 export type ProblemFrontmatter = z.infer<typeof problemFrontmatterSchema>;
+export type CanonicalReference = ProblemFrontmatter["canonical_reference"];

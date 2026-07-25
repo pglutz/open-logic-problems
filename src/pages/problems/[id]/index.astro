@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import ProblemLayout from "../../../layouts/ProblemLayout.astro";
-import { renderMarkdown } from "../../../lib/markdown/pipeline";
+import { renderMarkdown, renderIfPresent } from "../../../lib/markdown/pipeline";
 import { splitSections } from "../../../lib/markdown/sections";
 
 export async function getStaticPaths() {
@@ -14,9 +14,6 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const sections = splitSections(entry.body ?? "");
-
-const renderIfPresent = (markdown?: string) =>
-  markdown ? renderMarkdown(markdown) : Promise.resolve(undefined);
 
 const [statementHtml, definitionsHtml, partialResultsHtml, additionalReferencesHtml, notesHtml] =
   await Promise.all([

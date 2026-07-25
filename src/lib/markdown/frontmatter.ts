@@ -1,20 +1,4 @@
-import * as yaml from "js-yaml";
 import { problemFrontmatterSchema, type ProblemFrontmatter } from "../problemSchema";
-
-export interface ParsedProblemFile {
-  frontmatter: ProblemFrontmatter;
-  body: string;
-}
-
-const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/;
-
-export function parseProblemFile(raw: string): ParsedProblemFile {
-  const match = FRONTMATTER_RE.exec(raw);
-  if (!match) throw new Error("File does not start with a valid --- frontmatter block");
-  const [, yamlBlock, body] = match;
-  const frontmatter = problemFrontmatterSchema.parse(yaml.load(yamlBlock));
-  return { frontmatter, body };
-}
 
 // The schema is small and fixed, so rather than relying on js-yaml's dump()
 // heuristics for the whole object (which either drops quotes from prose

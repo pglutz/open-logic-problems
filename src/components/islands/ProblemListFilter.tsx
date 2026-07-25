@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AREAS, type Area } from "../../lib/areas";
 import type { ProblemIndexEntry, ProblemStatus } from "../../lib/problems";
 import {
+  STATUSES,
   STATUS_LABELS,
   IMPACTS,
   IMPACT_LABELS,
@@ -16,8 +17,6 @@ interface Props {
 
 type SortKey = "id" | "impact" | "status";
 type Impact = 1 | 2 | 3;
-
-const STATUSES: ProblemStatus[] = ["open", "closed", "claimed-proof-no-consensus"];
 
 // Highest impact first — filtering for the most significant problems is the more common intent.
 const impactFilterOrder: Impact[] = [...IMPACTS].reverse();

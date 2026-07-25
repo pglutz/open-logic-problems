@@ -25,6 +25,11 @@ export async function renderMarkdown(markdown: string): Promise<string> {
   return String(file);
 }
 
+/** Renders an optional section's markdown, passing through `undefined` for blank/absent content. */
+export function renderIfPresent(markdown: string | undefined): Promise<string | undefined> {
+  return markdown?.trim() ? renderMarkdown(markdown) : Promise.resolve(undefined);
+}
+
 /**
  * Comments are authored by any signed-in user and shown to everyone as soon
  * as they're posted (no PR review, unlike problem content), so this

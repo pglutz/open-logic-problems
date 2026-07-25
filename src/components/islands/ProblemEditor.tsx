@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase/client";
 import { OPEN_AUTH_POPOVER_EVENT } from "../../lib/authPopoverEvent";
-import { renderMarkdown } from "../../lib/markdown/pipeline";
-import { joinSections } from "../../lib/markdown/sections";
+import { renderMarkdown, renderIfPresent } from "../../lib/markdown/pipeline";
+import { joinSections, type ProblemSections } from "../../lib/markdown/sections";
 import { AREAS, type Area } from "../../lib/areas";
 import {
   STATUS_LABELS,
@@ -14,23 +14,12 @@ import {
 } from "../../lib/problems";
 import { formatArea } from "../../lib/problems";
 import ProblemBody from "../react/ProblemBody";
+import type { CanonicalReference } from "../../lib/problemSchema";
 
-interface CanonicalReference {
-  title: string;
-  author: string;
-  venue?: string;
-  year?: number;
-  link?: string;
-  doi?: string;
-}
-
-interface ProblemSectionsInput {
-  statement: string;
-  definitions: string;
-  partialResults: string;
-  additionalReferences: string;
-  notes: string;
-}
+// Every field is required here (unlike ProblemSections, where they're
+// optional) — the editor always seeds its textareas with a definite string,
+// using "" rather than undefined for an absent section.
+type ProblemSectionsInput = Required<ProblemSections>;
 
 interface ProblemEditorProps {
   problem: {
@@ -91,8 +80,6 @@ export default function ProblemEditor({ problem, sections }: ProblemEditorProps)
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const renderIfPresent = (markdown: string) =>
-        markdown.trim() ? renderMarkdown(markdown) : Promise.resolve(undefined);
       Promise.all([
         renderMarkdown(statement),
         renderIfPresent(definitions),

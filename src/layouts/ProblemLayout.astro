@@ -3,20 +3,13 @@ import BaseLayout from "./BaseLayout.astro";
 import ProblemBody from "../components/react/ProblemBody";
 import CommentSection from "../components/islands/CommentSection";
 import type { Area } from "../lib/areas";
-
-interface CanonicalReference {
-  title: string;
-  author: string;
-  venue?: string;
-  year?: number;
-  link?: string;
-  doi?: string;
-}
+import type { ProblemStatus } from "../lib/problems";
+import type { CanonicalReference } from "../lib/problemSchema";
 
 interface Props {
   id: number;
   name: string;
-  status: "open" | "closed" | "claimed-proof-no-consensus";
+  status: ProblemStatus;
   area: Area[];
   impact: 1 | 2 | 3;
   canonicalReference: CanonicalReference;

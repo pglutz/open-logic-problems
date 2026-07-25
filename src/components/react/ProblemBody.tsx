@@ -2,15 +2,7 @@ import StatusBadge from "./StatusBadge";
 import ImpactMarks from "./ImpactMarks";
 import AreaTags from "./AreaTags";
 import type { ProblemStatus } from "../../lib/problems";
-
-interface CanonicalReference {
-  title: string;
-  author: string;
-  venue?: string;
-  year?: number;
-  link?: string;
-  doi?: string;
-}
+import type { CanonicalReference } from "../../lib/problemSchema";
 
 interface ProblemBodyProps {
   status: ProblemStatus;
