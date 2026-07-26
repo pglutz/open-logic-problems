@@ -28,6 +28,10 @@ function describeChange(entry: ChangelogEntry): string {
   if (entry.type === "new-problem") return `${label} was added.`;
   return `${label} changed status: ${entry.old_status} → ${entry.new_status}.`;
 }
+
+function changeTypeLabel(entry: ChangelogEntry): string {
+  return entry.type === "new-problem" ? "New problem" : "Problem status changed";
+}
 ---
 
 <BaseLayout title="Home" description="A collection of open problems in mathematical logic.">
@@ -52,6 +56,7 @@ function describeChange(entry: ChangelogEntry): string {
         <ul class="changes">
           {recentChanges.map((entry) => (
             <li>
+              <span class={`badge change-badge change-${entry.type}`}>{changeTypeLabel(entry)}</span>
               <span class="muted">{entry.date}</span> &mdash;{" "}
               <a href={`/problems/${entry.id}`}>{describeChange(entry)}</a>
             </li>
@@ -95,5 +100,8 @@ function describeChange(entry: ChangelogEntry): string {
   .changes li {
     padding: 0.35rem 0;
     border-bottom: var(--border-width) solid var(--color-border);
+  }
+  .change-badge {
+    margin-right: 0.6rem;
   }
 </style>

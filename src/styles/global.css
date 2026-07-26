@@ -143,6 +143,14 @@ pre code {
   background: var(--color-claimed-bg);
   border-color: var(--color-claimed-border);
 }
+.badge.change-new-problem {
+  background: var(--color-open-bg);
+  border-color: var(--color-open-border);
+}
+.badge.change-status-change {
+  background: var(--color-claimed-bg);
+  border-color: var(--color-claimed-border);
+}
 
 /* Shared across the comment section and the suggest-an-edit form, which live
    under different layouts (ProblemLayout vs BaseLayout). */
