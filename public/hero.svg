@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" role="img" aria-label="Abstract decorative graphic of logical symbols">
-  <rect width="800" height="240" fill="#16213e"/>
-  <text x="60" y="150" font-family="Georgia, serif" font-size="120" fill="#4a86e0" opacity="0.9">∀</text>
-  <text x="220" y="150" font-family="Georgia, serif" font-size="120" fill="#3aa361" opacity="0.9">∃</text>
-  <text x="380" y="150" font-family="Georgia, serif" font-size="120" fill="#d99a2b" opacity="0.9">¬</text>
-  <text x="520" y="150" font-family="Georgia, serif" font-size="120" fill="#e8e8e8" opacity="0.85">⊢</text>
-  <text x="660" y="150" font-family="Georgia, serif" font-size="120" fill="#7aa7f0" opacity="0.9">ω</text>
-</svg>
