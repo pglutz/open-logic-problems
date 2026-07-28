@@ -234,11 +234,10 @@ export default function ProblemListFilter({ problems }: Props) {
         <div className="cards">
           {sorted.map((p) => (
             <div className={`status-box card status-${p.status}`} key={p.id}>
+              <a href={`/problems/${p.id}`} className="card-stretched-link" aria-label={p.name} />
               <div className="meta-row">
                 <span className="problem-id muted">#{p.id}</span>
-                <h3>
-                  <a href={`/problems/${p.id}`}>{p.name}</a>
-                </h3>
+                <h3 className="card-title-plain">{p.name}</h3>
                 <span className="impact" title={IMPACT_RUBRIC[p.impact]}>
                   {"!".repeat(p.impact)}
                 </span>
@@ -346,7 +345,19 @@ export default function ProblemListFilter({ problems }: Props) {
           gap: 1rem;
         }
         .card {
+          position: relative;
           padding: 0.85rem 1.1rem;
+          transition: filter 0.1s ease;
+        }
+        .card:hover {
+          filter: saturate(1.15) brightness(0.98);
+        }
+        .card-stretched-link {
+          position: absolute;
+          inset: 0;
+        }
+        .card-title-plain {
+          color: color-mix(in srgb, var(--color-text) 80%, var(--color-bg) 20%);
         }
         .card .meta-row {
           display: flex;
@@ -383,10 +394,11 @@ export default function ProblemListFilter({ problems }: Props) {
           margin-right: -0.1rem;
         }
         .card .area-tag {
+          position: relative;
           display: inline-block;
           padding: 0.1rem 0.55rem;
           border-radius: var(--radius-sm);
-          background: rgba(128, 128, 128, 0.15);
+          background: rgba(128, 128, 128, 0.2);
           font-size: 0.85rem;
           text-decoration: none;
         }

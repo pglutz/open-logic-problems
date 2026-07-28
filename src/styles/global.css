@@ -55,7 +55,7 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   background: var(--color-bg);
   color: var(--color-text);
   line-height: 1.55;
@@ -69,10 +69,29 @@ main {
 
 a {
   color: var(--color-link);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+a:hover {
+  color: #b6524a;
+  text-decoration-color: currentColor;
+}
+@media (prefers-color-scheme: dark) {
+  a:hover {
+    color: #e29b90;
+  }
 }
 
 h1, h2, h3 {
   line-height: 1.25;
+}
+h1 {
+  font-size: 1.75rem;
+}
+h2 {
+  font-size: 1.3rem;
 }
 
 .muted {
@@ -166,7 +185,19 @@ pre code {
   border: none;
   padding: 0;
   text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
   cursor: pointer;
+}
+.link-button:hover {
+  color: #b6524a;
+  text-decoration-color: currentColor;
+}
+@media (prefers-color-scheme: dark) {
+  .link-button:hover {
+    color: #e29b90;
+  }
 }
 .comment-signin-prompt {
   margin: 0;
