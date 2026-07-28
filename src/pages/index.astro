@@ -23,20 +23,18 @@ const featuredProblems =
     ? (await getCollection("problems")).filter((p) => (featuredIds as number[]).includes(p.data.id))
     : [];
 
-function describeChange(entry: ChangelogEntry): string {
-  const label = entry.name ?? `Problem #${entry.id}`;
-  if (entry.type === "new-problem") return `${label} was added.`;
-  return `${label} changed status: ${entry.old_status} → ${entry.new_status}.`;
+function changeTitle(entry: ChangelogEntry): string {
+  return entry.name ?? `Problem #${entry.id}`;
 }
 
 function changeTypeLabel(entry: ChangelogEntry): string {
-  return entry.type === "new-problem" ? "New problem" : "Problem status changed";
+  return entry.type === "new-problem" ? "New problem" : "Status changed";
 }
 ---
 
 <BaseLayout title="Home" description="A collection of open problems in mathematical logic.">
   <div class="intro">
-    <img class="hero" src="/thinker_9.png" alt="" />
+    <img class="hero" src="/thinker_11.png" alt="" />
 
     <h1>Open Problems in Mathematical Logic</h1>
     <p>
@@ -53,12 +51,14 @@ function changeTypeLabel(entry: ChangelogEntry): string {
       recentChanges.length === 0 ? (
         <p class="muted">No changes recorded yet.</p>
       ) : (
-        <ul class="changes">
+        <ul class="changes panel-box">
           {recentChanges.map((entry) => (
             <li>
-              <span class={`badge change-badge change-${entry.type}`}>{changeTypeLabel(entry)}</span>
-              <span class="muted">{entry.date}</span> &mdash;{" "}
-              <a href={`/problems/${entry.id}`}>{describeChange(entry)}</a>
+              <a href={`/problems/${entry.id}`} class="entry-line">
+                <span class="muted entry-date">{entry.date}</span>
+                <strong class={`change-label change-${entry.type}`}>{changeTypeLabel(entry)}</strong>
+                <span>{changeTitle(entry)}</span>
+              </a>
             </li>
           ))}
         </ul>
@@ -95,13 +95,46 @@ function changeTypeLabel(entry: ChangelogEntry): string {
   }
   .changes {
     list-style: none;
+    margin: 0;
     padding: 0;
   }
   .changes li {
-    padding: 0.35rem 0;
+    padding: 0.5rem 0;
     border-bottom: var(--border-width) solid var(--color-border);
   }
-  .change-badge {
-    margin-right: 0.6rem;
+  .changes li:last-child {
+    border-bottom: none;
+  }
+  .panel-box {
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 0.25rem 1.25rem;
+    background: rgba(128, 128, 128, 0.06);
+  }
+  .entry-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  .entry-line:hover {
+    text-decoration: underline;
+  }
+  .entry-date {
+    display: inline-block;
+    min-width: 5.5rem;
+  }
+  .change-label {
+    display: inline-block;
+    min-width: 8.25rem;
+    white-space: nowrap;
+  }
+  .change-label.change-new-problem {
+    color: #5f23c7;
+  }
+  .change-label.change-status-change {
+    color: #c5205d;
   }
 </style>
