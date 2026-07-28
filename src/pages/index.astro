@@ -54,11 +54,11 @@ function changeTypeLabel(entry: ChangelogEntry): string {
         <ul class="changes panel-box">
           {recentChanges.map((entry) => (
             <li>
-              <a href={`/problems/${entry.id}`} class="entry-line">
+              <div class="entry-line">
                 <span class="muted entry-date">{entry.date}</span>
                 <strong class={`change-label change-${entry.type}`}>{changeTypeLabel(entry)}</strong>
-                <span>{changeTitle(entry)}</span>
-              </a>
+                <a href={`/problems/${entry.id}`}>{changeTitle(entry)}</a>
+              </div>
             </li>
           ))}
         </ul>
@@ -116,11 +116,6 @@ function changeTypeLabel(entry: ChangelogEntry): string {
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.75rem;
-    color: inherit;
-    text-decoration: none;
-  }
-  .entry-line:hover {
-    text-decoration: underline;
   }
   .entry-date {
     display: inline-block;
