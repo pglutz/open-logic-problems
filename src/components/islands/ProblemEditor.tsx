@@ -145,6 +145,13 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
     referenceWarning = "This reference is missing an author.";
   }
 
+  const statusChanged = status !== baselineStatus;
+  const statusWarning = statusChanged
+    ? mode === "new"
+      ? "Proposing a problem with a non-open status gets extra scrutiny during review, so please make sure this is backed by a citable published result."
+      : "You're changing this problem's status — status changes get extra scrutiny during review, so please make sure this is backed by a citable published result."
+    : null;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!session) return;
@@ -248,75 +255,86 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
     <form className="problem-editor" onSubmit={handleSubmit} noValidate>
       <div className="editor-columns">
         <div className="editor-left">
-          {showValidationSummary && (
-            <p className="editor-error-box">One or more required fields are blank.</p>
-          )}
-          <div className={`editor-field editor-field-full-width${nameInvalid ? " editor-field-invalid" : ""}`}>
-            <label>Title</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
+          <div className="editor-header-fields">
+            {(showValidationSummary || statusWarning || referenceWarning) && (
+              <div className="editor-messages">
+                {showValidationSummary && (
+                  <p className="editor-error-box">
+                    <strong>Error:</strong> One or more required fields are blank.
+                  </p>
+                )}
+                {statusWarning && (
+                  <p className="editor-warning-box">
+                    <strong>Warning:</strong> {statusWarning}
+                  </p>
+                )}
+                {referenceWarning && (
+                  <p className="editor-warning-box">
+                    <strong>Warning:</strong> {referenceWarning}
+                  </p>
+                )}
+              </div>
+            )}
+            <div className={`editor-field editor-field-full-width${nameInvalid ? " editor-field-invalid" : ""}`}>
+              <label>Title</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            </div>
 
-          <details className={`editor-collapsible${areaInvalid ? " editor-collapsible-invalid" : ""}`}>
-            <summary>Area ({area.length} selected)</summary>
-            <div className="editor-collapsible-body">
-              <div className="editor-area-checkboxes">
-                {AREAS.map((a) => (
-                  <label key={a} className="editor-checkbox-label">
-                    <input type="checkbox" checked={area.includes(a)} onChange={() => toggleArea(a)} />
-                    {formatArea(a)}
-                  </label>
-                ))}
+            <details className={`editor-collapsible${areaInvalid ? " editor-collapsible-invalid" : ""}`}>
+              <summary>Area ({area.length} selected)</summary>
+              <div className="editor-collapsible-body">
+                <div className="editor-area-checkboxes">
+                  {AREAS.map((a) => (
+                    <label key={a} className="editor-checkbox-label">
+                      <input type="checkbox" checked={area.includes(a)} onChange={() => toggleArea(a)} />
+                      {formatArea(a)}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </details>
+
+            <div className="editor-inline-row">
+              <div className={`editor-field editor-field-compact${statusChanged ? " editor-field-warning" : ""}`}>
+                <label>Status</label>
+                <select
+                  className="editor-select-compact"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as ProblemStatus)}
+                >
+                  {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="editor-field editor-field-compact">
+                <label>Impact</label>
+                <select
+                  className="editor-select-compact"
+                  title={IMPACT_RUBRIC[impact]}
+                  value={impact}
+                  onChange={(e) => setImpact(Number(e.target.value) as 1 | 2 | 3)}
+                >
+                  {([3, 2, 1] as const).map((n) => (
+                    <option key={n} value={n} title={IMPACT_RUBRIC[n]}>
+                      {IMPACT_LABELS[n]}
+                      {"  "}
+                      {IMPACT_SHORT_LABELS[n]}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
-          </details>
-
-          <div className="editor-inline-row">
-            <div className="editor-field editor-field-compact">
-              <label>Status</label>
-              <select
-                className="editor-select-compact"
-                value={status}
-                onChange={(e) => setStatus(e.target.value as ProblemStatus)}
-              >
-                {Object.entries(STATUS_LABELS).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="editor-field editor-field-compact">
-              <label>Impact</label>
-              <select
-                className="editor-select-compact"
-                title={IMPACT_RUBRIC[impact]}
-                value={impact}
-                onChange={(e) => setImpact(Number(e.target.value) as 1 | 2 | 3)}
-              >
-                {([3, 2, 1] as const).map((n) => (
-                  <option key={n} value={n} title={IMPACT_RUBRIC[n]}>
-                    {IMPACT_LABELS[n]}
-                    {"  "}
-                    {IMPACT_SHORT_LABELS[n]}
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
-          {status !== baselineStatus && (
-            <p className="editor-status-warning">
-              {mode === "new"
-                ? "Proposing a problem with a non-open status gets extra scrutiny during review, so please make sure this is backed by a citable published result."
-                : "You're changing this problem's status — status changes get extra scrutiny during review, so please make sure this is backed by a citable published result."}
-            </p>
-          )}
 
           <div className={`editor-field${statementInvalid ? " editor-field-invalid" : ""}`}>
             <label>Statement</label>
             <textarea value={statement} onChange={(e) => setStatement(e.target.value)} rows={8} />
           </div>
 
-          <details className="editor-collapsible">
+          <details className={`editor-collapsible${referenceWarning ? " editor-collapsible-warning" : ""}`}>
             <summary>Reference for the problem statement</summary>
             <div className="editor-collapsible-body">
               <div className="editor-field">
@@ -345,7 +363,6 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               </div>
             </div>
           </details>
-          {referenceWarning && <p className="editor-status-warning">{referenceWarning}</p>}
 
           <div className="editor-field">
             <label>Definitions (optional)</label>

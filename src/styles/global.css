@@ -313,6 +313,11 @@ pre code {
   }
 }
 
+.editor-header-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
 .editor-field {
   display: flex;
   flex-direction: column;
@@ -350,6 +355,12 @@ pre code {
   border: var(--border-width) solid var(--color-error-border);
   background: var(--color-error-bg);
 }
+.editor-field-warning input,
+.editor-field-warning select,
+.editor-field-warning textarea {
+  border: var(--border-width) solid var(--color-claimed-border);
+  background: var(--color-claimed-bg);
+}
 
 .editor-inline-row {
   display: flex;
@@ -362,18 +373,25 @@ pre code {
   max-width: 12rem;
 }
 
-.editor-status-warning {
-  margin: -0.5rem 0 0;
+.editor-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+.editor-warning-box {
+  margin: 0;
   padding: 0.6rem 0.8rem;
   border: var(--border-width) solid var(--color-claimed-border);
-  background: var(--color-claimed-bg);
+  background: color-mix(in srgb, var(--color-claimed-bg) 88%, var(--color-claimed-border) 12%);
   border-radius: var(--radius-md);
   font-size: 0.9rem;
 }
 .editor-error-box {
+  margin: 0;
   padding: 0.6rem 0.8rem;
   border: var(--border-width) solid var(--color-error-border);
-  background: var(--color-error-bg);
+  background: color-mix(in srgb, var(--color-error-bg) 88%, var(--color-error-border) 12%);
   border-radius: var(--radius-md);
   font-size: 0.9rem;
 }
@@ -386,6 +404,10 @@ pre code {
 .editor-collapsible-invalid {
   border: var(--border-width) solid var(--color-error-border);
   background: var(--color-error-bg);
+}
+.editor-collapsible-warning {
+  border: var(--border-width) solid var(--color-claimed-border);
+  background: var(--color-claimed-bg);
 }
 .editor-collapsible summary {
   cursor: pointer;
