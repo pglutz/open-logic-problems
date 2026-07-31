@@ -1,0 +1,17 @@
+---
+id: null
+name: "Borel boundedness of CBERs"
+status: open
+area: [descriptive-set-theory]
+impact: 2
+canonical_reference:
+  title: "Borel boundedness and the lattice rounding property"
+  author: "Charles M. Boykin and Steve Jackson"
+  venue: "Contemporary Mathematics"
+  year: 2007
+  doi: "10.1090/conm/425/08121"
+---
+
+## Statement
+
+Is every countable Borel equivalence relation Borel bounded?
