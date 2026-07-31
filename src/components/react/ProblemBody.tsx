@@ -74,8 +74,10 @@ export default function ProblemBody({
       </div>
 
       {hasReference && (
-        <section className="problem-section">
-          <SectionHeading className="section-heading">Reference for the problem statement</SectionHeading>
+        <details className="problem-section">
+          <summary className="section-heading reference-summary">
+            Reference for the problem statement
+          </summary>
           <p>
             {referenceParts.map((part, i) => (
               <span key={i}>
@@ -97,7 +99,7 @@ export default function ProblemBody({
               </>
             )}
           </p>
-        </section>
+        </details>
       )}
 
       {definitionsHtml && (

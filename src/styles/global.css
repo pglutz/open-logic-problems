@@ -281,6 +281,9 @@ pre code {
   border-bottom: var(--border-width) solid var(--color-border);
   padding-bottom: 0.25rem;
 }
+.reference-summary {
+  cursor: pointer;
+}
 
 /* ProblemEditor.tsx — shared by the suggest-an-edit and propose-a-new-problem
    pages (a React island, so Astro's scoped-style attribute never reaches
