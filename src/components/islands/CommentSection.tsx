@@ -62,16 +62,19 @@ export default function CommentSection({ problemId }: { problemId: number }) {
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!session) return;
+    const trimmedName = name.trim();
+    const trimmedBody = body.trim();
+    if (!trimmedName || !trimmedBody) return;
     setSubmitting(true);
     setError(null);
-    window.localStorage.setItem(NAME_STORAGE_KEY, name);
+    window.localStorage.setItem(NAME_STORAGE_KEY, trimmedName);
     const { data, error } = await supabase
       .from("comments")
       .insert({
         problem_id: problemId,
         author_id: session.user.id,
-        author_name: name,
-        body,
+        author_name: trimmedName,
+        body: trimmedBody,
       })
       .select("id, author_id, author_name, body, status, created_at")
       .single();
