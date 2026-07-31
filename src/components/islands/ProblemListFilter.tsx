@@ -138,7 +138,7 @@ export default function ProblemListFilter({ problems }: Props) {
         case "impact":
           return (a.impact - b.impact) * dir;
         case "status":
-          return a.status.localeCompare(b.status) * dir;
+          return (STATUSES.indexOf(a.status) - STATUSES.indexOf(b.status)) * dir;
       }
     });
   }, [filtered, sortKey, sortDir]);

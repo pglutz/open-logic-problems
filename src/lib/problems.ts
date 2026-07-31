@@ -2,7 +2,7 @@ import type { Area } from "./areas.ts";
 
 export type ProblemStatus = "open" | "closed" | "claimed-proof-no-consensus";
 
-export const STATUSES: ProblemStatus[] = ["open", "closed", "claimed-proof-no-consensus"];
+export const STATUSES: ProblemStatus[] = ["open", "claimed-proof-no-consensus", "closed"];
 
 export interface ProblemIndexEntry {
   id: number;
@@ -28,8 +28,8 @@ export const IMPACT_SHORT_LABELS: Record<1 | 2 | 3, string> = {
 
 export const STATUS_LABELS: Record<ProblemStatus, string> = {
   open: "Open",
-  closed: "Closed",
   "claimed-proof-no-consensus": "Proof claimed",
+  closed: "Solved",
 };
 
 export const IMPACT_RUBRIC: Record<1 | 2 | 3, string> = {
