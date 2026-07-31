@@ -71,3 +71,16 @@ export async function checkSubmissionRateLimit(
   }
   return null;
 }
+
+// Logs a submission for the rate-limit count. The PR has already been
+// created by the time this runs, so a failure here doesn't fail the
+// request — but it's still logged server-side rather than silently
+// swallowed, since a failed insert means this submission won't count
+// against the user's rate limit next time.
+export async function logSubmission(
+  userClient: SupabaseClient,
+  row: { author_id: string; problem_id: number | null; kind: "edit" | "new_problem"; pr_url: string },
+): Promise<void> {
+  const { error } = await userClient.from("problem_edit_submissions").insert(row);
+  if (error) console.error("Failed to log submission:", error);
+}

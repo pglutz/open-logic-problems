@@ -5,7 +5,12 @@ import { z } from "zod";
 import { pendingProblemSchema } from "../../lib/problemSchema";
 import { serializePendingProblemFile } from "../../lib/markdown/frontmatter";
 import { submitNewProblemPR } from "../../lib/github";
-import { jsonResponse, authenticateRequest, checkSubmissionRateLimit } from "../../lib/api/submission";
+import {
+  jsonResponse,
+  authenticateRequest,
+  checkSubmissionRateLimit,
+  logSubmission,
+} from "../../lib/api/submission";
 
 const requestSchema = z.object({
   frontmatter: pendingProblemSchema,
@@ -55,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
     return jsonResponse(502, { error: "github_error", message: "Failed to open a pull request. Please try again." });
   }
 
-  await userClient.from("problem_edit_submissions").insert({
+  await logSubmission(userClient, {
     author_id: user.id,
     problem_id: null,
     kind: "new_problem",
