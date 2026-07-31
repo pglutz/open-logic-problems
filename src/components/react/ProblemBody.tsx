@@ -90,14 +90,13 @@ export default function ProblemBody({
             {canonicalReference.link && (
               <>
                 {" "}
-                (<a href={canonicalReference.link}>link</a>)
+                [<a href={canonicalReference.link}>link</a>]
               </>
             )}
             {canonicalReference.doi && (
               <>
                 {" "}
-                (DOI:{" "}
-                <a href={`https://doi.org/${canonicalReference.doi}`}>{canonicalReference.doi}</a>)
+                [<a href={`https://doi.org/${canonicalReference.doi}`}>doi</a>]
               </>
             )}
           </p>
