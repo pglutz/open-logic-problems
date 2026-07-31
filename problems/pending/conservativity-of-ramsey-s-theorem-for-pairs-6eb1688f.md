@@ -1,0 +1,29 @@
+---
+id: null
+name: "Conservativity of Ramsey's Theorem for pairs"
+status: open
+area: [computability-theory, proof-theory]
+impact: 2
+canonical_reference:
+  title: "The inductive strength of Ramsey's Theorem for Pairs"
+  author: "C. T. Chong, Theodore A. Slaman and Yue Yang"
+  venue: "Advances in Mathematics"
+  year: 2017
+  link: "https://math.berkeley.edu/~slaman/papers/ChongSlamanYang2014.pdf"
+  doi: "10.1016/j.aim.2016.11.036"
+---
+
+## Statement
+
+Is $\mathsf{RT}^2_2$, i.e. Ramsey's Theorem for pairs and two colors, $\Pi^1_1$-conservative over $\mathsf{RCA}_0 + B\Sigma^0_2$?
+
+## Known Partial Results
+
+- Hirst showed that $\mathsf{RT}^2_2$ proves $B\Sigma^0_2$.
+- Chong, Slaman and Yang showed that $\mathsf{RT}^2_2$ does not prove $I\Sigma^0_2$ over $\mathsf{RCA}_0$.
+- Patey and Yokoyama showed that $\mathsf{RT}^2_2$ is $\Pi^0_3$-conservative over $\mathsf{RCA}_0$.
+- Cholak, Jockusch and Slaman showed that $\mathsf{RT}^2_2 + I\Sigma^0_2$ is $\Pi^1_1$-conservative over $\mathsf{RCA}_0 + I\Sigma^0_2$.
+
+## Notes
+
+This is one of the most well-known open problems in reverse math.
