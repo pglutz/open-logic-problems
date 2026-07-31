@@ -9,7 +9,7 @@ import { jsonResponse, authenticateRequest, checkSubmissionRateLimit } from "../
 
 const requestSchema = z.object({
   frontmatter: pendingProblemSchema,
-  body: z.string().min(1),
+  body: z.string().min(1).max(50000),
   commitMessage: z.string().min(1).max(500),
 });
 

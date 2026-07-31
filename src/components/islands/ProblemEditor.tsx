@@ -291,7 +291,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             )}
             <div className={`editor-field editor-field-full-width${nameInvalid ? " editor-field-invalid" : ""}`}>
               <label>Title</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+              <input type="text" maxLength={500} value={name} onChange={(e) => setName(e.target.value)} />
             </div>
 
             <details className={`editor-collapsible${areaInvalid ? " editor-collapsible-invalid" : ""}`}>
@@ -353,15 +353,30 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             <div className="editor-collapsible-body">
               <div className="editor-field">
                 <label>Title (optional)</label>
-                <input type="text" value={refTitle} onChange={(e) => setRefTitle(e.target.value)} />
+                <input
+                  type="text"
+                  maxLength={500}
+                  value={refTitle}
+                  onChange={(e) => setRefTitle(e.target.value)}
+                />
               </div>
               <div className="editor-field">
                 <label>Author(s) (optional)</label>
-                <input type="text" value={refAuthor} onChange={(e) => setRefAuthor(e.target.value)} />
+                <input
+                  type="text"
+                  maxLength={500}
+                  value={refAuthor}
+                  onChange={(e) => setRefAuthor(e.target.value)}
+                />
               </div>
               <div className="editor-field">
                 <label>Venue (optional)</label>
-                <input type="text" value={refVenue} onChange={(e) => setRefVenue(e.target.value)} />
+                <input
+                  type="text"
+                  maxLength={500}
+                  value={refVenue}
+                  onChange={(e) => setRefVenue(e.target.value)}
+                />
               </div>
               <div className="editor-field">
                 <label>Year (optional)</label>
@@ -369,11 +384,21 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               </div>
               <div className="editor-field">
                 <label>Link (optional)</label>
-                <input type="url" value={refLink} onChange={(e) => setRefLink(e.target.value)} />
+                <input
+                  type="url"
+                  maxLength={500}
+                  value={refLink}
+                  onChange={(e) => setRefLink(e.target.value)}
+                />
               </div>
               <div className="editor-field">
                 <label>DOI (optional)</label>
-                <input type="text" value={refDoi} onChange={(e) => setRefDoi(e.target.value)} />
+                <input
+                  type="text"
+                  maxLength={500}
+                  value={refDoi}
+                  onChange={(e) => setRefDoi(e.target.value)}
+                />
               </div>
             </div>
           </details>

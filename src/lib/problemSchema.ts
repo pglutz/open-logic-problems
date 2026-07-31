@@ -3,17 +3,17 @@ import { AREAS } from "./areas.ts";
 
 // Fields shared by an assigned problem and one still awaiting an id.
 const problemCoreFields = {
-  name: z.string().min(1),
+  name: z.string().min(1).max(500),
   status: z.enum(["open", "closed", "claimed-proof-no-consensus"]),
   area: z.array(z.enum(AREAS)).min(1),
   impact: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   canonical_reference: z.object({
-    title: z.string(),
-    author: z.string(),
-    venue: z.string().optional(),
+    title: z.string().max(500),
+    author: z.string().max(500),
+    venue: z.string().max(500).optional(),
     year: z.number().int().optional(),
-    link: z.string().url().optional(),
-    doi: z.string().optional(),
+    link: z.string().url().max(500).optional(),
+    doi: z.string().max(500).optional(),
   }),
 };
 

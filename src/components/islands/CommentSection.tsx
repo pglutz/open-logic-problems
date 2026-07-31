@@ -126,6 +126,7 @@ export default function CommentSection({ problemId }: { problemId: number }) {
           />
           <textarea
             required
+            maxLength={5000}
             placeholder="Add a comment… (Markdown links and $LaTeX$ are supported)"
             rows={3}
             value={body}
