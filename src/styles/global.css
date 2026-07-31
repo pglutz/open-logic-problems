@@ -289,7 +289,6 @@ pre code {
 }
 .reference-summary {
   cursor: pointer;
-  font-size: 1.15rem;
   font-weight: 600;
 }
 .reference-box[open] .reference-summary {
