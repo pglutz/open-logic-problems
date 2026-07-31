@@ -218,7 +218,7 @@ pre code {
    `section`/`h2`/`h3` selectors so it doesn't bleed into unrelated
    <section> elements on other pages (e.g. the homepage). */
 .statement-box {
-  margin: 1.25rem 0 2rem;
+  margin: 1.25rem 0 1.25rem;
 }
 .meta-row {
   display: flex;
@@ -285,6 +285,7 @@ pre code {
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 0.6rem 1rem;
+  margin-bottom: 1.25rem;
 }
 .reference-summary {
   cursor: pointer;
