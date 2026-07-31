@@ -76,10 +76,8 @@ export default function ProblemBody({
       </div>
 
       {hasReference && (
-        <details className="problem-section">
-          <summary className="section-heading reference-summary">
-            Reference for the problem statement
-          </summary>
+        <details className="problem-section reference-box">
+          <summary className="reference-summary">Reference for the problem statement</summary>
           <p>
             {referenceParts.map((part, i) => (
               <span key={i}>
