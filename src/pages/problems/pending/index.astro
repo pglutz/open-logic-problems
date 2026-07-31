@@ -1,0 +1,29 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const pendingProblems = (await getCollection("pendingProblems")).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name),
+);
+---
+
+<BaseLayout title="Pending Problems" excludeFromSearch>
+  <h1>Pending Problems</h1>
+  <p class="muted">
+    New-problem proposals awaiting ID assignment. Not linked from anywhere else on the site.
+  </p>
+
+  {
+    pendingProblems.length === 0 ? (
+      <p class="muted">No pending problems right now.</p>
+    ) : (
+      <ul>
+        {pendingProblems.map((entry) => (
+          <li>
+            <a href={`/problems/pending/${entry.id}`}>{entry.data.name}</a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>
