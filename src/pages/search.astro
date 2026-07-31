@@ -8,10 +8,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <div id="search"></div>
 
   <script is:inline>
-    // Pagefind's index is generated into dist/pagefind/ at build time (see
-    // package.json's build script), so this only works against a built site
-    // (npm run build), not `astro dev`, which serves source files directly
-    // rather than the build output. `is:inline` keeps Astro/Vite from
+    // Pagefind's index is generated at build time and copied into the
+    // deployed static root's pagefind/ dir (see package.json's build
+    // script), so this only works against a built site (npm run build),
+    // not `astro dev`, which serves source files directly rather than the
+    // build output. `is:inline` keeps Astro/Vite from
     // bundling this script — Vite's dynamic-import handling leaves a
     // `__VITE_PRELOAD__` placeholder that's never substituted for a
     // runtime-only path like this one, which throws before the import runs.
