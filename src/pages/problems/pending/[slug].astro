@@ -1,0 +1,55 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ProblemBody from "../../../components/react/ProblemBody";
+import { renderMarkdown, renderIfPresent } from "../../../lib/markdown/pipeline";
+import { splitSections } from "../../../lib/markdown/sections";
+
+export async function getStaticPaths() {
+  const pendingProblems = await getCollection("pendingProblems");
+  return pendingProblems.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const sections = splitSections(entry.body ?? "");
+
+const [statementHtml, definitionsHtml, partialResultsHtml, additionalReferencesHtml, notesHtml] =
+  await Promise.all([
+    renderMarkdown(sections.statement),
+    renderIfPresent(sections.definitions),
+    renderIfPresent(sections.partialResults),
+    renderIfPresent(sections.additionalReferences),
+    renderIfPresent(sections.notes),
+  ]);
+
+const title = `${entry.data.name} (pending)`;
+---
+
+<BaseLayout title={title} excludeFromSearch>
+  <p class="muted problem-id">Pending review &mdash; not yet a numbered problem</p>
+  <h1>{entry.data.name}</h1>
+
+  <ProblemBody
+    status={entry.data.status}
+    impact={entry.data.impact}
+    area={entry.data.area}
+    canonicalReference={entry.data.canonical_reference}
+    statementHtml={statementHtml}
+    definitionsHtml={definitionsHtml}
+    partialResultsHtml={partialResultsHtml}
+    additionalReferencesHtml={additionalReferencesHtml}
+    notesHtml={notesHtml}
+  />
+</BaseLayout>
+
+<style>
+  .problem-id {
+    margin-bottom: 0;
+  }
+  h1 {
+    margin-top: 0.1rem;
+  }
+</style>

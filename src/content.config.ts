@@ -1,6 +1,6 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
-import { problemFrontmatterSchema } from "./lib/problemSchema";
+import { problemFrontmatterSchema, pendingProblemSchema } from "./lib/problemSchema";
 
 // Non-recursive pattern ("*.md", not "**/*.md") deliberately excludes
 // problems/pending/ — files awaiting ID assignment by the GitHub Action
@@ -10,4 +10,12 @@ const problems = defineCollection({
   schema: problemFrontmatterSchema,
 });
 
-export const collections = { problems };
+// New-problem proposals awaiting ID assignment. Rendered at
+// /problems/pending/[slug] purely so a PR's Vercel preview deploy has a
+// real page to look at — never linked to from anywhere on the site.
+const pendingProblems = defineCollection({
+  loader: glob({ pattern: "*.md", base: "./problems/pending" }),
+  schema: pendingProblemSchema,
+});
+
+export const collections = { problems, pendingProblems };
