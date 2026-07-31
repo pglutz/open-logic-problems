@@ -4,5 +4,11 @@
     "type": "new-problem",
     "id": 7,
     "name": "Kolmogorov-Loveland randomness vs Martin-Löf randomness"
+  },
+  {
+    "date": "2026-07-31",
+    "type": "new-problem",
+    "id": 8,
+    "name": "Conservativity of Ramsey's Theorem for pairs"
   }
 ]
