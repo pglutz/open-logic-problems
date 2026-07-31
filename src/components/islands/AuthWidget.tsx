@@ -39,7 +39,7 @@ export default function AuthWidget() {
     return () => window.removeEventListener(OPEN_AUTH_POPOVER_EVENT, handleOpenRequest);
   }, []);
 
-  async function handleSignIn(e: React.FormEvent) {
+  async function handleSignIn(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
     const { error } = await supabase.auth.signInWithOtp({

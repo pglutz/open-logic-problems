@@ -12,7 +12,7 @@ const problemCoreFields = {
     author: z.string().max(500),
     venue: z.string().max(500).optional(),
     year: z.number().int().optional(),
-    link: z.string().url().max(500).optional(),
+    link: z.url().max(500).optional(),
     doi: z.string().max(500).optional(),
   }),
 };

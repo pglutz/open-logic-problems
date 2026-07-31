@@ -159,7 +159,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
       : "You're changing this problem's status — status changes get extra scrutiny during review, so please make sure this is backed by a citable published result."
     : null;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!session) return;
     if (hasValidationErrors) {

@@ -59,7 +59,7 @@ export default function CommentSection({ problemId }: { problemId: number }) {
     };
   }, [problemId]);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!session) return;
     setSubmitting(true);
