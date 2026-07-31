@@ -12,6 +12,7 @@ interface ProblemBodyProps {
   statementHtml: string;
   definitionsHtml?: string;
   partialResultsHtml?: string;
+  claimedProofsHtml?: string;
   additionalReferencesHtml?: string;
   notesHtml?: string;
   // Omitted entirely in the suggest-an-edit live preview, where a link back
@@ -37,6 +38,7 @@ export default function ProblemBody({
   statementHtml,
   definitionsHtml,
   partialResultsHtml,
+  claimedProofsHtml,
   additionalReferencesHtml,
   notesHtml,
   suggestEditHref,
@@ -113,6 +115,13 @@ export default function ProblemBody({
         <section className="problem-section">
           <SectionHeading className="section-heading">Known Partial Results</SectionHeading>
           <div dangerouslySetInnerHTML={{ __html: partialResultsHtml }} />
+        </section>
+      )}
+
+      {claimedProofsHtml && (
+        <section className="problem-section">
+          <SectionHeading className="section-heading">Claimed Proofs</SectionHeading>
+          <div dangerouslySetInnerHTML={{ __html: claimedProofsHtml }} />
         </section>
       )}
 

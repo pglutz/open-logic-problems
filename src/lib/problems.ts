@@ -29,7 +29,7 @@ export const IMPACT_SHORT_LABELS: Record<1 | 2 | 3, string> = {
 export const STATUS_LABELS: Record<ProblemStatus, string> = {
   open: "Open",
   closed: "Closed",
-  "claimed-proof-no-consensus": "No consensus",
+  "claimed-proof-no-consensus": "Proof claimed",
 };
 
 export const IMPACT_RUBRIC: Record<1 | 2 | 3, string> = {

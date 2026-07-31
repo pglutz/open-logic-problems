@@ -16,6 +16,7 @@ interface Props {
   statementHtml: string;
   definitionsHtml?: string;
   partialResultsHtml?: string;
+  claimedProofsHtml?: string;
   additionalReferencesHtml?: string;
   notesHtml?: string;
 }
@@ -30,6 +31,7 @@ const {
   statementHtml,
   definitionsHtml,
   partialResultsHtml,
+  claimedProofsHtml,
   additionalReferencesHtml,
   notesHtml,
 } = Astro.props;
@@ -49,6 +51,7 @@ const title = `${name} (#${id})`;
     statementHtml={statementHtml}
     definitionsHtml={definitionsHtml}
     partialResultsHtml={partialResultsHtml}
+    claimedProofsHtml={claimedProofsHtml}
     additionalReferencesHtml={additionalReferencesHtml}
     notesHtml={notesHtml}
     suggestEditHref={`/problems/${id}/edit`}

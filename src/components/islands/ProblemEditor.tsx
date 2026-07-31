@@ -25,6 +25,7 @@ const EMPTY_SECTIONS: ProblemSectionsInput = {
   statement: "",
   definitions: "",
   partialResults: "",
+  claimedProofs: "",
   additionalReferences: "",
   notes: "",
 };
@@ -47,6 +48,7 @@ interface PreviewHtml {
   statement: string;
   definitions?: string;
   partialResults?: string;
+  claimedProofs?: string;
   additionalReferences?: string;
   notes?: string;
 }
@@ -76,6 +78,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   const [statement, setStatement] = useState(initialSections.statement);
   const [definitions, setDefinitions] = useState(initialSections.definitions);
   const [partialResults, setPartialResults] = useState(initialSections.partialResults);
+  const [claimedProofs, setClaimedProofs] = useState(initialSections.claimedProofs);
   const [additionalReferences, setAdditionalReferences] = useState(initialSections.additionalReferences);
   const [notes, setNotes] = useState(initialSections.notes);
 
@@ -108,20 +111,24 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
         renderMarkdown(statement),
         renderIfPresent(definitions),
         renderIfPresent(partialResults),
+        renderIfPresent(claimedProofs),
         renderIfPresent(additionalReferences),
         renderIfPresent(notes),
-      ]).then(([statementHtml, definitionsHtml, partialResultsHtml, additionalReferencesHtml, notesHtml]) => {
-        setPreviewHtml({
-          statement: statementHtml,
-          definitions: definitionsHtml,
-          partialResults: partialResultsHtml,
-          additionalReferences: additionalReferencesHtml,
-          notes: notesHtml,
-        });
-      });
+      ]).then(
+        ([statementHtml, definitionsHtml, partialResultsHtml, claimedProofsHtml, additionalReferencesHtml, notesHtml]) => {
+          setPreviewHtml({
+            statement: statementHtml,
+            definitions: definitionsHtml,
+            partialResults: partialResultsHtml,
+            claimedProofs: claimedProofsHtml,
+            additionalReferences: additionalReferencesHtml,
+            notes: notesHtml,
+          });
+        },
+      );
     }, 250);
     return () => clearTimeout(timer);
-  }, [statement, definitions, partialResults, additionalReferences, notes]);
+  }, [statement, definitions, partialResults, claimedProofs, additionalReferences, notes]);
 
   function toggleArea(a: Area) {
     setArea((prev) => (prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]));
@@ -183,7 +190,14 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
         doi: refDoi || undefined,
       },
     };
-    const bodyContent = joinSections({ statement, definitions, partialResults, additionalReferences, notes });
+    const bodyContent = joinSections({
+      statement,
+      definitions,
+      partialResults,
+      claimedProofs,
+      additionalReferences,
+      notes,
+    });
     const effectiveCommitMessage = commitMessage.trim() || `New problem proposal: ${name}`;
 
     const endpoint = mode === "new" ? "/api/submit-new-problem" : "/api/submit-problem";
@@ -373,6 +387,10 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             <textarea value={partialResults} onChange={(e) => setPartialResults(e.target.value)} rows={5} />
           </div>
           <div className="editor-field">
+            <label>Claimed Proofs (optional)</label>
+            <textarea value={claimedProofs} onChange={(e) => setClaimedProofs(e.target.value)} rows={5} />
+          </div>
+          <div className="editor-field">
             <label>Notes (optional)</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} />
           </div>
@@ -428,6 +446,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               statementHtml={previewHtml.statement}
               definitionsHtml={previewHtml.definitions}
               partialResultsHtml={previewHtml.partialResults}
+              claimedProofsHtml={previewHtml.claimedProofs}
               additionalReferencesHtml={previewHtml.additionalReferences}
               notesHtml={previewHtml.notes}
               sectionHeadingTag="h3"

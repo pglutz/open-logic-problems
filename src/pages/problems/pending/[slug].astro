@@ -16,14 +16,21 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const sections = splitSections(entry.body ?? "");
 
-const [statementHtml, definitionsHtml, partialResultsHtml, additionalReferencesHtml, notesHtml] =
-  await Promise.all([
-    renderMarkdown(sections.statement),
-    renderIfPresent(sections.definitions),
-    renderIfPresent(sections.partialResults),
-    renderIfPresent(sections.additionalReferences),
-    renderIfPresent(sections.notes),
-  ]);
+const [
+  statementHtml,
+  definitionsHtml,
+  partialResultsHtml,
+  claimedProofsHtml,
+  additionalReferencesHtml,
+  notesHtml,
+] = await Promise.all([
+  renderMarkdown(sections.statement),
+  renderIfPresent(sections.definitions),
+  renderIfPresent(sections.partialResults),
+  renderIfPresent(sections.claimedProofs),
+  renderIfPresent(sections.additionalReferences),
+  renderIfPresent(sections.notes),
+]);
 
 const title = `${entry.data.name} (pending)`;
 ---
@@ -40,6 +47,7 @@ const title = `${entry.data.name} (pending)`;
     statementHtml={statementHtml}
     definitionsHtml={definitionsHtml}
     partialResultsHtml={partialResultsHtml}
+    claimedProofsHtml={claimedProofsHtml}
     additionalReferencesHtml={additionalReferencesHtml}
     notesHtml={notesHtml}
   />
