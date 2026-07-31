@@ -380,7 +380,13 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               </div>
               <div className="editor-field">
                 <label>Year (optional)</label>
-                <input type="number" value={refYear} onChange={(e) => setRefYear(e.target.value)} />
+                <input
+                  type="number"
+                  min={1800}
+                  max={new Date().getFullYear() + 1}
+                  value={refYear}
+                  onChange={(e) => setRefYear(e.target.value)}
+                />
               </div>
               <div className="editor-field">
                 <label>Link (optional)</label>

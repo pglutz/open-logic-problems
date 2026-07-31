@@ -11,7 +11,7 @@ const problemCoreFields = {
     title: z.string().max(500),
     author: z.string().max(500),
     venue: z.string().max(500).optional(),
-    year: z.number().int().optional(),
+    year: z.number().int().min(1800).max(new Date().getFullYear() + 1).optional(),
     link: z.url().max(500).optional(),
     doi: z.string().max(500).optional(),
   }),
