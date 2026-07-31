@@ -10,5 +10,11 @@
     "type": "new-problem",
     "id": 8,
     "name": "Conservativity of Ramsey's Theorem for pairs"
+  },
+  {
+    "date": "2026-07-31",
+    "type": "new-problem",
+    "id": 9,
+    "name": "Borel boundedness of CBERs"
   }
 ]
