@@ -26,3 +26,8 @@ pnpm-debug.log*
 # Local Vercel folder
 .vercel
 .claude/settings.local.json
+.env*
+
+# Marketplace-installed agent skills (regenerable from skills-lock.json)
+.agents/
+.claude/skills/
