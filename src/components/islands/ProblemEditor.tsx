@@ -85,6 +85,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   const [previewHtml, setPreviewHtml] = useState<PreviewHtml>({ statement: "" });
   const [commitMessage, setCommitMessage] = useState("");
 
+  const [mobileTab, setMobileTab] = useState<"edit" | "preview">("edit");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ prUrl: string } | null>(null);
@@ -267,7 +268,24 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
 
   return (
     <form className="problem-editor" onSubmit={handleSubmit} noValidate>
-      <div className="editor-columns">
+      <div className="editor-columns" data-mobile-tab={mobileTab}>
+        <div className="editor-mobile-tabs" data-active={mobileTab}>
+          <div className="editor-mobile-tab-slider" aria-hidden="true" />
+          <button
+            type="button"
+            className={`editor-mobile-tab${mobileTab === "edit" ? " editor-mobile-tab-active" : ""}`}
+            onClick={() => setMobileTab("edit")}
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            className={`editor-mobile-tab${mobileTab === "preview" ? " editor-mobile-tab-active" : ""}`}
+            onClick={() => setMobileTab("preview")}
+          >
+            Preview
+          </button>
+        </div>
         <div className="editor-left">
           <div className="editor-header-fields">
             {(showValidationSummary || statusWarning || referenceWarning) && (

@@ -53,6 +53,16 @@
   box-sizing: border-box;
 }
 
+html {
+  /* Without this, mobile browsers apply their own automatic font-size
+     "boosting" heuristic per element based on container width — producing
+     inconsistent sizes across the page (worse in landscape, where the wider
+     viewport changes the heuristic's math) rather than the sizes actually
+     declared here. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   font-family: "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -316,13 +326,65 @@ pre code {
   position: sticky;
   top: 1rem;
 }
-@media (max-width: 60rem) {
+@media (max-width: 55rem) {
   .editor-columns {
     flex-direction: column;
   }
   .editor-right {
     position: static;
     width: 100%;
+  }
+}
+
+.editor-mobile-tabs {
+  display: none;
+}
+@media (max-width: 55rem) {
+  .editor-mobile-tabs {
+    display: flex;
+    position: relative;
+    width: 100%;
+    margin-bottom: -1rem;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg);
+    padding: 0.15rem;
+  }
+  .editor-mobile-tab-slider {
+    position: absolute;
+    top: 0.15rem;
+    bottom: 0.15rem;
+    left: 0.15rem;
+    width: calc(50% - 0.15rem);
+    border-radius: var(--radius-pill);
+    background: var(--color-link);
+    transition: transform 0.2s ease;
+  }
+  .editor-mobile-tabs[data-active="preview"] .editor-mobile-tab-slider {
+    transform: translateX(100%);
+  }
+  .editor-mobile-tab {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 50%;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    border: none;
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  .editor-mobile-tab-active {
+    color: #fff;
+  }
+  .editor-columns[data-mobile-tab="edit"] .editor-right {
+    display: none;
+  }
+  .editor-columns[data-mobile-tab="preview"] .editor-left {
+    display: none;
   }
 }
 
