@@ -59,8 +59,8 @@ html {
      inconsistent sizes across the page (worse in landscape, where the wider
      viewport changes the heuristic's math) rather than the sizes actually
      declared here. */
-  -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
