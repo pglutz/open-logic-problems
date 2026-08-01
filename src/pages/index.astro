@@ -33,7 +33,10 @@ function changeTypeLabel(entry: ChangelogEntry): string {
 
 <BaseLayout title="Home" description="A collection of open problems in mathematical logic.">
   <div class="intro">
-    <img class="hero" src="/thinker_11.png" alt="" />
+    <picture>
+      <source media="(max-width: 600px)" srcset="/thinker_crop_1.png" />
+      <img class="hero" src="/thinker_11.png" alt="" />
+    </picture>
 
     <h1>Open Problems in Mathematical Logic</h1>
     <p>
@@ -91,6 +94,14 @@ function changeTypeLabel(entry: ChangelogEntry): string {
     height: auto;
     border-radius: var(--radius-lg);
     margin: 1.5rem 0 1rem 1.25rem;
+  }
+  @media (max-width: 600px) {
+    .hero {
+      float: none;
+      display: block;
+      width: 100%;
+      margin: 0 0 1.25rem;
+    }
   }
   .changes {
     list-style: none;
