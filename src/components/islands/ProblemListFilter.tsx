@@ -169,17 +169,18 @@ export default function ProblemListFilter({ problems }: Props) {
 
         <div className="filter-group">
           <h3>Direction</h3>
-          <div className="button-row">
+          <div className="direction-toggle" data-active={sortDir}>
+            <div className="direction-toggle-slider" aria-hidden="true" />
             <button
               type="button"
-              className={sortDir === "asc" ? "active" : ""}
+              className={`direction-toggle-option${sortDir === "asc" ? " direction-toggle-active" : ""}`}
               onClick={() => setSortDir("asc")}
             >
               Ascending
             </button>
             <button
               type="button"
-              className={sortDir === "desc" ? "active" : ""}
+              className={`direction-toggle-option${sortDir === "desc" ? " direction-toggle-active" : ""}`}
               onClick={() => setSortDir("desc")}
             >
               Descending
@@ -334,6 +335,44 @@ export default function ProblemListFilter({ problems }: Props) {
         .button-row button.active {
           background: var(--color-link);
           border-color: var(--color-link);
+          color: #fff;
+        }
+        .direction-toggle {
+          position: relative;
+          display: flex;
+          width: fit-content;
+          border: var(--border-width) solid var(--color-border);
+          border-radius: var(--radius-pill);
+          background: var(--color-bg);
+          padding: 0.12rem;
+        }
+        .direction-toggle-slider {
+          position: absolute;
+          top: 0.12rem;
+          bottom: 0.12rem;
+          left: 0.12rem;
+          width: calc(50% - 0.12rem);
+          border-radius: var(--radius-pill);
+          background: var(--color-link);
+          transition: transform 0.2s ease;
+        }
+        .direction-toggle[data-active="desc"] .direction-toggle-slider {
+          transform: translateX(100%);
+        }
+        .direction-toggle-option {
+          position: relative;
+          z-index: 1;
+          flex: 1 1 50%;
+          font: inherit;
+          font-size: 0.85rem;
+          padding: 0.3rem 0.64rem;
+          border: none;
+          background: transparent;
+          color: var(--color-text);
+          cursor: pointer;
+          transition: color 0.2s ease;
+        }
+        .direction-toggle-active {
           color: #fff;
         }
         .count {
