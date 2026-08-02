@@ -6,7 +6,11 @@ const links = [
   { href: "/problems", label: "List of Problems" },
   { href: "/problems/new", label: "Submit a New Problem" },
 ];
-const currentPath = Astro.url.pathname;
+// Astro's static build uses directory-style routing (e.g. `/faq/index.html`), where
+// Astro.url.pathname resolves to "/faq/" (trailing slash) — unlike astro dev's per-request
+// SSR, which reflects the exact requested path with no slash added. Stripping it here keeps
+// the comparison against `link.href` correct in both.
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
 <header class="nav">
