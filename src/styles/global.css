@@ -296,6 +296,7 @@ pre code {
   border-radius: var(--radius-md);
   padding: 0.6rem 1rem;
   margin-top: -0.75rem;
+  background: rgba(128, 128, 128, 0.06);
 }
 .reference-summary {
   cursor: pointer;
