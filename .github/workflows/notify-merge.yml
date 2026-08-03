@@ -1,0 +1,23 @@
+name: Notify on Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  notify:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Send merge notification email
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: node --experimental-strip-types scripts/notify-merge.ts

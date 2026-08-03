@@ -11,6 +11,7 @@ import {
   checkSubmissionRateLimit,
   logSubmission,
 } from "../../lib/api/submission";
+import { sendEmail, buildNotifyMarker } from "../../lib/email";
 
 const requestSchema = z.object({
   problemId: z.number().int().positive(),
@@ -39,6 +40,15 @@ export const POST: APIRoute = async ({ request }) => {
 
   const newFileContent = serializeProblemFile(payload.frontmatter, payload.body);
 
+  const notifyMarker = user.email
+    ? buildNotifyMarker({
+        email: user.email,
+        kind: "edit",
+        problemId: payload.problemId,
+        name: payload.frontmatter.name,
+      })
+    : "";
+
   let prResult;
   try {
     prResult = await submitProblemEditPR({
@@ -46,8 +56,8 @@ export const POST: APIRoute = async ({ request }) => {
       path: `problems/${payload.problemId}.md`,
       newFileContent,
       commitMessage: payload.commitMessage,
-      prTitle: `Suggest edit: Problem #${payload.problemId} — ${payload.commitMessage}`,
-      prBody: `Suggested by ${user.email ?? "a signed-in user"} via the website's edit form.\n\n${payload.commitMessage}`,
+      prTitle: `Suggested edit: Problem #${payload.problemId} — ${payload.commitMessage}`,
+      prBody: `Suggested by ${user.email ?? "a signed-in user"} via the website's edit form.\n\n${payload.commitMessage}${notifyMarker ? `\n\n${notifyMarker}` : ""}`,
     });
   } catch {
     return jsonResponse(502, { error: "github_error", message: "Failed to open a pull request. Please try again." });
@@ -59,6 +69,17 @@ export const POST: APIRoute = async ({ request }) => {
     kind: "edit",
     pr_url: prResult.prUrl,
   });
+
+  if (user.email) {
+    // Awaited rather than fire-and-forget: a serverless function's process
+    // can be frozen the instant the response is sent, so an un-awaited send
+    // isn't guaranteed to complete.
+    await sendEmail(
+      user.email,
+      `Your suggested edit to Problem #${payload.problemId} was submitted`,
+      `Your suggested edit to Problem #${payload.problemId} has been submitted as a pull request on github: ${prResult.prUrl}\n\nYou'll get another email when it's accepted.`,
+    );
+  }
 
   return jsonResponse(200, { prUrl: prResult.prUrl, prNumber: prResult.prNumber });
 };

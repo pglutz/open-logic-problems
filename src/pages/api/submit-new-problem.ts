@@ -11,6 +11,7 @@ import {
   checkSubmissionRateLimit,
   logSubmission,
 } from "../../lib/api/submission";
+import { sendEmail, buildNotifyMarker } from "../../lib/email";
 
 const requestSchema = z.object({
   frontmatter: pendingProblemSchema,
@@ -46,6 +47,15 @@ export const POST: APIRoute = async ({ request }) => {
   const slug = `${slugify(payload.frontmatter.name)}-${crypto.randomUUID().slice(0, 8)}`;
   const newFileContent = serializePendingProblemFile(payload.frontmatter, payload.body);
 
+  const notifyMarker = user.email
+    ? buildNotifyMarker({
+        email: user.email,
+        kind: "new_problem",
+        problemId: null,
+        name: payload.frontmatter.name,
+      })
+    : "";
+
   let prResult;
   try {
     prResult = await submitNewProblemPR({
@@ -54,7 +64,7 @@ export const POST: APIRoute = async ({ request }) => {
       newFileContent,
       commitMessage: payload.commitMessage,
       prTitle: `New problem proposal: ${payload.frontmatter.name}`,
-      prBody: `Proposed by ${user.email ?? "a signed-in user"} via the website's new-problem form.\n\n${payload.commitMessage}`,
+      prBody: `Proposed by ${user.email ?? "a signed-in user"} via the website's new-problem form.\n\n${payload.commitMessage}${notifyMarker ? `\n\n${notifyMarker}` : ""}`,
     });
   } catch {
     return jsonResponse(502, { error: "github_error", message: "Failed to open a pull request. Please try again." });
@@ -66,6 +76,14 @@ export const POST: APIRoute = async ({ request }) => {
     kind: "new_problem",
     pr_url: prResult.prUrl,
   });
+
+  if (user.email) {
+    await sendEmail(
+      user.email,
+      `Your new problem proposal "${payload.frontmatter.name}" was submitted`,
+      `Your new problem proposal "${payload.frontmatter.name}" has been submitted as a pull request on github: ${prResult.prUrl}\n\nYou'll get another email when it's accepted.`,
+    );
+  }
 
   return jsonResponse(200, { prUrl: prResult.prUrl, prNumber: prResult.prNumber });
 };

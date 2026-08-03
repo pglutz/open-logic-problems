@@ -263,6 +263,8 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
         <a href={result.prUrl} target="_blank" rel="noreferrer">
           {result.prUrl}
         </a>
+        <br />
+        You'll get another email when it's accepted.
       </p>
     );
   }
