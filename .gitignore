@@ -31,3 +31,9 @@ pnpm-debug.log*
 # Marketplace-installed agent skills (regenerable from skills-lock.json)
 .agents/
 .claude/skills/
+skills-lock.json
+
+# editor/agent config, local to this machine
+.vscode/
+AGENTS.md
+CLAUDE.md
