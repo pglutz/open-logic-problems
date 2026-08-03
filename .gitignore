@@ -37,3 +37,6 @@ skills-lock.json
 .vscode/
 AGENTS.md
 CLAUDE.md
+
+# scratch/local-only files, not for the repo
+local/
