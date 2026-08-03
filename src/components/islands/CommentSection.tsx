@@ -120,14 +120,22 @@ export default function CommentSection({ problemId }: { problemId: number }) {
 
       {session ? (
         <form className="comment-form" onSubmit={handleSubmit}>
+          <label htmlFor="comment-author-name" className="visually-hidden">
+            Your name
+          </label>
           <input
+            id="comment-author-name"
             type="text"
             required
             placeholder="Your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
+          <label htmlFor="comment-body" className="visually-hidden">
+            Comment
+          </label>
           <textarea
+            id="comment-body"
             required
             maxLength={5000}
             placeholder="Add a comment… (Markdown links and $LaTeX$ are supported)"

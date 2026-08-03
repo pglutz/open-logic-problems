@@ -308,8 +308,14 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               </div>
             )}
             <div className={`editor-field editor-field-full-width${nameInvalid ? " editor-field-invalid" : ""}`}>
-              <label>Title</label>
-              <input type="text" maxLength={500} value={name} onChange={(e) => setName(e.target.value)} />
+              <label htmlFor="editor-name">Title</label>
+              <input
+                id="editor-name"
+                type="text"
+                maxLength={500}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
 
             <details className={`editor-collapsible${areaInvalid ? " editor-collapsible-invalid" : ""}`}>
@@ -328,8 +334,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
 
             <div className="editor-inline-row">
               <div className={`editor-field editor-field-compact${statusChanged ? " editor-field-warning" : ""}`}>
-                <label>Status</label>
+                <label htmlFor="editor-status">Status</label>
                 <select
+                  id="editor-status"
                   className="editor-select-compact"
                   value={status}
                   onChange={(e) => setStatus(e.target.value as ProblemStatus)}
@@ -342,8 +349,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 </select>
               </div>
               <div className="editor-field editor-field-compact">
-                <label>Impact</label>
+                <label htmlFor="editor-impact">Impact</label>
                 <select
+                  id="editor-impact"
                   className="editor-select-compact"
                   title={IMPACT_RUBRIC[impact]}
                   value={impact}
@@ -362,16 +370,22 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
           </div>
 
           <div className={`editor-field${statementInvalid ? " editor-field-invalid" : ""}`}>
-            <label>Statement</label>
-            <textarea value={statement} onChange={(e) => setStatement(e.target.value)} rows={8} />
+            <label htmlFor="editor-statement">Statement</label>
+            <textarea
+              id="editor-statement"
+              value={statement}
+              onChange={(e) => setStatement(e.target.value)}
+              rows={8}
+            />
           </div>
 
           <details className={`editor-collapsible${referenceWarning ? " editor-collapsible-warning" : ""}`}>
             <summary>Reference for the problem statement</summary>
             <div className="editor-collapsible-body">
               <div className="editor-field">
-                <label>Title (optional)</label>
+                <label htmlFor="editor-ref-title">Title (optional)</label>
                 <input
+                  id="editor-ref-title"
                   type="text"
                   maxLength={500}
                   value={refTitle}
@@ -379,8 +393,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 />
               </div>
               <div className="editor-field">
-                <label>Author(s) (optional)</label>
+                <label htmlFor="editor-ref-author">Author(s) (optional)</label>
                 <input
+                  id="editor-ref-author"
                   type="text"
                   maxLength={500}
                   value={refAuthor}
@@ -388,8 +403,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 />
               </div>
               <div className="editor-field">
-                <label>Venue (optional)</label>
+                <label htmlFor="editor-ref-venue">Venue (optional)</label>
                 <input
+                  id="editor-ref-venue"
                   type="text"
                   maxLength={500}
                   value={refVenue}
@@ -397,8 +413,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 />
               </div>
               <div className="editor-field">
-                <label>Year (optional)</label>
+                <label htmlFor="editor-ref-year">Year (optional)</label>
                 <input
+                  id="editor-ref-year"
                   type="number"
                   min={1800}
                   max={new Date().getFullYear() + 1}
@@ -407,8 +424,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 />
               </div>
               <div className="editor-field">
-                <label>Link (optional)</label>
+                <label htmlFor="editor-ref-link">Link (optional)</label>
                 <input
+                  id="editor-ref-link"
                   type="url"
                   maxLength={500}
                   value={refLink}
@@ -416,8 +434,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 />
               </div>
               <div className="editor-field">
-                <label>DOI (optional)</label>
+                <label htmlFor="editor-ref-doi">DOI (optional)</label>
                 <input
+                  id="editor-ref-doi"
                   type="text"
                   maxLength={500}
                   value={refDoi}
@@ -428,24 +447,40 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
           </details>
 
           <div className="editor-field">
-            <label>Definitions (optional)</label>
-            <textarea value={definitions} onChange={(e) => setDefinitions(e.target.value)} rows={5} />
-          </div>
-          <div className="editor-field">
-            <label>Known Partial Results (optional)</label>
-            <textarea value={partialResults} onChange={(e) => setPartialResults(e.target.value)} rows={5} />
-          </div>
-          <div className="editor-field">
-            <label>Claimed Proofs (optional)</label>
-            <textarea value={claimedProofs} onChange={(e) => setClaimedProofs(e.target.value)} rows={5} />
-          </div>
-          <div className="editor-field">
-            <label>Notes (optional)</label>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} />
-          </div>
-          <div className="editor-field">
-            <label>Additional References (optional)</label>
+            <label htmlFor="editor-definitions">Definitions (optional)</label>
             <textarea
+              id="editor-definitions"
+              value={definitions}
+              onChange={(e) => setDefinitions(e.target.value)}
+              rows={5}
+            />
+          </div>
+          <div className="editor-field">
+            <label htmlFor="editor-partial-results">Known Partial Results (optional)</label>
+            <textarea
+              id="editor-partial-results"
+              value={partialResults}
+              onChange={(e) => setPartialResults(e.target.value)}
+              rows={5}
+            />
+          </div>
+          <div className="editor-field">
+            <label htmlFor="editor-claimed-proofs">Claimed Proofs (optional)</label>
+            <textarea
+              id="editor-claimed-proofs"
+              value={claimedProofs}
+              onChange={(e) => setClaimedProofs(e.target.value)}
+              rows={5}
+            />
+          </div>
+          <div className="editor-field">
+            <label htmlFor="editor-notes">Notes (optional)</label>
+            <textarea id="editor-notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} />
+          </div>
+          <div className="editor-field">
+            <label htmlFor="editor-additional-references">Additional References (optional)</label>
+            <textarea
+              id="editor-additional-references"
               value={additionalReferences}
               onChange={(e) => setAdditionalReferences(e.target.value)}
               rows={4}
@@ -454,8 +489,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
 
           {mode === "edit" && (
             <div className={`editor-field${commitMessageInvalid ? " editor-field-invalid" : ""}`}>
-              <label>Summary of changes</label>
+              <label htmlFor="editor-commit-message-field">Summary of changes</label>
               <textarea
+                id="editor-commit-message-field"
                 className="editor-commit-message"
                 placeholder="e.g. Add a partial result from Smith (2024)"
                 value={commitMessage}
