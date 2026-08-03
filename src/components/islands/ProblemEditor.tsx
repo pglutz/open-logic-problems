@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase/client";
 import { OPEN_AUTH_POPOVER_EVENT } from "../../lib/authPopoverEvent";
@@ -97,6 +97,13 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   // it's filled in, since the render below ANDs this with the field's
   // current (live) blank-ness.
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
+  const errorSummaryRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (invalidFields.size > 0) {
+      errorSummaryRef.current?.focus();
+    }
+  }, [invalidFields]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -291,17 +298,23 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             {(showValidationSummary || statusWarning || referenceWarning) && (
               <div className="editor-messages">
                 {showValidationSummary && (
-                  <p className="editor-error-box">
+                  <p
+                    id="editor-error-summary"
+                    className="editor-error-box"
+                    role="alert"
+                    tabIndex={-1}
+                    ref={errorSummaryRef}
+                  >
                     <strong>Error:</strong> One or more required fields are blank.
                   </p>
                 )}
                 {statusWarning && (
-                  <p className="editor-warning-box">
+                  <p className="editor-warning-box" role="status">
                     <strong>Warning:</strong> {statusWarning}
                   </p>
                 )}
                 {referenceWarning && (
-                  <p className="editor-warning-box">
+                  <p className="editor-warning-box" role="status">
                     <strong>Warning:</strong> {referenceWarning}
                   </p>
                 )}
@@ -315,10 +328,15 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 maxLength={500}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                aria-invalid={nameInvalid || undefined}
+                aria-describedby={nameInvalid ? "editor-error-summary" : undefined}
               />
             </div>
 
-            <details className={`editor-collapsible${areaInvalid ? " editor-collapsible-invalid" : ""}`}>
+            <details
+              className={`editor-collapsible${areaInvalid ? " editor-collapsible-invalid" : ""}`}
+              aria-describedby={areaInvalid ? "editor-error-summary" : undefined}
+            >
               <summary>Area ({area.length} selected)</summary>
               <div className="editor-collapsible-body">
                 <div className="editor-area-checkboxes">
@@ -376,6 +394,8 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               value={statement}
               onChange={(e) => setStatement(e.target.value)}
               rows={8}
+              aria-invalid={statementInvalid || undefined}
+              aria-describedby={statementInvalid ? "editor-error-summary" : undefined}
             />
           </div>
 
@@ -497,6 +517,8 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 value={commitMessage}
                 onChange={(e) => setCommitMessage(e.target.value)}
                 rows={3}
+                aria-invalid={commitMessageInvalid || undefined}
+                aria-describedby={commitMessageInvalid ? "editor-error-summary" : undefined}
               />
             </div>
           )}

@@ -89,7 +89,9 @@ export default function AuthWidget() {
               </button>
             </>
           ) : status === "sent" ? (
-            <span className="auth-status">Check your email for a sign-in link.</span>
+            <span className="auth-status" role="status">
+              Check your email for a sign-in link.
+            </span>
           ) : (
             <form onSubmit={handleSignIn}>
               <input
@@ -103,7 +105,9 @@ export default function AuthWidget() {
                 {status === "sending" ? "Sending…" : "Sign in"}
               </button>
               {status === "error" && (
-                <span className="auth-status auth-error">{errorMessage ?? "Something went wrong."}</span>
+                <span className="auth-status auth-error" role="alert">
+                  {errorMessage ?? "Something went wrong."}
+                </span>
               )}
             </form>
           )}

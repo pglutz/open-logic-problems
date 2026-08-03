@@ -146,7 +146,11 @@ export default function CommentSection({ problemId }: { problemId: number }) {
           <button type="submit" disabled={submitting}>
             {submitting ? "Posting…" : "Post comment"}
           </button>
-          {error && <p className="comment-error">{error}</p>}
+          {error && (
+            <p className="comment-error" role="alert">
+              {error}
+            </p>
+          )}
         </form>
       ) : (
         <p className="comment-signin-prompt">
