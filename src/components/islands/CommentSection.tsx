@@ -23,6 +23,7 @@ export default function CommentSection({ problemId }: { problemId: number }) {
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [postedMessage, setPostedMessage] = useState("");
 
   useEffect(() => {
     setName(window.localStorage.getItem(NAME_STORAGE_KEY) ?? "");
@@ -67,6 +68,7 @@ export default function CommentSection({ problemId }: { problemId: number }) {
     if (!trimmedName || !trimmedBody) return;
     setSubmitting(true);
     setError(null);
+    setPostedMessage("");
     window.localStorage.setItem(NAME_STORAGE_KEY, trimmedName);
     const { data, error } = await supabase
       .from("comments")
@@ -87,10 +89,14 @@ export default function CommentSection({ problemId }: { problemId: number }) {
     setSubmitting(false);
     setComments((prev) => [...(prev ?? []), { ...data, bodyHtml } as Comment]);
     setBody("");
+    setPostedMessage("Comment posted.");
   }
 
   return (
     <div className="comment-section">
+      <div aria-live="polite" className="visually-hidden">
+        {postedMessage}
+      </div>
       {comments === null && <p className="muted">Loading comments…</p>}
       {comments && comments.length === 0 && <p className="muted">No comments yet.</p>}
       {comments && comments.length > 0 && (
