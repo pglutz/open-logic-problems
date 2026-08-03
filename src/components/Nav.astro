@@ -277,3 +277,23 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     color: var(--color-error-text);
   }
 </style>
+
+<script>
+  const mobileMenu = document.querySelector(".mobile-menu");
+  const hamburgerButton = document.querySelector(".hamburger-button");
+
+  if (mobileMenu instanceof HTMLDetailsElement) {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && mobileMenu.open) {
+        mobileMenu.open = false;
+        if (hamburgerButton instanceof HTMLElement) hamburgerButton.focus();
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (mobileMenu.open && e.target instanceof Node && !mobileMenu.contains(e.target)) {
+        mobileMenu.open = false;
+      }
+    });
+  }
+</script>
