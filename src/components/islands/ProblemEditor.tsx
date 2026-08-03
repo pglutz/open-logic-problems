@@ -276,10 +276,14 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   return (
     <form className="problem-editor" onSubmit={handleSubmit} noValidate>
       <div className="editor-columns" data-mobile-tab={mobileTab}>
-        <div className="editor-mobile-tabs" data-active={mobileTab}>
+        <div className="editor-mobile-tabs" data-active={mobileTab} role="tablist">
           <div className="editor-mobile-tab-slider" aria-hidden="true" />
           <button
             type="button"
+            id="editor-tab-edit"
+            role="tab"
+            aria-selected={mobileTab === "edit"}
+            aria-controls="editor-panel-edit"
             className={`editor-mobile-tab${mobileTab === "edit" ? " editor-mobile-tab-active" : ""}`}
             onClick={() => setMobileTab("edit")}
           >
@@ -287,13 +291,17 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
           </button>
           <button
             type="button"
+            id="editor-tab-preview"
+            role="tab"
+            aria-selected={mobileTab === "preview"}
+            aria-controls="editor-panel-preview"
             className={`editor-mobile-tab${mobileTab === "preview" ? " editor-mobile-tab-active" : ""}`}
             onClick={() => setMobileTab("preview")}
           >
             Preview
           </button>
         </div>
-        <div className="editor-left">
+        <div className="editor-left" id="editor-panel-edit" role="tabpanel" aria-labelledby="editor-tab-edit">
           <div className="editor-header-fields">
             {(showValidationSummary || statusWarning || referenceWarning) && (
               <div className="editor-messages">
@@ -529,7 +537,12 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
           {error && <p className="comment-error">{error}</p>}
         </div>
 
-        <div className="editor-right">
+        <div
+          className="editor-right"
+          id="editor-panel-preview"
+          role="tabpanel"
+          aria-labelledby="editor-tab-preview"
+        >
           <div className="editor-preview-page">
             {mode === "new" ? (
               <p className="muted editor-preview-id">New problem proposal</p>

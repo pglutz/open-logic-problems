@@ -159,6 +159,7 @@ export default function ProblemListFilter({ problems }: Props) {
                 key={opt.key}
                 type="button"
                 className={sortKey === opt.key ? "active" : ""}
+                aria-pressed={sortKey === opt.key}
                 onClick={() => setSortKey(opt.key)}
               >
                 {opt.label}
@@ -174,6 +175,7 @@ export default function ProblemListFilter({ problems }: Props) {
             <button
               type="button"
               className={`direction-toggle-option${sortDir === "asc" ? " direction-toggle-active" : ""}`}
+              aria-pressed={sortDir === "asc"}
               onClick={() => setSortDir("asc")}
             >
               Ascending
@@ -181,6 +183,7 @@ export default function ProblemListFilter({ problems }: Props) {
             <button
               type="button"
               className={`direction-toggle-option${sortDir === "desc" ? " direction-toggle-active" : ""}`}
+              aria-pressed={sortDir === "desc"}
               onClick={() => setSortDir("desc")}
             >
               Descending
