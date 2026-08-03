@@ -258,11 +258,12 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   if (result) {
     return (
       <p className="comment-signin-prompt">
-        Your {mode === "new" ? "problem proposal" : "suggested edit"} has been opened as a pull
-        request:{" "}
+        Your {mode === "new" ? "problem proposal" : "suggested edit"} has been submitted as a pull
+        request on github:{" "}
         <a href={result.prUrl} target="_blank" rel="noreferrer">
           {result.prUrl}
         </a>
+        <br />
         <br />
         You'll get another email when it's accepted.
       </p>
