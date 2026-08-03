@@ -17,6 +17,7 @@
   --color-claimed-border: #d99a2b;
   --color-error-bg: #fdf2f2;
   --color-error-border: #d9776c;
+  --color-error-text: #a2362a;
 
   --max-width: 860px;
 
@@ -46,6 +47,7 @@
     --color-claimed-border: #d99a2b;
     --color-error-bg: #33201f;
     --color-error-border: #c97b70;
+    --color-error-text: #c97b70;
   }
 }
 
@@ -184,7 +186,7 @@ pre code {
 /* Shared across the comment section and the suggest-an-edit form, which live
    under different layouts (ProblemLayout vs BaseLayout). */
 .comment-error {
-  color: var(--color-error-border);
+  color: var(--color-error-text);
   font-size: 0.85rem;
   margin: 0;
 }
