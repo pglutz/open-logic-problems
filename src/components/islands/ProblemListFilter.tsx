@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AREAS, type Area } from "../../lib/areas";
+import ImpactMarks from "../react/ImpactMarks";
 import type { ProblemIndexEntry, ProblemStatus } from "../../lib/problems";
 import {
   STATUSES,
@@ -7,7 +8,6 @@ import {
   IMPACTS,
   IMPACT_LABELS,
   IMPACT_SHORT_LABELS,
-  IMPACT_RUBRIC,
   formatArea,
 } from "../../lib/problems";
 
@@ -244,9 +244,7 @@ export default function ProblemListFilter({ problems }: Props) {
               <div className="meta-row">
                 <span className="problem-id muted">#{p.id}</span>
                 <h3 className="card-title-plain">{p.name}</h3>
-                <span className="impact" title={IMPACT_RUBRIC[p.impact]}>
-                  {"!".repeat(p.impact)}
-                </span>
+                <ImpactMarks impact={p.impact} />
               </div>
               <div className="area-row">
                 {p.area.map((a) => (
