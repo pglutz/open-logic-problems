@@ -10,6 +10,7 @@ export default function AuthWidget() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -28,6 +29,18 @@ export default function AuthWidget() {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open]);
 
   useEffect(() => {
@@ -55,11 +68,13 @@ export default function AuthWidget() {
     setStatus("idle");
     setEmail("");
     setOpen(false);
+    triggerRef.current?.focus();
   }
 
   return (
     <div className="auth-widget" ref={containerRef}>
       <button
+        ref={triggerRef}
         type="button"
         className="icon-link auth-icon-button"
         aria-label={session ? `Account: ${session.user.email}` : "Sign in"}
@@ -94,7 +109,11 @@ export default function AuthWidget() {
             </span>
           ) : (
             <form onSubmit={handleSignIn}>
+              <label htmlFor="auth-email" className="visually-hidden">
+                Email
+              </label>
               <input
+                id="auth-email"
                 type="email"
                 required
                 placeholder="Email"
