@@ -151,6 +151,7 @@ export default function ProblemListFilter({ problems }: Props) {
   return (
     <div className="listing">
       <aside className="sidebar">
+        <h2 className="visually-hidden">Sort and filter problems</h2>
         <div className="filter-group">
           <h3>Sort by</h3>
           <div className="button-row">
@@ -231,6 +232,7 @@ export default function ProblemListFilter({ problems }: Props) {
       </aside>
 
       <div className="results">
+        <h2 className="visually-hidden">Results</h2>
         <p className="count muted">
           {sorted.length} problem{sorted.length === 1 ? "" : "s"}
         </p>
