@@ -16,5 +16,11 @@
     "type": "new-problem",
     "id": 9,
     "name": "Borel boundedness of CBERs"
+  },
+  {
+    "date": "2026-08-04",
+    "type": "new-problem",
+    "id": 10,
+    "name": "Is every Polish group graphic?"
   }
 ]
