@@ -6,7 +6,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <div class="not-found">
     <h1>404: The page you're looking for could not be found</h1>
     <div class="not-found-row">
-      <img class="not-found-image" src="/thinker_404.png" alt="" />
+      <picture class="not-found-image">
+        <source media="(max-width: 600px)" srcset="/thinker_404_crop.png" />
+        <img src="/thinker_404.png" alt="" />
+      </picture>
       <div class="not-found-text">
         <p>If you think something is wrong with the website you can email us at <a href="mailto:admin@openlogicproblems.com">admin@openlogicproblems.com</a> or open an issue on <a href="https://github.com/pglutz/open-logic-problems">GitHub</a>. Otherwise, you might be able to find what you're looking for on the <a href="/">home page</a>, the <a href="/faq">FAQ</a>, the <a href="/problems">list of problems</a>, or by using the <a href="/search">search feature</a>.</p>
       </div>
@@ -29,8 +32,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     display: block;
     flex: 0 0 auto;
     width: min(270px, 100%);
-    height: auto;
+    overflow: hidden;
     border-radius: var(--radius-lg);
+  }
+  .not-found-image img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
   .not-found-text {
     flex: 1 1 240px;
@@ -38,5 +46,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
   .not-found-text p {
     margin-top: 0;
+  }
+  @media (max-width: 600px) {
+    .not-found-image {
+      width: 100%;
+    }
   }
 </style>
