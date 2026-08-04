@@ -40,3 +40,8 @@ CLAUDE.md
 
 # scratch/local-only files, not for the repo
 local/
+
+# Emacs temporary files
+*~
+\#*\#
+.\#*
