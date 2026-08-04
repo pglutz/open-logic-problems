@@ -6,12 +6,9 @@ description: How this site works and how to contribute.
 
 # FAQ
 
-## What is this site?
+## What is this website?
 
-A collection of open problems in mathematical logic — set theory, model theory, proof
-theory, computability theory, and related areas. Each problem has its own page with a precise
-statement, its current status, definitions of the terms it uses, known partial results, and
-references.
+
 
 ## What do the statuses mean?
 
