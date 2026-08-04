@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import changelogData from "../../data/changelog.json";
 import featuredIds from "../../data/featured.json";
+import { formatArea } from "../lib/problems";
 
 interface ChangelogEntry {
   date: string;
@@ -48,7 +49,7 @@ function changeTypeLabel(entry: ChangelogEntry): string {
     </p>
     
     <p>
-    This site is maintained by <a href="https://websites.umich.edu/~pglutz/">Patrick Lutz</a>. To report problems with the website or make suggestions, feel free to email <a href="mailto:admin@openlogicproblems.com">admin@openlogicproblems.com</a> or open an issue on <a href="https://github.com/pglutz/open-logic-problems">GitHub</a>.
+    This site is maintained by <a href="https://websites.umich.edu/~pglutz/">Patrick Lutz</a>. To report problems with the website or make suggestions, feel free to email <a href="mailto:admin@openlogicproblems.com">admin@openlogicproblems.com</a> or open an issue on <a href="https://github.com/pglutz/open-logic-problems">GitHub</a>. 
     </p>
   </div>
 
@@ -77,10 +78,20 @@ function changeTypeLabel(entry: ChangelogEntry): string {
     featuredProblems.length > 0 && (
       <section>
         <h2>Featured Problems</h2>
-        <ul>
+        <ul class="changes panel-box">
           {featuredProblems.map((p) => (
-            <li>
-              <a href={`/problems/${p.data.id}`}>{p.data.name ?? `Problem #${p.data.id}`}</a>
+            <li class="featured-item">
+              <div class="entry-line featured-entry-line">
+                <span class="muted entry-date">#{p.data.id}</span>
+                <a class="featured-title" href={`/problems/${p.data.id}`}>{p.data.name ?? `Problem #${p.data.id}`}</a>
+              </div>
+              <ul class="area-tags featured-area-tags">
+                {p.data.area.map((a) => (
+                  <li>
+                    <a href={`/problems?area=${encodeURIComponent(a)}`}>{formatArea(a)}</a>
+                  </li>
+                ))}
+              </ul>
             </li>
           ))}
         </ul>
@@ -113,11 +124,11 @@ function changeTypeLabel(entry: ChangelogEntry): string {
     margin: 0;
     padding: 0;
   }
-  .changes li {
+  .changes > li {
     padding: 0.5rem 0;
     border-bottom: var(--border-width) solid var(--color-border);
   }
-  .changes li:last-child {
+  .changes > li:last-child {
     border-bottom: none;
   }
   .panel-box {
@@ -136,6 +147,40 @@ function changeTypeLabel(entry: ChangelogEntry): string {
     display: inline-block;
     min-width: 5.5rem;
   }
+  .featured-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .featured-entry-line {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .featured-entry-line .entry-date {
+    min-width: 0;
+  }
+  .featured-title {
+    flex: 1;
+    min-width: 0;
+  }
+  .featured-area-tags {
+    justify-content: flex-end;
+  }
+  @media (min-width: 47.6rem) {
+    .featured-item {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 1rem;
+    }
+    .featured-entry-line {
+      flex: 1;
+      min-width: 0;
+    }
+    .featured-area-tags {
+      flex: 0 0 auto;
+    }
+  }
   .change-label {
     display: inline-block;
     min-width: 8.25rem;
@@ -146,5 +191,8 @@ function changeTypeLabel(entry: ChangelogEntry): string {
   }
   .change-label.change-status-change {
     color: #c5205d;
+  }
+  section + section {
+    margin-top: 2.25rem;
   }
 </style>
