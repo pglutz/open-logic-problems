@@ -1,0 +1,22 @@
+---
+id: null
+name: "Is every Polish group graphic?"
+status: open
+area: [descriptive-set-theory]
+impact: 1
+canonical_reference:
+  title: "Borel graphable equivalence relations"
+  author: "Tyler Arant, Alexander S. Kechris, and Patrick Lutz"
+  venue: "Advances in Mathematics"
+  year: 2026
+  link: "https://arxiv.org/pdf/2409.08624"
+  doi: "10.1016/j.aim.2025.110765"
+---
+
+## Statement
+
+A Polish group $G$ is called *graphic* if every Borel action of $G$ on a Polish space $X$ generates a Borel graphable equivalence relation. Is every Polish group graphic?
+
+## Known Partial Results
+
+Arant, Kechris and Lutz showed that every connected Polish group is graphic.
