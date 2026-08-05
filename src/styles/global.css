@@ -308,6 +308,26 @@ pre code {
   margin-bottom: 0.5rem;
 }
 
+/* faq.md — scoped via :has(.faq-item) since it's the only page with these. */
+main:has(.faq-item) h2 {
+  margin-top: 1.5rem;
+}
+.faq-item {
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+  background: rgba(128, 128, 128, 0.06);
+}
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.faq-item[open] summary {
+  margin-bottom: 0.5rem;
+}
+
 /* ProblemEditor.tsx — shared by the suggest-an-edit and propose-a-new-problem
    pages (a React island, so Astro's scoped-style attribute never reaches
    it — these rules must be global regardless). */
