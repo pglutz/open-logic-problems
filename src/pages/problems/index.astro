@@ -16,7 +16,7 @@ const index: ProblemIndexEntry[] = problems
   .sort((a, b) => a.id - b.id);
 ---
 
-<BaseLayout title="List of Problems" description="Browse all open problems in mathematical logic, filterable by area, status, and impact.">
+<BaseLayout title="List of Problems" description="Browse all problems, filterable by area, status, and impact.">
   <h1>List of Problems</h1>
   <ProblemListFilter problems={index} client:load />
 </BaseLayout>

@@ -163,8 +163,8 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   const statusChanged = status !== baselineStatus;
   const statusWarning = statusChanged
     ? mode === "new"
-      ? "Proposing a problem with a non-open status gets extra scrutiny during review, so please make sure this is backed by a citable published result."
-      : "You're changing this problem's status — status changes get extra scrutiny during review, so please make sure this is backed by a citable published result."
+      ? "New problems with non-open status will receive extra scrutiny during review; please make sure the status is correct and that the prbolem is worthy of inclusion."
+      : "You're changing this problem's status — status changes will receive extra scrutiny during review, so please make sure the status change is correct and is backed by reliable evidence."
     : null;
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {

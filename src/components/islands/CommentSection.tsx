@@ -144,7 +144,7 @@ export default function CommentSection({ problemId }: { problemId: number }) {
             id="comment-body"
             required
             maxLength={5000}
-            placeholder="Add a comment… (Markdown links and $LaTeX$ are supported)"
+            placeholder="Add a comment… (Markdown links and $\LaTeX$ are supported)"
             rows={3}
             value={body}
             onChange={(e) => setBody(e.target.value)}
