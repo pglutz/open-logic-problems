@@ -32,7 +32,7 @@ Each problem comes with three types of labels indicating the problem's area, sta
 
 **Status:** each problem is also labelled as either open, solved or having a claimed proof which is considered credible by the community but which has not yet been fully accepted. The status of a problem is indicated both by a label next to the problem's title and by the color of the problem (blue for open, green for solved and tan for a credible but unverified proof).
 
-**Impact:** each problem is also labelled by the expected impact of a solution—roughly how much he community would be expected to care if the problem were to be solved. Note that this is not the same thing as difficulty: there may be very hard problems that few people care about and problems that many people care about that turn out to have relatively simple solutions. Impact is indicated using between one and three exclamation marks.
+**Impact:** each problem is also labelled by the expected impact of a solution—roughly how much the community would be expected to care if the problem were to be solved. Note that this is not the same thing as difficulty: there may be very hard problems that few people care about and problems that many people care about that turn out to have relatively simple solutions. Impact is indicated using between one and three exclamation marks.
 
 ### How should I interpret the impact rating of a problem?
 
@@ -69,7 +69,7 @@ Every problem page has a comments section at the bottom. In order to leave a com
 
 ### What if I notice a problem with the website or have a suggestion for improving it?
 
-You can either email [admin@openlogicproblems.com]() or creat an issue on [GitHub]().
+You can either email [admin@openlogicproblems.com](mailto:admin@openlogicproblems.com) or create an issue on [GitHub](https://github.com/pglutz/open-logic-problems).
 
 ### Who made this website?
 
@@ -85,7 +85,7 @@ The best ways to contribute to the website are to suggest new problems, edit exi
 
 You can suggest changes to existing problems either by using the suggest-an-edit form or by making a pull request on GitHub.
 
-To use the suggest-an-edit form, navigate to the problem that you would like to edit and click on the "Suggest an edit" link in the bottom right-hand corner of the problem statement box. This will take you to  page where you can edit the problem. This page will prompt you to sign in, which you can do by entering your email address and then clicking a link which will be emailed to you. Once signed in, you can use the edit page to make changes to the problem and see the results in a live preview. When you are satisfied with your changes, add a description of them to the "Summary of changes" box at the bottom of the editor and then click "Submit suggested edit." Your edit will then be turned into a pull request on GitHub. You'll receive an email both when your edit is submitted and when the changes are accepted and incorporated into the website.
+To use the suggest-an-edit form, navigate to the problem that you would like to edit and click on the "Suggest an edit" link in the bottom right-hand corner of the problem statement box. This will take you to a page where you can edit the problem. This page will prompt you to sign in, which you can do by entering your email address and then clicking a link which will be emailed to you. Once signed in, you can use the edit page to make changes to the problem and see the results in a live preview. When you are satisfied with your changes, add a description of them to the "Summary of changes" box at the bottom of the editor and then click "Submit suggested edit." Your edit will then be turned into a pull request on GitHub. You'll receive an email both when your edit is submitted and when the changes are accepted and incorporated into the website.
 
 If you prefer, you may also edit problems by directly making a pull request on GitHub. If you choose to do so, make sure that you follow the required format for problems; see the [CONTRIBUTING](https://github.com/pglutz/open-logic-problems/blob/main/CONTRIBUTING.md) page on GitHub for more details.
 
