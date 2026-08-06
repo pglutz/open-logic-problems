@@ -40,5 +40,11 @@
     "type": "new-problem",
     "id": 13,
     "name": "Stable fields conjecture"
+  },
+  {
+    "date": "2026-08-06",
+    "type": "new-problem",
+    "id": 14,
+    "name": "Cherlin-Zilber Algebraicity Conjecture"
   }
 ]
