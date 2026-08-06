@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
     paths: ["problems/**"]
+  # Lets this be re-run manually from the Actions tab (e.g. after an Actions
+  # outage caused a push to be missed) — unlike the push trigger above, this
+  # ignores the paths filter, so it'll still process any already-pending
+  # file even though nothing new was just pushed.
+  workflow_dispatch:
 
 concurrency:
   group: content-automation
