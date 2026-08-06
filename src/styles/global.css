@@ -603,6 +603,11 @@ main:has(.faq-item) h2 {
 .signin-subtitle {
   margin: -0.7rem 0 0;
 }
+.signin-oauth-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
 .signin-oauth-button {
   display: flex;
   align-items: center;
