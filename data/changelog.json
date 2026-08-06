@@ -28,5 +28,11 @@
     "type": "new-problem",
     "id": 11,
     "name": "Kreisel's Conjecture"
+  },
+  {
+    "date": "2026-08-06",
+    "type": "new-problem",
+    "id": 12,
+    "name": "Hyperfiniteness of amenable group actions"
   }
 ]
