@@ -41,7 +41,7 @@ export const POST: APIRoute = async ({ request }) => {
   const newFileContent = serializeProblemFile(payload.frontmatter, payload.body);
 
   const notifyMarker = user.email
-    ? buildNotifyMarker({
+    ? buildNotifyMarker(import.meta.env.NOTIFY_MARKER_KEY, {
         email: user.email,
         kind: "edit",
         problemId: payload.problemId,
@@ -75,6 +75,7 @@ export const POST: APIRoute = async ({ request }) => {
     // can be frozen the instant the response is sent, so an un-awaited send
     // isn't guaranteed to complete.
     await sendEmail(
+      import.meta.env.RESEND_API_KEY,
       user.email,
       `Your suggested edit to Problem #${payload.problemId} was submitted`,
       `Your suggested edit to Problem #${payload.problemId} has been submitted as a pull request on github: ${prResult.prUrl}\n\nYou'll get another email when it's accepted.`,

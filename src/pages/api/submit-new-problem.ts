@@ -45,16 +45,22 @@ export const POST: APIRoute = async ({ request }) => {
   if (rateLimited) return rateLimited;
 
   const slug = `${slugify(payload.frontmatter.name)}-${crypto.randomUUID().slice(0, 8)}`;
-  const newFileContent = serializePendingProblemFile(payload.frontmatter, payload.body);
 
+  // Embedded in the pending file's own body, not the PR body — unlike an
+  // edit (live the moment its PR merges), a new problem isn't actually live
+  // until the content-automation workflow assigns it an id, so that's what
+  // reads this marker and sends the "accepted" email, not the merge-time
+  // workflow. See assign-ids.ts.
   const notifyMarker = user.email
-    ? buildNotifyMarker({
+    ? buildNotifyMarker(import.meta.env.NOTIFY_MARKER_KEY, {
         email: user.email,
         kind: "new_problem",
         problemId: null,
         name: payload.frontmatter.name,
       })
     : "";
+  const bodyWithMarker = notifyMarker ? `${payload.body}\n\n${notifyMarker}` : payload.body;
+  const newFileContent = serializePendingProblemFile(payload.frontmatter, bodyWithMarker);
 
   let prResult;
   try {
@@ -64,7 +70,7 @@ export const POST: APIRoute = async ({ request }) => {
       newFileContent,
       commitMessage: payload.commitMessage,
       prTitle: `New problem proposal: ${payload.frontmatter.name}`,
-      prBody: `Proposed via the website's new-problem form.\n\n${payload.commitMessage}${notifyMarker ? `\n\n${notifyMarker}` : ""}`,
+      prBody: `Proposed via the website's new-problem form.\n\n${payload.commitMessage}`,
     });
   } catch {
     return jsonResponse(502, { error: "github_error", message: "Failed to open a pull request. Please try again." });
@@ -79,6 +85,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (user.email) {
     await sendEmail(
+      import.meta.env.RESEND_API_KEY,
       user.email,
       `Your new problem proposal "${payload.frontmatter.name}" was submitted`,
       `Your new problem proposal "${payload.frontmatter.name}" has been submitted as a pull request on github: ${prResult.prUrl}\n\nYou'll get another email when it's accepted.`,

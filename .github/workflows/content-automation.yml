@@ -49,3 +49,13 @@ jobs:
           else
             echo "No changes to commit."
           fi
+
+      # Deliberately its own step, after the push above: if that step fails
+      # (e.g. a concurrent push conflict), GitHub Actions skips this one by
+      # default, so a submitter is only ever emailed once their new problem
+      # is genuinely live, not just locally assigned an id on the runner.
+      - name: Notify submitters of newly-assigned problems
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFY_MARKER_KEY: ${{ secrets.NOTIFY_MARKER_KEY }}
+        run: node --experimental-strip-types scripts/content-automation/notify-assigned.ts

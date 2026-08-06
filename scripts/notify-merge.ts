@@ -42,15 +42,18 @@ if (!payload.email) {
   process.exit(0);
 }
 
-const subject =
-  payload.kind === "edit"
-    ? `Your suggested edit to Problem #${payload.problemId} was accepted`
-    : `Your new problem proposal "${payload.name}" was accepted`;
+// A new-problem proposal isn't actually live the moment its PR merges — it
+// still needs an id assigned by the content-automation workflow, which is
+// what sends this notification for that case instead (see assign-ids.ts).
+// This guard mainly matters for PRs opened before that change shipped,
+// which still carry an embedded new_problem marker from the old flow.
+if (payload.kind !== "edit") {
+  console.log(`Marker kind is "${payload.kind}", not "edit"; skipping (handled elsewhere).`);
+  process.exit(0);
+}
 
-const text =
-  payload.kind === "edit"
-    ? `Your suggested edit to Problem #${payload.problemId} (${payload.name}) has been accepted and is now live.\n\n${prUrl}`
-    : `Your new problem proposal "${payload.name}" has been accepted and is now live.\n\n${prUrl}`;
+const subject = `Your suggested edit to Problem #${payload.problemId} was accepted`;
+const text = `Your suggested edit to Problem #${payload.problemId} (${payload.name}) has been accepted and is now live.\n\n${prUrl}`;
 
 const res = await fetch("https://api.resend.com/emails", {
   method: "POST",
