@@ -1,0 +1,46 @@
+---
+id: null
+name: "Cherlin-Zilber Algebraicity Conjecture"
+status: open
+area: [model-theory]
+impact: 2
+canonical_reference:
+  title: "Groups of small Morley rank"
+  author: "Gregory Cherlin"
+  venue: "Annals of Mathematical Logic "
+  year: 1979
+  doi: "https://doi.org/10.1016/0003-4843(79)90019-6"
+---
+
+## Statement
+
+Every infinite simple group of finite Morley rank is an algebraic group over an algebraically closed field.
+
+## Known Partial Results
+
+It is known for infinite simple groups of Morley rank at most three, for groups of 'even type', and for simple groups of finite Morley rank with a split BN-pair of Tits rank at least 2.
+
+## Additional References
+
+T. Altınel, A. Borovik and G. Cherlin, “Groups of mixed type,” J. Algebra 192 (1997), 524–571.
+
+T. Altınel, A. V. Borovik and G. Cherlin, Simple Groups of Finite Morley Rank, Mathematical Surveys and Monographs 145, AMS, 2008.
+
+A. Borovik and A. Nesin, Groups of Finite Morley Rank, Oxford Logic Guides 26, Oxford University Press, 1994.
+
+O. Frécon, “Simple groups of Morley rank 3 are algebraic,” J. Amer. Math. Soc. 31 (2018), no. 3, 643–659.
+
+L. Kramer, K. Tent and H. Van Maldeghem, “Simple groups of finite Morley rank and Tits buildings,” Israel J. Math. 109 (1999), 189–224.
+
+A. Nesin, “Nonsolvable groups of Morley rank 3,” J. Algebra 124 (1989), 199–218.
+
+A. Nesin, “On bad groups, bad fields, and pseudoplanes,” J. Symbolic Logic 56 (1991), 915–931.
+
+K. Tent, “From the Cherlin–Zilber Conjecture via sharply 2-transitive groups to the Burnside problem,” 2025/2026 survey.
+
+B. I. Zil’ber, “Группы и кольца, теория которых категорична”
+[“Groups and rings whose theory is categorical”], Fundamenta Mathematicae 95 (1977), no. 3, 173–188.
+
+## Notes
+
+The original sources state the conjecture in different terms: for Zilber, the conjecture was for uncountably categorical groups, and for Cherlin, the conjecture was for infinite simple omega-stable groups. The contemporary formulation splits the difference.
