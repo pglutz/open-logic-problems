@@ -1,7 +1,7 @@
 // Run by .github/workflows/notify-merge.yml when a submission PR is merged.
-// No npm dependencies — Node 22's built-in fetch/Buffer are enough, so this
-// workflow doesn't need an `npm ci` step at all.
-export {}; // marks this file as a module, enabling top-level await below
+// No npm dependencies — Node 22's built-in fetch/Buffer/crypto are enough, so
+// this workflow doesn't need an `npm ci` step at all.
+import { createDecipheriv } from "node:crypto";
 
 interface NotifyPayload {
   email: string;
@@ -13,6 +13,7 @@ interface NotifyPayload {
 const prBody = process.env.PR_BODY ?? "";
 const prUrl = process.env.PR_URL ?? "";
 const resendApiKey = process.env.RESEND_API_KEY;
+const notifyMarkerKey = Buffer.from(process.env.NOTIFY_MARKER_KEY ?? "", "hex");
 
 const match = prBody.match(/<!-- opl-notify:([A-Za-z0-9+/=]+) -->/);
 if (!match) {
@@ -22,9 +23,17 @@ if (!match) {
 
 let payload: NotifyPayload;
 try {
-  payload = JSON.parse(Buffer.from(match[1], "base64").toString("utf-8"));
+  // Layout matches buildNotifyMarker in src/lib/email.ts: iv (12) + authTag (16) + ciphertext.
+  const raw = Buffer.from(match[1], "base64");
+  const iv = raw.subarray(0, 12);
+  const authTag = raw.subarray(12, 28);
+  const ciphertext = raw.subarray(28);
+  const decipher = createDecipheriv("aes-256-gcm", notifyMarkerKey, iv);
+  decipher.setAuthTag(authTag);
+  const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+  payload = JSON.parse(plaintext.toString("utf-8"));
 } catch (err) {
-  console.error("Failed to parse notification marker:", err);
+  console.error("Failed to decrypt/parse notification marker:", err);
   process.exit(1);
 }
 

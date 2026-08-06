@@ -3,6 +3,8 @@
 // app sends arbitrary email; Supabase's own SMTP config handles auth emails
 // separately). Reuses the same verified sending domain as that SMTP setup.
 
+import { randomBytes, createCipheriv } from "node:crypto";
+
 const RESEND_API_URL = "https://api.resend.com/emails";
 const FROM_ADDRESS = "Open Problems in Mathematical Logic <noreply@mail.openlogicproblems.com>";
 
@@ -33,12 +35,17 @@ export interface NotifyPayload {
   name: string;
 }
 
-// Embedded as a hidden HTML comment in the PR body at submission time, so
-// the merge-notification workflow can read it straight off the closed PR's
-// body (via the webhook event) with no database lookup — the PR body
-// already names the submitter's email in plain text today, so this adds no
-// new exposure, just makes the same data machine-readable.
+// Embedded as a hidden HTML comment in the PR body at submission time, so the
+// merge-notification workflow can read it straight off the closed PR's body
+// (via the webhook event) with no database lookup. The payload is AES-256-GCM
+// encrypted (not just base64) since PR bodies are public — only the
+// GitHub Action holding NOTIFY_MARKER_KEY can recover the submitter's email.
 export function buildNotifyMarker(payload: NotifyPayload): string {
-  const encoded = Buffer.from(JSON.stringify(payload), "utf-8").toString("base64");
+  const key = Buffer.from(import.meta.env.NOTIFY_MARKER_KEY, "hex");
+  const iv = randomBytes(12);
+  const cipher = createCipheriv("aes-256-gcm", key, iv);
+  const ciphertext = Buffer.concat([cipher.update(JSON.stringify(payload), "utf-8"), cipher.final()]);
+  const authTag = cipher.getAuthTag();
+  const encoded = Buffer.concat([iv, authTag, ciphertext]).toString("base64");
   return `<!-- opl-notify:${encoded} -->`;
 }

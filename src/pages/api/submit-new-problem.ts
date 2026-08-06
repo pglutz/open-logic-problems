@@ -64,7 +64,7 @@ export const POST: APIRoute = async ({ request }) => {
       newFileContent,
       commitMessage: payload.commitMessage,
       prTitle: `New problem proposal: ${payload.frontmatter.name}`,
-      prBody: `Proposed by ${user.email ?? "a signed-in user"} via the website's new-problem form.\n\n${payload.commitMessage}${notifyMarker ? `\n\n${notifyMarker}` : ""}`,
+      prBody: `Proposed via the website's new-problem form.\n\n${payload.commitMessage}${notifyMarker ? `\n\n${notifyMarker}` : ""}`,
     });
   } catch {
     return jsonResponse(502, { error: "github_error", message: "Failed to open a pull request. Please try again." });

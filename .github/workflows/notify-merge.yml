@@ -18,6 +18,7 @@ jobs:
       - name: Send merge notification email
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFY_MARKER_KEY: ${{ secrets.NOTIFY_MARKER_KEY }}
           PR_BODY: ${{ github.event.pull_request.body }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: node --experimental-strip-types scripts/notify-merge.ts
