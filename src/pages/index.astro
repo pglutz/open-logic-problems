@@ -16,7 +16,7 @@ interface ChangelogEntry {
 
 // changelog.json is append-only in true chronological order, so reversing it
 // (rather than sorting by date) is what actually gets same-day entries right.
-const recentChanges = (changelogData as ChangelogEntry[]).slice().reverse().slice(0, 10);
+const recentChanges = (changelogData as ChangelogEntry[]).slice().reverse().slice(0, 5);
 
 const featuredProblems =
   (featuredIds as number[]).length > 0
