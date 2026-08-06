@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase/client";
-import { OPEN_AUTH_POPOVER_EVENT } from "../../lib/authPopoverEvent";
+import { useSigninHref } from "../../lib/signinHref";
 import { renderMarkdown, renderIfPresent } from "../../lib/markdown/pipeline";
 import { joinSections, type ProblemSections } from "../../lib/markdown/sections";
 import { AREAS, type Area } from "../../lib/areas";
@@ -55,6 +55,7 @@ interface PreviewHtml {
 
 export default function ProblemEditor({ mode = "edit", problem, sections }: ProblemEditorProps) {
   const [session, setSession] = useState<Session | null>(null);
+  const signinHref = useSigninHref();
 
   // A brand-new proposal has no prior on-disk status to compare against —
   // treat "open" as the baseline instead, so the existing status-warning
@@ -243,14 +244,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   if (!session) {
     return (
       <p className="comment-signin-prompt">
-        <button
-          type="button"
-          className="link-button"
-          onClick={() => window.dispatchEvent(new CustomEvent(OPEN_AUTH_POPOVER_EVENT))}
-        >
-          Sign in
-        </button>{" "}
-        to {mode === "new" ? "propose a new problem" : "suggest an edit"}.
+        <a href={signinHref}>Sign in</a> to {mode === "new" ? "propose a new problem" : "suggest an edit"}.
       </p>
     );
   }

@@ -219,7 +219,7 @@ pre code {
   font-size: 1.02rem;
   font-weight: 500;
 }
-.comment-signin-prompt .link-button {
+.comment-signin-prompt a {
   font-weight: 700;
 }
 
@@ -572,4 +572,52 @@ main:has(.faq-item) h2 {
   margin: 0.1rem 0 1.25rem;
   font-size: 1.6rem;
   line-height: 1.25;
+}
+
+/* SignInForm.tsx (a React island, so these must be global) and shared
+   status text used wherever a sign-in/sign-out result is reported. */
+.auth-status {
+  color: var(--color-text);
+}
+.signin-main {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1.25rem;
+}
+.signin-card {
+  width: 100%;
+  max-width: 24rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgba(128, 128, 128, 0.06);
+  padding: 1.75rem 1.75rem 2rem;
+}
+.signin-title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.signin-subtitle {
+  margin: -0.7rem 0 0;
+}
+.signin-form,
+.signin-sent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.signin-submit {
+  width: 100%;
+  text-align: center;
+}
+.signin-hint {
+  margin: 0;
+  font-size: 0.82rem;
+}
+.signin-sent-links {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.85rem;
 }

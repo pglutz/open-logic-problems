@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SignInForm from "../components/islands/SignInForm";
+---
+
+<BaseLayout title="Sign in" excludeFromSearch>
+  <div class="signin-main">
+    <SignInForm client:load />
+  </div>
+</BaseLayout>

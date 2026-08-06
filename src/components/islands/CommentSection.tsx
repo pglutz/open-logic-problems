@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase/client";
 import { renderCommentMarkdown } from "../../lib/markdown/pipeline";
-import { OPEN_AUTH_POPOVER_EVENT } from "../../lib/authPopoverEvent";
+import { useSigninHref } from "../../lib/signinHref";
 
 interface Comment {
   id: string;
@@ -18,6 +18,7 @@ const NAME_STORAGE_KEY = "comment-author-name";
 
 export default function CommentSection({ problemId }: { problemId: number }) {
   const [session, setSession] = useState<Session | null>(null);
+  const signinHref = useSigninHref();
   const [comments, setComments] = useState<Comment[] | null>(null);
   const [name, setName] = useState("");
   const [body, setBody] = useState("");
@@ -160,14 +161,7 @@ export default function CommentSection({ problemId }: { problemId: number }) {
         </form>
       ) : (
         <p className="comment-signin-prompt">
-          <button
-            type="button"
-            className="link-button"
-            onClick={() => window.dispatchEvent(new CustomEvent(OPEN_AUTH_POPOVER_EVENT))}
-          >
-            Sign in
-          </button>{" "}
-          to leave a comment.
+          <a href={signinHref}>Sign in</a> to leave a comment.
         </p>
       )}
     </div>

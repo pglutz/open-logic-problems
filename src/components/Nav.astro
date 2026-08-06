@@ -91,7 +91,10 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     color: var(--color-nav-text);
   }
   .nav-inner {
-    max-width: var(--max-width);
+    /* Deliberately wider than the site's content column (var(--max-width),
+       860px) — the nav row has more items than the reading column needs to
+       accommodate, and this width is decoupled from --max-width on purpose. */
+    max-width: 1080px;
     margin: 0 auto;
     padding: 0.85rem 1.25rem;
     display: flex;
@@ -199,82 +202,34 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
 <style is:global>
   /* AuthWidget is a React island; its markup is rendered client-side, so
-     Astro's scoped-style attribute never reaches it — these rules must be
-     global. */
-  .auth-widget {
-    position: relative;
-    font-size: 0.9rem;
-  }
-  .auth-icon-button {
-    position: relative;
-    line-height: 0;
-    background: none;
-    border: none;
-    padding: 0;
-    color: inherit;
-    cursor: pointer;
-  }
-  .auth-icon-button svg {
-    vertical-align: middle;
-  }
-  .auth-signed-in-dot {
-    position: absolute;
-    top: -1px;
-    right: -3px;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #4caf50;
-    border: var(--border-width) solid var(--color-nav-bg);
-  }
-  .auth-popover {
-    position: absolute;
-    top: calc(100% + 0.6rem);
-    right: 0;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    min-width: 15rem;
-    padding: 0.75rem;
-    border-radius: var(--radius-md);
-    border: var(--border-width) solid var(--color-border);
-    background: var(--color-bg);
-    color: var(--color-text);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  }
-  .auth-popover form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .auth-popover input[type="email"] {
+     Astro's scoped-style attribute never reaches it — this rule must be
+     global. Both the "Sign In" (link to /signin) and "Sign Out" (button)
+     states share this one style; there's no visual distinction between them
+     beyond the text. */
+  .nav-signin-button {
     font: inherit;
-    font-size: 0.9rem;
-    padding: 0.3rem 0.5rem;
-    border-radius: var(--radius-sm);
-    border: var(--border-width) solid var(--color-border);
-    background: var(--color-bg);
-    color: var(--color-text);
-  }
-  .auth-popover button {
-    align-self: flex-start;
     font-size: 0.85rem;
-    padding: 0.3rem 0.65rem;
-    border-radius: var(--radius-sm);
-    border: var(--border-width) solid var(--color-border);
+    font-weight: 600;
+    padding: 0.35rem 0.9rem;
+    border-radius: var(--radius-md);
+    border: var(--border-width) solid color-mix(in srgb, var(--color-nav-text) 35%, transparent);
     background: transparent;
-    color: var(--color-text);
+    color: var(--color-nav-text);
+    text-decoration: none;
     cursor: pointer;
-  }
-  .auth-popover button:hover {
+    white-space: nowrap;
     opacity: 0.85;
   }
-  .auth-status {
-    color: var(--color-text);
-  }
-  .auth-error {
-    color: var(--color-error-text);
+  .nav-signin-button:hover {
+    /* Matches the rest of the nav's link-hover treatment (see .desktop-nav
+       a:hover above): no color change, just brighter — opacity handles the
+       text, and the border gets its own stronger mix so it brightens too.
+       color is repeated here (not just in the base rule) because the
+       signed-out state renders an <a>, and global.css's site-wide a:hover
+       would otherwise recolor it. */
+    opacity: 1;
+    color: var(--color-nav-text);
+    border-color: color-mix(in srgb, var(--color-nav-text) 75%, transparent);
   }
 </style>
 
