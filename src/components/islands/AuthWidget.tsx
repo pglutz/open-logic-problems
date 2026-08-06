@@ -14,10 +14,21 @@ export default function AuthWidget() {
   }, []);
 
   if (session) {
+    // Deliberately an <a>, not a <button> — see the sizing comment on
+    // .nav-signin-button in Nav.astro. role="button" tells assistive tech
+    // this behaves as an action, not a navigation, despite the tag.
     return (
-      <button type="button" className="nav-signin-button" onClick={() => supabase.auth.signOut()}>
+      <a
+        href="#"
+        role="button"
+        className="nav-signin-button"
+        onClick={(e) => {
+          e.preventDefault();
+          supabase.auth.signOut();
+        }}
+      >
         Sign Out
-      </button>
+      </a>
     );
   }
 
