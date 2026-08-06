@@ -22,5 +22,11 @@
     "type": "new-problem",
     "id": 10,
     "name": "Is every Polish group graphic?"
+  },
+  {
+    "date": "2026-08-06",
+    "type": "new-problem",
+    "id": 11,
+    "name": "Kreisel's Conjecture"
   }
 ]
