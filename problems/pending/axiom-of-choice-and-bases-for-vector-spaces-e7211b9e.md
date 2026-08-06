@@ -9,6 +9,7 @@ canonical_reference:
   author: "Paul Howard and Eleftherios Tachtsis"
   venue: "Mathematical Logic Quarterly"
   year: 2013
+  doi: "https://doi.org/10.1002/malq.201200049"
 ---
 
 ## Statement
