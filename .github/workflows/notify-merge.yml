@@ -3,10 +3,24 @@ name: Notify on Merge
 on:
   pull_request:
     types: [closed]
+  # Lets a missed run (e.g. a GitHub Actions outage swallowing the original
+  # pull_request event) be recovered manually from the Actions tab, by PR
+  # number — github.event.pull_request isn't populated on this trigger, so
+  # the "Look up PR details" step below fetches the same fields via the API
+  # instead.
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to (re-)send the merge notification for"
+        required: true
+        type: number
+
+permissions:
+  pull-requests: read
 
 jobs:
   notify:
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -15,10 +29,27 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Look up PR details (manual trigger only)
+        if: github.event_name == 'workflow_dispatch'
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          delimiter="$(openssl rand -hex 8)"
+          json="$(gh pr view ${{ inputs.pr_number }} --json body,url,merged)"
+          echo "merged=$(echo "$json" | jq -r .merged)" >> "$GITHUB_OUTPUT"
+          echo "url=$(echo "$json" | jq -r .url)" >> "$GITHUB_OUTPUT"
+          echo "body<<$delimiter" >> "$GITHUB_OUTPUT"
+          echo "$json" | jq -r .body >> "$GITHUB_OUTPUT"
+          echo "$delimiter" >> "$GITHUB_OUTPUT"
+
       - name: Send merge notification email
+        # For a manual trigger, only proceed if the given PR was actually
+        # merged — otherwise this would send a false "accepted" email.
+        if: github.event_name == 'pull_request' || steps.pr.outputs.merged == 'true'
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           NOTIFY_MARKER_KEY: ${{ secrets.NOTIFY_MARKER_KEY }}
-          PR_BODY: ${{ github.event.pull_request.body }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_BODY: ${{ github.event_name == 'pull_request' && github.event.pull_request.body || steps.pr.outputs.body }}
+          PR_URL: ${{ github.event_name == 'pull_request' && github.event.pull_request.html_url || steps.pr.outputs.url }}
         run: node --experimental-strip-types scripts/notify-merge.ts
