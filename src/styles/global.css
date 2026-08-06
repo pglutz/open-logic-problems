@@ -577,6 +577,7 @@ main:has(.faq-item) h2 {
 /* SignInForm.tsx (a React island, so these must be global) and shared
    status text used wherever a sign-in/sign-out result is reported. */
 .auth-status {
+  margin: 0;
   color: var(--color-text);
 }
 .signin-main {
@@ -615,6 +616,14 @@ main:has(.faq-item) h2 {
 .signin-hint {
   margin: 0;
   font-size: 0.82rem;
+}
+/* In the "check your email" state specifically, pull the hint closer to the
+   line above it and add extra room before "Use a different email" below —
+   the parent's flex `gap` alone gives equal spacing on both sides, which
+   read as too far from the message it's elaborating on. */
+.signin-sent .signin-hint {
+  margin-top: -0.3rem;
+  margin-bottom: 1.2rem;
 }
 .signin-sent-links {
   display: flex;

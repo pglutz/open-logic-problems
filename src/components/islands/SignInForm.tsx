@@ -23,15 +23,6 @@ export default function SignInForm() {
     return () => subscription.subscription.unsubscribe();
   }, []);
 
-  // Covers both the tab that completed the magic link (lands here already
-  // signed in) and this tab, if it's still open and picks up the same
-  // session via Supabase's cross-tab sync — either way, there's nothing to
-  // do on /signin once signed in, so leave immediately rather than showing
-  // an intermediate "you're signed in" screen.
-  useEffect(() => {
-    if (session) window.location.href = redirectTarget();
-  }, [session]);
-
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
@@ -49,9 +40,20 @@ export default function SignInForm() {
     setErrorMessage(null);
   }
 
-  // Signed-in is a transient state here — the effect above navigates away
-  // immediately, so there's nothing worth rendering for it.
-  if (session) return null;
+  if (session) {
+    return (
+      <div className="signin-card">
+        <p className="auth-status">Signed in as {session.user.email}.</p>
+        <div className="signin-sent-links">
+          <a href={redirectTarget()}>Continue</a>
+          <span aria-hidden="true">·</span>
+          <button type="button" className="link-button" onClick={() => supabase.auth.signOut()}>
+            Sign out
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="signin-card">
@@ -63,8 +65,11 @@ export default function SignInForm() {
           <p className="auth-status">
             Check your email for a sign-in link, sent to <strong>{email}</strong>.
           </p>
+          <p className="muted signin-hint">
+            Didn't get it after a minute or two? Check spam, or try again with a different email.
+          </p>
           <button type="button" className="link-button" onClick={handleUseDifferentEmail}>
-            Use a different email
+            Try a different email
           </button>
         </div>
       ) : (
