@@ -52,5 +52,11 @@
     "type": "new-problem",
     "id": 15,
     "name": "Axiomatizability of generic automorphisms"
+  },
+  {
+    "date": "2026-08-06",
+    "type": "new-problem",
+    "id": 16,
+    "name": "Axiom of Choice and bases for vector spaces"
   }
 ]
