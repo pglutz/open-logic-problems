@@ -603,6 +603,36 @@ main:has(.faq-item) h2 {
 .signin-subtitle {
   margin: -0.7rem 0 0;
 }
+.signin-oauth-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
+}
+.signin-oauth-button:hover {
+  background: rgba(128, 128, 128, 0.1);
+}
+.signin-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+.signin-divider-line {
+  flex: 1 1 auto;
+  height: var(--border-width);
+  background: var(--color-border);
+}
 .signin-form,
 .signin-sent {
   display: flex;
