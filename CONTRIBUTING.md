@@ -4,27 +4,27 @@ If you would like to contribute a new problem or to add or correct information f
 
 ## Editing form on website
 
+The easiest way to add a problem or to edit an existing problem is to use the editing form on the website. For new problems, you can reach the editing form by clicking [Submit a New Problem](https://www.openlogicproblems.com/problems/new) in the website's navigation bar. For editing existing problems, you can reach the editing form by visiting the problem's page and clicking the "Suggest an edit" link in the bottom right-hand corner of the problem statement.
+
 ## Pull request on github
 
-Problems are stored as Markdown files with YAML frontmatter under `problems/`. If you're
-comfortable with git, you can edit these files directly and open a pull request instead of
-using the website's editor.
+Problems are stored as Markdown files with YAML frontmatter under `problems/`. If you're comfortable with git, you can edit these files directly and open a pull request instead of using the website's editor.
 
-Every pull request that touches `problems/**` is automatically checked (see "Validate
-Content" in the Actions tab) for schema errors and duplicate ids, and is reviewed manually
-before merging.
+All problem files must follow a standardized format, which is described below. Note that every pull request that touches `problems/**` is automatically checked (see "Validate Content" in the Actions tab) for schema errors and duplicate ids, and is reviewed manually before merging.
 
 ### Editing an existing problem
 
-Edit the corresponding `problems/<id>.md` file directly. Keep its `id` unchanged — that's how
-the site's automation and the rest of this repo track which problem a file belongs to.
+Edit the corresponding `problems/<id>.md` file directly. Keep its `id` unchanged—that's how the site's automation and the rest of this repo track which problem a file belongs to.
 
 ### Proposing a new problem
 
-Add a new file at `problems/pending/<slug>.md` (pick any short, descriptive, kebab-case
-`<slug>`) with `id: null`. **Never hand-assign a real id yourself** — once your pull request
-is merged, a GitHub Action assigns the next available id, moves the file to
-`problems/<id>.md`, and logs the addition on the homepage automatically.
+Add a new file at `problems/pending/<slug>.md` (pick any short, descriptive, kebab-case `<slug>`) with `id: null`. **Never hand-assign a real id yourself**—once your pull request is merged, a GitHub Action assigns the next available id, moves the file to `problems/<id>.md`, and logs the addition on the homepage automatically.
+
+## Issue on github
+
+If you would like a problem added or a change made to an existing problem but don't want to make the change yourself, you may also open an issue on GitHub to request it. However, please be aware that such request will be given relatively low priority. If you really want to see a problem added, the best way to do so is to add it yourself.
+
+# Format for problem files
 
 ### Frontmatter fields
 
@@ -80,10 +80,8 @@ Optional.
 Optional. References beyond the `canonical_reference` above.
 ```
 
-Only "Statement" is required; the rest can be omitted entirely if there's nothing to put
-there. See any file under `problems/` for a real example.
+Only "Statement" is required; the rest can be omitted entirely if there's nothing to put there. See any file under `problems/` for a real example.
 
-## Issue on github
 
 # Contributing potential solutions to problems
 
