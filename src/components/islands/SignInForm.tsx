@@ -93,8 +93,10 @@ export default function SignInForm() {
           <p className="auth-status">
             Check your email for a sign-in link, sent to <strong>{email}</strong>.
           </p>
-          <p className="muted signin-hint">
-            Didn't get it after a minute or two? Check spam, or try again with a different email.
+          <p className="signin-hint">
+            Some users have reported not receiving the sign-in link, especially when using work or
+            school email addresses. If you do not receive the link within a minute or two, try a
+            different email or sign in with GitHub instead.
           </p>
           <button type="button" className="link-button" onClick={handleUseDifferentEmail}>
             Try a different email
@@ -116,8 +118,10 @@ export default function SignInForm() {
           <button type="submit" className="editor-submit signin-submit" disabled={status === "sending"}>
             {status === "sending" ? "Sending…" : "Email me a sign-in link"}
           </button>
-          <p className="muted signin-hint">
-            Didn't get it after a minute or two? Check spam, or try again with a different email.
+          <p className="signin-hint">
+            Some users have reported not receiving the sign-in link, especially when using work or
+            school email addresses. If you do not receive the link within a minute or two, try a
+            different email or sign in with GitHub instead.
           </p>
           {status === "error" && (
             <p className="comment-error" role="alert">

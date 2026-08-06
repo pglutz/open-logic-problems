@@ -643,16 +643,19 @@ main:has(.faq-item) h2 {
   width: 100%;
   text-align: center;
 }
+/* Same treatment as .editor-warning-box (status-change warnings). */
 .signin-hint {
-  margin: 0;
-  font-size: 0.82rem;
+  margin: 0.4rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border: var(--border-width) solid var(--color-claimed-border);
+  background: color-mix(in srgb, var(--color-claimed-bg) 88%, var(--color-claimed-border) 12%);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  color: var(--color-text);
 }
-/* In the "check your email" state specifically, pull the hint closer to the
-   line above it and add extra room before "Use a different email" below —
-   the parent's flex `gap` alone gives equal spacing on both sides, which
-   read as too far from the message it's elaborating on. */
+/* In the "check your email" state, add extra room before "Try a different
+   email" below — the parent's flex `gap` alone reads as too tight there. */
 .signin-sent .signin-hint {
-  margin-top: -0.3rem;
   margin-bottom: 1.2rem;
 }
 .signin-sent-links {
