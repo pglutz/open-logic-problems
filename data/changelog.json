@@ -46,5 +46,11 @@
     "type": "new-problem",
     "id": 14,
     "name": "Cherlin-Zilber Algebraicity Conjecture"
+  },
+  {
+    "date": "2026-08-06",
+    "type": "new-problem",
+    "id": 15,
+    "name": "Axiomatizability of generic automorphisms"
   }
 ]
