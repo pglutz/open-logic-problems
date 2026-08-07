@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase/client";
+import { useSigninHref } from "../../lib/signinHref";
 
 export default function AuthWidget() {
   const [session, setSession] = useState<Session | null>(null);
+  const signinHref = useSigninHref();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -33,7 +35,7 @@ export default function AuthWidget() {
   }
 
   return (
-    <a className="nav-signin-button" href="/signin">
+    <a className="nav-signin-button" href={signinHref}>
       Sign In
     </a>
   );
