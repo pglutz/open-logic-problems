@@ -21,6 +21,11 @@ const props = Astro.props;
 const title = props.title ?? props.frontmatter?.title;
 const description = props.description ?? props.frontmatter?.description;
 const { excludeFromSearch, maxWidth } = props;
+
+const fullTitle = `${title} · Open Problems in Mathematical Logic`;
+const SITE_URL = "https://www.openlogicproblems.com";
+const pageUrl = `${SITE_URL}${Astro.url.pathname}`;
+const thumbnailUrl = `${SITE_URL}/thinker_thumbnail.png`;
 ---
 
 <!doctype html>
@@ -28,8 +33,24 @@ const { excludeFromSearch, maxWidth } = props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} · Open Problems in Mathematical Logic</title>
+    <title>{fullTitle}</title>
     {description && <meta name="description" content={description} />}
+
+    <!-- So link previews on messaging/social platforms show this image
+         consistently, instead of each platform guessing (some fall back to
+         the favicon, some scrape the page for something image-shaped). -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={thumbnailUrl} />
+    <meta property="og:image:width" content="1199" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    {description && <meta name="twitter:description" content={description} />}
+    <meta name="twitter:image" content={thumbnailUrl} />
+
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
