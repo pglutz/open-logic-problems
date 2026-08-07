@@ -1,0 +1,40 @@
+---
+id: null
+name: "Non-trivial automorphisms of the Turing degrees"
+status: open
+area: [computability-theory]
+impact: 2
+canonical_reference:
+  title: " Permutations of the integers induce only the trivial automorphism of the Turing degrees"
+  author: "Bjørn Kjos-Hanssen"
+  venue: "Bulletin of Symbolic Logic"
+  year: 2018
+  link: "https://arxiv.org/pdf/1603.00525"
+  doi: "10.1017/bsl.2018.15"
+---
+
+## Statement
+
+Is there a non-trivial automorphism of the Turing degrees?
+
+## Definitions
+
+By an *automorphism* of the Turing degrees, we mean an automorphism of the Turing degrees considered as a partial order.
+
+## Known Partial Results
+
+- Jockusch and Solovay showed that if $f$ is an automorphism of the Turing degrees which preserves the Turing jump (i.e. for all $x$, $f(x') = f(x)'$) then $f$ is equal to the identity on the cone above $0^{(4)}$.
+- Nerode and Shore proved that every automorphism is equal to the identity on some cone. Slaman and Woodin later showed that every automorphism is equal to the identity on the cone above $0^{(2)}$.
+- Slaman and Woodin showed that there are only countably many automorphisms. Furthermore, they showed that every automorphism can be represented by an arithmetic function—i.e. for any automorphism $f$ there is an arithmetic function $g\colon 2^\mathbb{N} \to 2^\mathbb{N}$ such that for all $x$, $[g(x)]_T = f([x]_T)$.
+- Slaman and Woodin also showed that any automorphism of the Turing degrees is fully determined by what is does on any $5$-generic real. In particular, the set of degrees below $0^{(5)}$ is an automorphism base for the Turing degrees.
+
+## Additional References
+
+*Definability in degree structures.* Theodore A. Slaman and W. Hugh Woodin, 2005. [[link](https://math.berkeley.edu/~slaman/talks/sw.pdf)]
+
+## Notes
+
+The question has been open since at least the 1970s. In the 1990s, Cooper claimed to have constructed a non-trivial automorphsim. However, his claims were not widely accepted.
+
+
+<!-- opl-notify:l6NktZIrxTJaCSgaQY1CmUKiNf9YSf+arqUw4nOsfDgv/poqr3K6Q41C0MdbGMO6wtiYnBCUtEDcTqJaP8zfgEtgj1XS52eEr6nq5FKKW8L4n5Hz2amAo8wxCiWAV+l+z2Bvbkfzu8Wxl6mY+JHY/BHTAtPqj26qkkY28dBnLb6UueWdu+bfQ6eeRuuQk11w9kC8iAkG4ybNEA== -->
