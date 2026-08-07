@@ -58,5 +58,11 @@
     "type": "new-problem",
     "id": 16,
     "name": "Axiom of Choice and bases for vector spaces"
+  },
+  {
+    "date": "2026-08-07",
+    "type": "new-problem",
+    "id": 17,
+    "name": "Non-trivial automorphisms of the Turing degrees"
   }
 ]
