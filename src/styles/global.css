@@ -415,6 +415,17 @@ main:has(.faq-item) h2 {
   }
 }
 
+/* Groups everything from the Title field through the canonical reference
+   box into one visually distinct unit — editor-only, no equivalent on the
+   published problem page. */
+.editor-top-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
 .editor-header-fields {
   display: flex;
   flex-direction: column;

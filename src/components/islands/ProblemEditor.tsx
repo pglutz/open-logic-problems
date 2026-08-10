@@ -446,216 +446,219 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
           </button>
         </div>
         <div className="editor-left" id="editor-panel-edit" role="tabpanel" aria-labelledby="editor-tab-edit">
-          <div className="editor-header-fields">
-            {(showValidationSummary ||
-              hasReferenceKeyErrors ||
-              statusWarning ||
-              referenceWarning ||
-              additionalReferenceWarning) && (
-              <div className="editor-messages" id="editor-error-summary" ref={errorSummaryRef} tabIndex={-1}>
-                {showValidationSummary && (
-                  <p className="editor-error-box" role="alert">
-                    <strong>Error:</strong> One or more required fields are blank.
-                  </p>
-                )}
-                {hasReferenceKeyErrors && (
-                  <p className="editor-error-box" role="alert">
-                    <strong>Error:</strong> One or more reference keys are missing, invalid, or duplicated.
-                  </p>
-                )}
-                {statusWarning && (
-                  <p className="editor-warning-box" role="status">
-                    <strong>Warning:</strong> {statusWarning}
-                  </p>
-                )}
-                {referenceWarning && (
-                  <p className="editor-warning-box" role="status">
-                    <strong>Warning:</strong> {referenceWarning}
-                  </p>
-                )}
-                {additionalReferenceWarning && (
-                  <p className="editor-warning-box" role="status">
-                    <strong>Warning:</strong> {additionalReferenceWarning}
-                  </p>
-                )}
+          {(showValidationSummary ||
+            hasReferenceKeyErrors ||
+            statusWarning ||
+            referenceWarning ||
+            additionalReferenceWarning) && (
+            <div className="editor-messages" id="editor-error-summary" ref={errorSummaryRef} tabIndex={-1}>
+              {showValidationSummary && (
+                <p className="editor-error-box" role="alert">
+                  <strong>Error:</strong> One or more required fields are blank.
+                </p>
+              )}
+              {hasReferenceKeyErrors && (
+                <p className="editor-error-box" role="alert">
+                  <strong>Error:</strong> One or more reference keys are missing, invalid, or duplicated.
+                </p>
+              )}
+              {statusWarning && (
+                <p className="editor-warning-box" role="status">
+                  <strong>Warning:</strong> {statusWarning}
+                </p>
+              )}
+              {referenceWarning && (
+                <p className="editor-warning-box" role="status">
+                  <strong>Warning:</strong> {referenceWarning}
+                </p>
+              )}
+              {additionalReferenceWarning && (
+                <p className="editor-warning-box" role="status">
+                  <strong>Warning:</strong> {additionalReferenceWarning}
+                </p>
+              )}
+            </div>
+          )}
+
+          <div className="editor-top-box">
+            <div className="editor-header-fields">
+              <div className={`editor-field editor-field-full-width${nameInvalid ? " editor-field-invalid" : ""}`}>
+                <label htmlFor="editor-name">Title</label>
+                <input
+                  id="editor-name"
+                  type="text"
+                  maxLength={500}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  aria-invalid={nameInvalid || undefined}
+                  aria-describedby={nameInvalid ? "editor-error-summary" : undefined}
+                />
               </div>
-            )}
-            <div className={`editor-field editor-field-full-width${nameInvalid ? " editor-field-invalid" : ""}`}>
-              <label htmlFor="editor-name">Title</label>
-              <input
-                id="editor-name"
-                type="text"
-                maxLength={500}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                aria-invalid={nameInvalid || undefined}
-                aria-describedby={nameInvalid ? "editor-error-summary" : undefined}
+
+              <details
+                className={`editor-collapsible${areaInvalid ? " editor-collapsible-invalid" : ""}`}
+                aria-describedby={areaInvalid ? "editor-error-summary" : undefined}
+              >
+                <summary>Area ({area.length} selected)</summary>
+                <div className="editor-collapsible-body">
+                  <div className="editor-area-checkboxes">
+                    {AREAS.map((a) => (
+                      <label key={a} className="editor-checkbox-label">
+                        <input type="checkbox" checked={area.includes(a)} onChange={() => toggleArea(a)} />
+                        {formatArea(a)}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </details>
+
+              <div className="editor-inline-row">
+                <div className={`editor-field editor-field-compact${statusChanged ? " editor-field-warning" : ""}`}>
+                  <label htmlFor="editor-status">Status</label>
+                  <select
+                    id="editor-status"
+                    className="editor-select-compact"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value as ProblemStatus)}
+                  >
+                    {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="editor-field editor-field-compact">
+                  <label htmlFor="editor-impact">Impact</label>
+                  <select
+                    id="editor-impact"
+                    className="editor-select-compact"
+                    title={IMPACT_RUBRIC[impact]}
+                    value={impact}
+                    onChange={(e) => setImpact(Number(e.target.value) as 1 | 2 | 3)}
+                  >
+                    {([3, 2, 1] as const).map((n) => (
+                      <option key={n} value={n} title={IMPACT_RUBRIC[n]}>
+                        {IMPACT_LABELS[n]}
+                        {"  "}
+                        {IMPACT_SHORT_LABELS[n]}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className={`editor-field${statementInvalid ? " editor-field-invalid" : ""}`}>
+              <label htmlFor="editor-statement">Statement</label>
+              <textarea
+                id="editor-statement"
+                value={statement}
+                onChange={(e) => setStatement(e.target.value)}
+                rows={8}
+                aria-invalid={statementInvalid || undefined}
+                aria-describedby={statementInvalid ? "editor-error-summary" : undefined}
               />
             </div>
 
             <details
-              className={`editor-collapsible${areaInvalid ? " editor-collapsible-invalid" : ""}`}
-              aria-describedby={areaInvalid ? "editor-error-summary" : undefined}
+              className={`editor-collapsible editor-reference-box${canonicalReferenceEmpty ? " editor-collapsible-warning" : ""}`}
             >
-              <summary>Area ({area.length} selected)</summary>
+              <summary>Reference for the problem statement</summary>
               <div className="editor-collapsible-body">
-                <div className="editor-area-checkboxes">
-                  {AREAS.map((a) => (
-                    <label key={a} className="editor-checkbox-label">
-                      <input type="checkbox" checked={area.includes(a)} onChange={() => toggleArea(a)} />
-                      {formatArea(a)}
-                    </label>
-                  ))}
+                <div className="editor-reference-row-header">
+                  <div className={`editor-field${canonicalKeyInvalid ? " editor-field-invalid" : ""}`}>
+                    <label htmlFor="editor-ref-key">Citation key</label>
+                    <input
+                      id="editor-ref-key"
+                      type="text"
+                      maxLength={200}
+                      placeholder="e.g. Smi20"
+                      value={refKey}
+                      onChange={(e) => setRefKey(e.target.value)}
+                      aria-invalid={canonicalKeyInvalid || undefined}
+                      aria-describedby={canonicalKeyInvalid ? "editor-error-summary" : undefined}
+                    />
+                  </div>
+                  <div className="editor-reference-row-actions">
+                    <button
+                      type="button"
+                      className="link-button editor-copy-citation"
+                      disabled={!refKey.trim()}
+                      onClick={() => copyCitation(refKey, "canonical")}
+                    >
+                      {copiedId === "canonical" ? "Copied!" : "Copy citation"}
+                    </button>
+                  </div>
+                </div>
+                <div
+                  className={`editor-field${referenceTitleBlank && !canonicalReferenceEmpty ? " editor-field-warning" : ""}`}
+                >
+                  <label htmlFor="editor-ref-title">Title (optional)</label>
+                  <input
+                    id="editor-ref-title"
+                    type="text"
+                    maxLength={500}
+                    value={refTitle}
+                    onChange={(e) => setRefTitle(e.target.value)}
+                  />
+                </div>
+                <div
+                  className={`editor-field${referenceAuthorBlank && !canonicalReferenceEmpty ? " editor-field-warning" : ""}`}
+                >
+                  <label htmlFor="editor-ref-author">Author(s) (optional)</label>
+                  <input
+                    id="editor-ref-author"
+                    type="text"
+                    maxLength={500}
+                    value={refAuthor}
+                    onChange={(e) => setRefAuthor(e.target.value)}
+                  />
+                </div>
+                <div className="editor-field">
+                  <label htmlFor="editor-ref-venue">Venue (optional)</label>
+                  <input
+                    id="editor-ref-venue"
+                    type="text"
+                    maxLength={500}
+                    value={refVenue}
+                    onChange={(e) => setRefVenue(e.target.value)}
+                  />
+                </div>
+                <div className="editor-field">
+                  <label htmlFor="editor-ref-year">Year (optional)</label>
+                  <input
+                    id="editor-ref-year"
+                    type="number"
+                    min={1800}
+                    max={new Date().getFullYear() + 1}
+                    value={refYear}
+                    onChange={(e) => setRefYear(e.target.value)}
+                  />
+                </div>
+                <div className="editor-field">
+                  <label htmlFor="editor-ref-link">Link (optional)</label>
+                  <input
+                    id="editor-ref-link"
+                    type="url"
+                    maxLength={500}
+                    value={refLink}
+                    onChange={(e) => setRefLink(e.target.value)}
+                  />
+                </div>
+                <div className="editor-field">
+                  <label htmlFor="editor-ref-doi">DOI (optional)</label>
+                  <input
+                    id="editor-ref-doi"
+                    type="text"
+                    maxLength={500}
+                    value={refDoi}
+                    onChange={(e) => setRefDoi(e.target.value)}
+                  />
                 </div>
               </div>
             </details>
-
-            <div className="editor-inline-row">
-              <div className={`editor-field editor-field-compact${statusChanged ? " editor-field-warning" : ""}`}>
-                <label htmlFor="editor-status">Status</label>
-                <select
-                  id="editor-status"
-                  className="editor-select-compact"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as ProblemStatus)}
-                >
-                  {Object.entries(STATUS_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="editor-field editor-field-compact">
-                <label htmlFor="editor-impact">Impact</label>
-                <select
-                  id="editor-impact"
-                  className="editor-select-compact"
-                  title={IMPACT_RUBRIC[impact]}
-                  value={impact}
-                  onChange={(e) => setImpact(Number(e.target.value) as 1 | 2 | 3)}
-                >
-                  {([3, 2, 1] as const).map((n) => (
-                    <option key={n} value={n} title={IMPACT_RUBRIC[n]}>
-                      {IMPACT_LABELS[n]}
-                      {"  "}
-                      {IMPACT_SHORT_LABELS[n]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
           </div>
-
-          <div className={`editor-field${statementInvalid ? " editor-field-invalid" : ""}`}>
-            <label htmlFor="editor-statement">Statement</label>
-            <textarea
-              id="editor-statement"
-              value={statement}
-              onChange={(e) => setStatement(e.target.value)}
-              rows={8}
-              aria-invalid={statementInvalid || undefined}
-              aria-describedby={statementInvalid ? "editor-error-summary" : undefined}
-            />
-          </div>
-
-          <details
-            className={`editor-collapsible editor-reference-box${canonicalReferenceEmpty ? " editor-collapsible-warning" : ""}`}
-          >
-            <summary>Reference for the problem statement</summary>
-            <div className="editor-collapsible-body">
-              <div className="editor-reference-row-header">
-                <div className={`editor-field${canonicalKeyInvalid ? " editor-field-invalid" : ""}`}>
-                  <label htmlFor="editor-ref-key">Citation key</label>
-                  <input
-                    id="editor-ref-key"
-                    type="text"
-                    maxLength={200}
-                    placeholder="e.g. Smi20"
-                    value={refKey}
-                    onChange={(e) => setRefKey(e.target.value)}
-                    aria-invalid={canonicalKeyInvalid || undefined}
-                    aria-describedby={canonicalKeyInvalid ? "editor-error-summary" : undefined}
-                  />
-                </div>
-                <div className="editor-reference-row-actions">
-                  <button
-                    type="button"
-                    className="link-button editor-copy-citation"
-                    disabled={!refKey.trim()}
-                    onClick={() => copyCitation(refKey, "canonical")}
-                  >
-                    {copiedId === "canonical" ? "Copied!" : "Copy citation"}
-                  </button>
-                </div>
-              </div>
-              <div
-                className={`editor-field${referenceTitleBlank && !canonicalReferenceEmpty ? " editor-field-warning" : ""}`}
-              >
-                <label htmlFor="editor-ref-title">Title (optional)</label>
-                <input
-                  id="editor-ref-title"
-                  type="text"
-                  maxLength={500}
-                  value={refTitle}
-                  onChange={(e) => setRefTitle(e.target.value)}
-                />
-              </div>
-              <div
-                className={`editor-field${referenceAuthorBlank && !canonicalReferenceEmpty ? " editor-field-warning" : ""}`}
-              >
-                <label htmlFor="editor-ref-author">Author(s) (optional)</label>
-                <input
-                  id="editor-ref-author"
-                  type="text"
-                  maxLength={500}
-                  value={refAuthor}
-                  onChange={(e) => setRefAuthor(e.target.value)}
-                />
-              </div>
-              <div className="editor-field">
-                <label htmlFor="editor-ref-venue">Venue (optional)</label>
-                <input
-                  id="editor-ref-venue"
-                  type="text"
-                  maxLength={500}
-                  value={refVenue}
-                  onChange={(e) => setRefVenue(e.target.value)}
-                />
-              </div>
-              <div className="editor-field">
-                <label htmlFor="editor-ref-year">Year (optional)</label>
-                <input
-                  id="editor-ref-year"
-                  type="number"
-                  min={1800}
-                  max={new Date().getFullYear() + 1}
-                  value={refYear}
-                  onChange={(e) => setRefYear(e.target.value)}
-                />
-              </div>
-              <div className="editor-field">
-                <label htmlFor="editor-ref-link">Link (optional)</label>
-                <input
-                  id="editor-ref-link"
-                  type="url"
-                  maxLength={500}
-                  value={refLink}
-                  onChange={(e) => setRefLink(e.target.value)}
-                />
-              </div>
-              <div className="editor-field">
-                <label htmlFor="editor-ref-doi">DOI (optional)</label>
-                <input
-                  id="editor-ref-doi"
-                  type="text"
-                  maxLength={500}
-                  value={refDoi}
-                  onChange={(e) => setRefDoi(e.target.value)}
-                />
-              </div>
-            </div>
-          </details>
 
           <div className="editor-field">
             <label htmlFor="editor-definitions">Definitions (optional)</label>
