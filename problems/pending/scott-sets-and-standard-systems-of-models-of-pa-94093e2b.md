@@ -1,0 +1,56 @@
+---
+id: null
+name: "Scott sets and standard systems of models of PA"
+status: open
+area: [computability-theory, set-theory]
+impact: 1
+canonical_reference:
+  key: "Wan26"
+  title: "Some notes on uncountable models of arithmetic"
+  author: "Wei Wang"
+  venue: "Fundamenta Mathematicae"
+  year: 2026
+  link: "https://arxiv.org/pdf/2007.05885"
+  doi: "10.4064/fm250514-22-11"
+references:
+  - key: "Sco62"
+    title: "Algebras of sets binumerable in complete extensions of arithmetic"
+    author: "Dana Scott"
+    venue: "Proc. Sympos. Pure Math., Vol. V"
+    year: 1962
+  - key: "KN82"
+    title: "Models of arithmetic and closed ideals"
+    author: "Julia Knight and Mark Nadel"
+    venue: "Journal of Symoblic Logic"
+    year: 1982
+    doi: "10.2307/2273102"
+  - key: "Git08"
+    title: "Scott's problem for proper Scott sets"
+    author: "Victoria Gitman"
+    venue: "Journal of Symbolic Logic"
+    year: 2008
+    doi: "10.2178/jsl/1230396751"
+---
+
+## Statement
+
+Is every Scott set the standard system of a non-standard model of $\mathsf{PA}$? Equivalently, is every Scott set the second order part of an $\omega$-model of $\mathsf{WKL}_0$?
+
+## Definitions
+
+- A *Turing ideal* is a set $A \subseteq 2^\mathbb{N}$ which is closed under finite joins and Turing reducibility. I.e. for any $x, y \in A$, $x\oplus y$ is in $A$ as is any $z \leq_T x$.
+- A *Scott set* is a Turing ideal $A$ such that for any $x \in A$ which codes an infinite binary tree, $A$ contains some element which codes an infinite path through this tree.
+- Given a non-standard model $M$ of $\mathsf{PA}$, the *standard system* of $M$, denoted $\mathsf{SSy}(M)$, is the set of reals $x \in 2^\mathbb{N}$ such that $x$ is coded by some element of $M$, i.e. there is some non-standard $a \in M$ such that $x(n) = 1$ if and only if the $n^\text{th}$ prime number divides $a$.
+
+## Known Partial Results
+
+- Scott [^Sco62] proved that every countable Scott set is the standard system of a non-standard model of $\mathsf{PA}$.
+- Knight and Nadel [^KN82] proved that every size $\aleph_1$ Scott set is the standard system of a non-standard model of $\mathsf{PA}$. Hence the question has a positive answer under $\mathsf{CH}$.
+- Gitman [^Git08] proved that under the Proper Forcing Axiom ($\mathsf{PFA}$), Scott sets of any size which satisfy certain technical conditions (arithmetically closed and proper) are the standard system of a non-standard model of $\mathsf{PA}$.
+
+## Notes
+
+Scott [^Sco62] proved that every if $M$ is a non-standard model of $\mathsf{PA}$ then its standard system is a Scott set. This question asks whether the converse holds.
+
+
+<!-- opl-notify:/1VrSJFfVMqtq/rpXmCrXJ9BGzcPk04g50N3tgfdh7DF9dNziTywsdiJ1akD5IvPpk+V0ZGj5yGpAH2rmF5LG8IiAYiu5VpmtuSPt5SweN+BbpLB04ucp+zqa4xboAN8ZLH+4RbjBe7YSR/Vw5NtYUowP0mOyPIhiY4IHHj55O3A8SNB+3bzBneoChgt3NXMrV3EIshOm2l37w== -->
