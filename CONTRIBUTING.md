@@ -35,7 +35,7 @@ status: open                   # open | claimed-proof-no-consensus | closed
 area: [model-theory]            # one or more of the areas listed below
 impact: 3                      # 1, 2, or 3 — see the FAQ for what these mean
 canonical_reference:
-  key: "vaught1961"            # required once title/author are non-blank; letters, digits, and hyphens only
+  key: "Vau61"                 # required once title/author are non-blank; letters, digits, and hyphens only
   title: "Denumerable models of complete theories"
   author: "Robert L. Vaught"
   venue: "Infinitistic Methods (Proc. Symposium on Foundations of Mathematics, Warsaw)"  # optional
@@ -43,7 +43,7 @@ canonical_reference:
   link: "https://example.com"  # optional
   doi: "10.1000/example"       # optional
 references:                    # optional — additional references beyond canonical_reference above
-  - key: "steel1978"           # required, same rules as canonical_reference's key
+  - key: "Ste78"                # required, same rules as canonical_reference's key
     title: "On Vaught's conjecture"
     author: "Steel, J."
     venue: "Cabal Seminar 76-77, Lecture Notes in Mathematics"  # optional
@@ -59,8 +59,15 @@ Valid `area` values: `computability-theory`, `set-theory`, `model-theory`,
 where no reference is available, but a reference should be included whenever possible. Every
 key (canonical or additional) must be unique within the file.
 
+Keys should follow the BibTeX "alpha" convention (shorter and more consistent than
+"author-year"): the first letter of each author's surname, capitalized, followed by the
+2-digit year — e.g. one author gives the first three letters of the surname (`Vau61`), two or
+three authors give one initial each (`BM90`, `MST16`), and four or more give the first three
+authors' initials (`JTW23`). Append `a`/`b`/... if that would collide with another key in the
+same file.
+
 Any reference — canonical or additional — can be cited from within the body by writing
-`[^key]` (e.g. `[^vaught1961]`), which renders as a link reading `[key]` pointing at that
+`[^key]` (e.g. `[^Vau61]`), which renders as a link reading `[key]` pointing at that
 reference's entry. A key that doesn't match any reference in the file renders as plain red
 text instead of a link, so a typo is easy to spot.
 

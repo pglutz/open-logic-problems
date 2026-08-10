@@ -152,7 +152,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   // current (live) blank-ness. Reference-key problems are the one exception
   // — see canonicalKeyInvalid/rowKeyProblem below, which highlight live.
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
-  const errorSummaryRef = useRef<HTMLParagraphElement>(null);
+  const errorSummaryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (invalidFields.size > 0) {
@@ -394,13 +394,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   // cheap to check and catching a duplicate/malformed key immediately is
   // more useful than waiting for a failed submit.
   const canonicalKeyInvalid = canonicalKeyProblem;
-  const showValidationSummary =
-    nameInvalid ||
-    areaInvalid ||
-    statementInvalid ||
-    commitMessageInvalid ||
-    (invalidFields.has("canonicalReferenceKey") && canonicalKeyProblem) ||
-    references.some((r) => invalidFields.has(`referenceKey-${r.localId}`) && rowKeyProblem(r));
+  const showValidationSummary = nameInvalid || areaInvalid || statementInvalid || commitMessageInvalid;
 
   return (
     <form className="problem-editor" onSubmit={handleSubmit} noValidate>
@@ -432,18 +426,20 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
         </div>
         <div className="editor-left" id="editor-panel-edit" role="tabpanel" aria-labelledby="editor-tab-edit">
           <div className="editor-header-fields">
-            {(showValidationSummary || statusWarning || referenceWarning || additionalReferenceWarning) && (
-              <div className="editor-messages">
+            {(showValidationSummary ||
+              hasReferenceKeyErrors ||
+              statusWarning ||
+              referenceWarning ||
+              additionalReferenceWarning) && (
+              <div className="editor-messages" id="editor-error-summary" ref={errorSummaryRef} tabIndex={-1}>
                 {showValidationSummary && (
-                  <p
-                    id="editor-error-summary"
-                    className="editor-error-box"
-                    role="alert"
-                    tabIndex={-1}
-                    ref={errorSummaryRef}
-                  >
-                    <strong>Error:</strong> One or more required fields are blank, or a reference key is
-                    missing, invalid, or duplicated.
+                  <p className="editor-error-box" role="alert">
+                    <strong>Error:</strong> One or more required fields are blank.
+                  </p>
+                )}
+                {hasReferenceKeyErrors && (
+                  <p className="editor-error-box" role="alert">
+                    <strong>Error:</strong> One or more reference keys are missing, invalid, or duplicated.
                   </p>
                 )}
                 {statusWarning && (
@@ -576,13 +572,11 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={4}
-              placeholder="e.g. This was first noted in [^smith2020]."
+              placeholder="e.g. This was first noted in [^Smi20]."
             />
           </div>
 
-          <details
-            className={`editor-collapsible${referenceWarning || canonicalKeyInvalid ? (canonicalKeyInvalid ? " editor-collapsible-invalid" : " editor-collapsible-warning") : ""}`}
-          >
+          <details className={`editor-collapsible${referenceWarning ? " editor-collapsible-warning" : ""}`}>
             <summary>Reference for the problem statement</summary>
             <div className="editor-collapsible-body">
               <div className="editor-reference-row-header">
@@ -592,7 +586,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                     id="editor-ref-key"
                     type="text"
                     maxLength={200}
-                    placeholder="e.g. smith2020"
+                    placeholder="e.g. Smi20"
                     value={refKey}
                     onChange={(e) => setRefKey(e.target.value)}
                     aria-invalid={canonicalKeyInvalid || undefined}
@@ -682,10 +676,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 const summaryLabel =
                   row.title.trim() || (row.key.trim() ? `[${row.key.trim()}]` : "New reference");
                 return (
-                  <details
-                    key={row.localId}
-                    className={`editor-collapsible${rowInvalid ? " editor-collapsible-invalid" : ""}`}
-                  >
+                  <details key={row.localId} className="editor-collapsible">
                     <summary>{summaryLabel}</summary>
                     <div className="editor-collapsible-body">
                       <div className="editor-reference-row-header">
@@ -695,7 +686,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                             id={`editor-ref-key-${row.localId}`}
                             type="text"
                             maxLength={200}
-                            placeholder="e.g. smith2020"
+                            placeholder="e.g. Smi20"
                             value={row.key}
                             onChange={(e) => updateReferenceRow(row.localId, { key: e.target.value })}
                             aria-invalid={rowInvalid || undefined}
@@ -710,13 +701,6 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                             onClick={() => copyCitation(row.key, row.localId)}
                           >
                             {copiedId === row.localId ? "Copied!" : "Copy citation"}
-                          </button>
-                          <button
-                            type="button"
-                            className="link-button editor-reference-remove"
-                            onClick={() => removeReferenceRow(row.localId)}
-                          >
-                            Remove
                           </button>
                         </div>
                       </div>
@@ -781,6 +765,13 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                           onChange={(e) => updateReferenceRow(row.localId, { doi: e.target.value })}
                         />
                       </div>
+                      <button
+                        type="button"
+                        className="editor-reference-remove"
+                        onClick={() => removeReferenceRow(row.localId)}
+                      >
+                        Remove reference
+                      </button>
                     </div>
                   </details>
                 );

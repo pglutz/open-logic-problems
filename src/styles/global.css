@@ -300,11 +300,16 @@ pre code {
 .citation-unresolved {
   color: var(--color-error-text);
 }
+/* Fixed-width first column so keys line up across sibling reference entries
+   — a plain fixed width (not min-width) achieves this without needing a
+   shared grid/table, since every entry starts at the same left edge. */
+.reference-entry {
+  display: flex;
+  gap: 0.5em;
+}
 .reference-key-prefix {
-  font-family: ui-monospace, monospace;
-  font-size: 0.9em;
+  flex: 0 0 4.5em;
   color: var(--color-text-muted);
-  margin-right: 0.4em;
 }
 
 /* faq.md — scoped via :has(.faq-item) since it's the only page with these. */
@@ -509,6 +514,7 @@ main:has(.faq-item) h2 {
 .editor-collapsible summary {
   cursor: pointer;
   font-weight: 600;
+  font-size: 0.9rem;
 }
 .editor-collapsible[open] summary {
   margin-bottom: 0.5rem;
@@ -550,10 +556,6 @@ main:has(.faq-item) h2 {
   gap: 0.9rem;
   flex: 0 0 auto;
   padding-bottom: 0.5rem;
-  /* Pushes "Remove" away from "Copy citation" so a slightly-off click can't
-     turn a benign copy into an accidental (unconfirmed) delete. */
-  justify-content: space-between;
-  min-width: 11rem;
 }
 .editor-copy-citation {
   font-size: 0.85rem;
@@ -564,14 +566,23 @@ main:has(.faq-item) h2 {
   cursor: not-allowed;
   text-decoration: none;
 }
+/* A real button, not a text link — "remove" is a distinct, standalone
+   action, not something to run together with "copy citation" on the same
+   line, so it gets its own line at the end of the row. */
 .editor-reference-remove {
+  align-self: flex-start;
+  font: inherit;
   font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-error-border);
+  background: transparent;
   color: var(--color-error-text);
-  text-decoration-color: color-mix(in srgb, var(--color-error-text) 35%, transparent);
+  cursor: pointer;
 }
 .editor-reference-remove:hover {
-  color: var(--color-error-text);
-  text-decoration-color: currentColor;
+  background: color-mix(in srgb, var(--color-error-text) 10%, transparent);
 }
 .editor-add-reference {
   align-self: flex-start;

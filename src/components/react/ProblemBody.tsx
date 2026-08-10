@@ -27,26 +27,28 @@ function ReferenceEntry({
 }) {
   const parts = referenceParts(reference);
   return (
-    <p id={id}>
+    <p id={id} className="reference-entry">
       {reference.key && <span className="reference-key-prefix">[{reference.key}]</span>}
-      {parts.map((part, i) => (
-        <span key={i}>
-          {i > 0 && ", "}
-          {part}
-        </span>
-      ))}
-      {reference.link && (
-        <>
-          {" "}
-          [<a href={reference.link}>link</a>]
-        </>
-      )}
-      {reference.doi && (
-        <>
-          {" "}
-          [<a href={`https://doi.org/${reference.doi}`}>doi</a>]
-        </>
-      )}
+      <span>
+        {parts.map((part, i) => (
+          <span key={i}>
+            {i > 0 && ", "}
+            {part}
+          </span>
+        ))}
+        {reference.link && (
+          <>
+            {" "}
+            [<a href={reference.link}>link</a>]
+          </>
+        )}
+        {reference.doi && (
+          <>
+            {" "}
+            [<a href={`https://doi.org/${reference.doi}`}>doi</a>]
+          </>
+        )}
+      </span>
     </p>
   );
 }
