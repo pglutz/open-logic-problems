@@ -625,7 +625,12 @@ main:has(.faq-item) h2 {
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
-  flex: 1 1 auto;
+  /* A zero flex-basis (not `auto`) so the parent's flex-wrap line-breaking
+     ignores this item's content width when deciding whether it fits — with
+     `auto`, a long nowrap+ellipsis title's *un-truncated* width counted as
+     its hypothetical size, wrapping the whole title+button block onto its
+     own line and leaving only the ▸ marker behind on the first line. */
+  flex: 1 1 0%;
   min-width: 0;
 }
 .editor-reference-summary-title {
