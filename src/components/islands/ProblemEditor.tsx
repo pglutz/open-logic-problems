@@ -44,6 +44,12 @@ interface ReferenceRow {
   year: string;
   link: string;
   doi: string;
+  // Only affects the row's initial <details open> state when it's first
+  // rendered — a freshly-added row starts expanded so the user can fill it
+  // in immediately, while a row loaded from an existing problem starts
+  // collapsed. Never updated afterward, so the user's own manual
+  // expand/collapse always takes over from there.
+  startOpen: boolean;
 }
 
 function referenceToRow(ref: Reference): ReferenceRow {
@@ -56,6 +62,7 @@ function referenceToRow(ref: Reference): ReferenceRow {
     year: ref.year ? String(ref.year) : "",
     link: ref.link ?? "",
     doi: ref.doi ?? "",
+    startOpen: false,
   };
 }
 
@@ -118,7 +125,17 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   function addReferenceRow() {
     setReferences((prev) => [
       ...prev,
-      { localId: crypto.randomUUID(), key: "", title: "", author: "", venue: "", year: "", link: "", doi: "" },
+      {
+        localId: crypto.randomUUID(),
+        key: "",
+        title: "",
+        author: "",
+        venue: "",
+        year: "",
+        link: "",
+        doi: "",
+        startOpen: true,
+      },
     ]);
   }
   function removeReferenceRow(localId: string) {
@@ -251,8 +268,12 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
 
   const referenceTitleBlank = !refTitle.trim();
   const referenceAuthorBlank = !refAuthor.trim();
+  // When the canonical reference is entirely empty, the whole box is
+  // highlighted (nothing more specific to point at); when only one of
+  // title/author is filled in, just that missing field is highlighted.
+  const canonicalReferenceEmpty = referenceTitleBlank && referenceAuthorBlank;
   let referenceWarning: string | null = null;
-  if (referenceTitleBlank && referenceAuthorBlank) {
+  if (canonicalReferenceEmpty) {
     referenceWarning =
       "No reference has been provided. Most problems should include a reference to a reliable published source — leave this blank only in unusual cases.";
   } else if (referenceTitleBlank) {
@@ -576,12 +597,14 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             />
           </div>
 
-          <details className={`editor-collapsible${referenceWarning ? " editor-collapsible-warning" : ""}`}>
+          <details
+            className={`editor-collapsible editor-reference-box${canonicalReferenceEmpty ? " editor-collapsible-warning" : ""}`}
+          >
             <summary>Reference for the problem statement</summary>
             <div className="editor-collapsible-body">
               <div className="editor-reference-row-header">
                 <div className={`editor-field${canonicalKeyInvalid ? " editor-field-invalid" : ""}`}>
-                  <label htmlFor="editor-ref-key">Key</label>
+                  <label htmlFor="editor-ref-key">Citation key</label>
                   <input
                     id="editor-ref-key"
                     type="text"
@@ -604,7 +627,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                   </button>
                 </div>
               </div>
-              <div className="editor-field">
+              <div
+                className={`editor-field${referenceTitleBlank && !canonicalReferenceEmpty ? " editor-field-warning" : ""}`}
+              >
                 <label htmlFor="editor-ref-title">Title (optional)</label>
                 <input
                   id="editor-ref-title"
@@ -614,7 +639,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                   onChange={(e) => setRefTitle(e.target.value)}
                 />
               </div>
-              <div className="editor-field">
+              <div
+                className={`editor-field${referenceAuthorBlank && !canonicalReferenceEmpty ? " editor-field-warning" : ""}`}
+              >
                 <label htmlFor="editor-ref-author">Author(s) (optional)</label>
                 <input
                   id="editor-ref-author"
@@ -673,15 +700,22 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             <div className="editor-reference-list">
               {references.map((row) => {
                 const rowInvalid = rowKeyProblem(row);
+                const rowBlank = isRowBlank(row);
+                const rowTitleBlank = !rowBlank && !row.title.trim();
+                const rowAuthorBlank = !rowBlank && !row.author.trim();
                 const summaryLabel =
                   row.title.trim() || (row.key.trim() ? `[${row.key.trim()}]` : "New reference");
                 return (
-                  <details key={row.localId} className="editor-collapsible">
+                  <details
+                    key={row.localId}
+                    className="editor-collapsible editor-reference-box"
+                    open={row.startOpen || undefined}
+                  >
                     <summary>{summaryLabel}</summary>
                     <div className="editor-collapsible-body">
                       <div className="editor-reference-row-header">
                         <div className={`editor-field${rowInvalid ? " editor-field-invalid" : ""}`}>
-                          <label htmlFor={`editor-ref-key-${row.localId}`}>Key</label>
+                          <label htmlFor={`editor-ref-key-${row.localId}`}>Citation key</label>
                           <input
                             id={`editor-ref-key-${row.localId}`}
                             type="text"
@@ -704,7 +738,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                           </button>
                         </div>
                       </div>
-                      <div className="editor-field">
+                      <div className={`editor-field${rowTitleBlank ? " editor-field-warning" : ""}`}>
                         <label htmlFor={`editor-ref-title-${row.localId}`}>Title</label>
                         <input
                           id={`editor-ref-title-${row.localId}`}
@@ -714,7 +748,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                           onChange={(e) => updateReferenceRow(row.localId, { title: e.target.value })}
                         />
                       </div>
-                      <div className="editor-field">
+                      <div className={`editor-field${rowAuthorBlank ? " editor-field-warning" : ""}`}>
                         <label htmlFor={`editor-ref-author-${row.localId}`}>Author(s)</label>
                         <input
                           id={`editor-ref-author-${row.localId}`}
