@@ -64,5 +64,11 @@
     "type": "new-problem",
     "id": 17,
     "name": "Non-trivial automorphisms of the Turing degrees"
+  },
+  {
+    "date": "2026-08-10",
+    "type": "new-problem",
+    "id": 18,
+    "name": "Scott sets and standard systems of models of PA"
   }
 ]
