@@ -3,7 +3,6 @@ export interface ProblemSections {
   definitions?: string;
   partialResults?: string;
   claimedProofs?: string;
-  additionalReferences?: string;
   notes?: string;
 }
 
@@ -15,7 +14,6 @@ const HEADING_ALIASES: Record<string, SectionKey> = {
   "known partial results": "partialResults",
   "partial results": "partialResults",
   "claimed proofs": "claimedProofs",
-  "additional references": "additionalReferences",
   notes: "notes",
 };
 
@@ -52,26 +50,17 @@ export function splitSections(markdown: string): ProblemSections {
     definitions: get("definitions") || undefined,
     partialResults: get("partialResults") || undefined,
     claimedProofs: get("claimedProofs") || undefined,
-    additionalReferences: get("additionalReferences") || undefined,
     notes: get("notes") || undefined,
   };
 }
 
-const SECTION_ORDER: SectionKey[] = [
-  "statement",
-  "definitions",
-  "partialResults",
-  "claimedProofs",
-  "additionalReferences",
-  "notes",
-];
+const SECTION_ORDER: SectionKey[] = ["statement", "definitions", "partialResults", "claimedProofs", "notes"];
 
 const SECTION_HEADINGS: Record<SectionKey, string> = {
   statement: "Statement",
   definitions: "Definitions",
   partialResults: "Known Partial Results",
   claimedProofs: "Claimed Proofs",
-  additionalReferences: "Additional References",
   notes: "Notes",
 };
 

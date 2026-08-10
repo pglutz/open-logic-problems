@@ -293,19 +293,18 @@ pre code {
   border-bottom: var(--border-width) solid var(--color-border);
   padding-bottom: 0.25rem;
 }
-.reference-box {
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 0.6rem 1rem;
-  margin-top: -0.75rem;
-  background: rgba(128, 128, 128, 0.06);
+/* [^key] citation links (ProblemBody's shared markdown pipeline, see
+   remarkCitations in src/lib/markdown/pipeline.ts) — a resolved citation
+   uses default link styling; an unresolved one (typo, or the reference
+   hasn't been added) is flagged in red so it's obviously not a real link. */
+.citation-unresolved {
+  color: var(--color-error-text);
 }
-.reference-summary {
-  cursor: pointer;
-  font-weight: 600;
-}
-.reference-box[open] .reference-summary {
-  margin-bottom: 0.5rem;
+.reference-key-prefix {
+  font-family: ui-monospace, monospace;
+  font-size: 0.9em;
+  color: var(--color-text-muted);
+  margin-right: 0.4em;
 }
 
 /* faq.md — scoped via :has(.faq-item) since it's the only page with these. */
@@ -531,6 +530,63 @@ main:has(.faq-item) h2 {
   gap: 0.4rem;
   font-weight: 400;
   font-size: 0.95rem;
+}
+
+.editor-reference-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.editor-reference-row-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+.editor-reference-row-header .editor-field {
+  flex: 1 1 auto;
+}
+.editor-reference-row-actions {
+  display: flex;
+  gap: 0.9rem;
+  flex: 0 0 auto;
+  padding-bottom: 0.5rem;
+  /* Pushes "Remove" away from "Copy citation" so a slightly-off click can't
+     turn a benign copy into an accidental (unconfirmed) delete. */
+  justify-content: space-between;
+  min-width: 11rem;
+}
+.editor-copy-citation {
+  font-size: 0.85rem;
+}
+.editor-copy-citation:disabled {
+  color: var(--color-text);
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+.editor-reference-remove {
+  font-size: 0.85rem;
+  color: var(--color-error-text);
+  text-decoration-color: color-mix(in srgb, var(--color-error-text) 35%, transparent);
+}
+.editor-reference-remove:hover {
+  color: var(--color-error-text);
+  text-decoration-color: currentColor;
+}
+.editor-add-reference {
+  align-self: flex-start;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-link);
+  background: transparent;
+  color: var(--color-link);
+  cursor: pointer;
+}
+.editor-add-reference:hover {
+  background: color-mix(in srgb, var(--color-link) 12%, transparent);
 }
 
 .editor-commit-message {

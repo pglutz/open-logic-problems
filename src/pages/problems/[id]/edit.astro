@@ -26,13 +26,13 @@ const sections = splitSections(entry.body ?? "");
       area: entry.data.area,
       impact: entry.data.impact,
       canonicalReference: entry.data.canonical_reference,
+      references: entry.data.references,
     }}
     sections={{
       statement: sections.statement,
       definitions: sections.definitions ?? "",
       partialResults: sections.partialResults ?? "",
       claimedProofs: sections.claimedProofs ?? "",
-      additionalReferences: sections.additionalReferences ?? "",
       notes: sections.notes ?? "",
     }}
     client:load

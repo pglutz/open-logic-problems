@@ -14,7 +14,7 @@ import {
 } from "../../lib/problems";
 import { formatArea } from "../../lib/problems";
 import ProblemBody from "../react/ProblemBody";
-import type { CanonicalReference } from "../../lib/problemSchema";
+import type { CanonicalReference, Reference } from "../../lib/problemSchema";
 
 // Every field is required here (unlike ProblemSections, where they're
 // optional) — the editor always seeds its textareas with a definite string,
@@ -26,9 +26,38 @@ const EMPTY_SECTIONS: ProblemSectionsInput = {
   definitions: "",
   partialResults: "",
   claimedProofs: "",
-  additionalReferences: "",
   notes: "",
 };
+
+// Local, editor-only shape for an in-progress additional-reference row.
+// `localId` is a stable React list key generated once per row — the
+// user-facing `key` field can be blank or transiently duplicated while
+// editing, so it can't double as the React key itself. `year` stays a string
+// (like the canonical reference's own `refYear` state) since it's bound to a
+// text input.
+interface ReferenceRow {
+  localId: string;
+  key: string;
+  title: string;
+  author: string;
+  venue: string;
+  year: string;
+  link: string;
+  doi: string;
+}
+
+function referenceToRow(ref: Reference): ReferenceRow {
+  return {
+    localId: crypto.randomUUID(),
+    key: ref.key,
+    title: ref.title,
+    author: ref.author,
+    venue: ref.venue ?? "",
+    year: ref.year ? String(ref.year) : "",
+    link: ref.link ?? "",
+    doi: ref.doi ?? "",
+  };
+}
 
 interface ProblemEditorProps {
   mode?: "edit" | "new";
@@ -40,6 +69,7 @@ interface ProblemEditorProps {
     area: Area[];
     impact: 1 | 2 | 3;
     canonicalReference: CanonicalReference;
+    references: Reference[];
   };
   sections?: ProblemSectionsInput;
 }
@@ -49,7 +79,6 @@ interface PreviewHtml {
   definitions?: string;
   partialResults?: string;
   claimedProofs?: string;
-  additionalReferences?: string;
   notes?: string;
 }
 
@@ -67,6 +96,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   const [status, setStatus] = useState<ProblemStatus>(baselineStatus);
   const [area, setArea] = useState<Area[]>(problem?.area ?? []);
   const [impact, setImpact] = useState<1 | 2 | 3>(problem?.impact ?? 1);
+  const [refKey, setRefKey] = useState(problem?.canonicalReference.key ?? "");
   const [refTitle, setRefTitle] = useState(problem?.canonicalReference.title ?? "");
   const [refAuthor, setRefAuthor] = useState(problem?.canonicalReference.author ?? "");
   const [refVenue, setRefVenue] = useState(problem?.canonicalReference.venue ?? "");
@@ -80,8 +110,23 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   const [definitions, setDefinitions] = useState(initialSections.definitions);
   const [partialResults, setPartialResults] = useState(initialSections.partialResults);
   const [claimedProofs, setClaimedProofs] = useState(initialSections.claimedProofs);
-  const [additionalReferences, setAdditionalReferences] = useState(initialSections.additionalReferences);
   const [notes, setNotes] = useState(initialSections.notes);
+
+  const [references, setReferences] = useState<ReferenceRow[]>(() =>
+    (problem?.references ?? []).map(referenceToRow),
+  );
+  function addReferenceRow() {
+    setReferences((prev) => [
+      ...prev,
+      { localId: crypto.randomUUID(), key: "", title: "", author: "", venue: "", year: "", link: "", doi: "" },
+    ]);
+  }
+  function removeReferenceRow(localId: string) {
+    setReferences((prev) => prev.filter((r) => r.localId !== localId));
+  }
+  function updateReferenceRow(localId: string, patch: Partial<ReferenceRow>) {
+    setReferences((prev) => prev.map((r) => (r.localId === localId ? { ...r, ...patch } : r)));
+  }
 
   const [previewHtml, setPreviewHtml] = useState<PreviewHtml>({ statement: "" });
   const [commitMessage, setCommitMessage] = useState("");
@@ -90,13 +135,22 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ prUrl: string } | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  function copyCitation(key: string, id: string) {
+    if (!key.trim()) return;
+    navigator.clipboard.writeText(`[^${key.trim()}]`);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId((current) => (current === id ? null : current)), 1500);
+  }
 
   // Which required fields were blank *at the last submit attempt* — a
   // snapshot, not a live computation, so blanking a field out after a failed
   // submit doesn't newly highlight it until the user tries submitting again.
   // A field already in this set still stops being highlighted the moment
   // it's filled in, since the render below ANDs this with the field's
-  // current (live) blank-ness.
+  // current (live) blank-ness. Reference-key problems are the one exception
+  // — see canonicalKeyInvalid/rowKeyProblem below, which highlight live.
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
   const errorSummaryRef = useRef<HTMLParagraphElement>(null);
 
@@ -114,30 +168,32 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
     return () => subscription.subscription.unsubscribe();
   }, []);
 
+  const validKeys = new Set(
+    [refKey, ...references.map((r) => r.key)].map((k) => k.trim()).filter(Boolean),
+  );
+  const validKeysSignature = [...validKeys].sort().join(",");
+
   useEffect(() => {
     const timer = setTimeout(() => {
       Promise.all([
-        renderMarkdown(statement),
-        renderIfPresent(definitions),
-        renderIfPresent(partialResults),
-        renderIfPresent(claimedProofs),
-        renderIfPresent(additionalReferences),
-        renderIfPresent(notes),
-      ]).then(
-        ([statementHtml, definitionsHtml, partialResultsHtml, claimedProofsHtml, additionalReferencesHtml, notesHtml]) => {
-          setPreviewHtml({
-            statement: statementHtml,
-            definitions: definitionsHtml,
-            partialResults: partialResultsHtml,
-            claimedProofs: claimedProofsHtml,
-            additionalReferences: additionalReferencesHtml,
-            notes: notesHtml,
-          });
-        },
-      );
+        renderMarkdown(statement, validKeys),
+        renderIfPresent(definitions, validKeys),
+        renderIfPresent(partialResults, validKeys),
+        renderIfPresent(claimedProofs, validKeys),
+        renderIfPresent(notes, validKeys),
+      ]).then(([statementHtml, definitionsHtml, partialResultsHtml, claimedProofsHtml, notesHtml]) => {
+        setPreviewHtml({
+          statement: statementHtml,
+          definitions: definitionsHtml,
+          partialResults: partialResultsHtml,
+          claimedProofs: claimedProofsHtml,
+          notes: notesHtml,
+        });
+      });
     }, 250);
     return () => clearTimeout(timer);
-  }, [statement, definitions, partialResults, claimedProofs, additionalReferences, notes]);
+    // validKeysSignature stands in for validKeys, which is a new Set every render.
+  }, [statement, definitions, partialResults, claimedProofs, notes, validKeysSignature]);
 
   function toggleArea(a: Area) {
     setArea((prev) => (prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]));
@@ -147,7 +203,51 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   const missingArea = area.length === 0;
   const missingStatement = !statement.trim();
   const missingCommitMessage = mode === "edit" && !commitMessage.trim();
-  const hasValidationErrors = missingName || missingArea || missingStatement || missingCommitMessage;
+
+  const KEY_FORMAT_RE = /^[A-Za-z0-9-]+$/;
+  const isRowBlank = (row: ReferenceRow) =>
+    !row.key.trim() &&
+    !row.title.trim() &&
+    !row.author.trim() &&
+    !row.venue.trim() &&
+    !row.year.trim() &&
+    !row.link.trim() &&
+    !row.doi.trim();
+  const nonBlankRows = references.filter((r) => !isRowBlank(r));
+
+  // A key is required as soon as there's a reference to cite: unconditionally
+  // for every non-blank additional-reference row, and only conditionally for
+  // the canonical reference, which can still legitimately be left fully blank.
+  const missingCanonicalKey = !refKey.trim() && (!!refTitle.trim() || !!refAuthor.trim());
+  const canonicalKeyFormatInvalid = !!refKey.trim() && !KEY_FORMAT_RE.test(refKey.trim());
+  const rowsMissingKey = nonBlankRows.filter((r) => !r.key.trim());
+  const rowsWithBadKeyFormat = references.filter((r) => r.key.trim() && !KEY_FORMAT_RE.test(r.key.trim()));
+
+  const keyCounts = new Map<string, number>();
+  const trimmedCanonicalKey = refKey.trim();
+  if (trimmedCanonicalKey) keyCounts.set(trimmedCanonicalKey, (keyCounts.get(trimmedCanonicalKey) ?? 0) + 1);
+  for (const r of references) {
+    const k = r.key.trim();
+    if (k) keyCounts.set(k, (keyCounts.get(k) ?? 0) + 1);
+  }
+  const duplicateKeys = new Set([...keyCounts.entries()].filter(([, count]) => count > 1).map(([k]) => k));
+
+  const canonicalKeyProblem =
+    missingCanonicalKey || canonicalKeyFormatInvalid || (!!trimmedCanonicalKey && duplicateKeys.has(trimmedCanonicalKey));
+  const rowKeyProblem = (row: ReferenceRow) => {
+    const k = row.key.trim();
+    return rowsMissingKey.includes(row) || rowsWithBadKeyFormat.includes(row) || (!!k && duplicateKeys.has(k));
+  };
+
+  const hasReferenceKeyErrors =
+    missingCanonicalKey ||
+    canonicalKeyFormatInvalid ||
+    rowsMissingKey.length > 0 ||
+    rowsWithBadKeyFormat.length > 0 ||
+    duplicateKeys.size > 0;
+
+  const hasValidationErrors =
+    missingName || missingArea || missingStatement || missingCommitMessage || hasReferenceKeyErrors;
 
   const referenceTitleBlank = !refTitle.trim();
   const referenceAuthorBlank = !refAuthor.trim();
@@ -160,6 +260,14 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   } else if (referenceAuthorBlank) {
     referenceWarning = "This reference is missing an author.";
   }
+
+  const rowsMissingTitleOrAuthor = nonBlankRows.filter((r) => !r.title.trim() || !r.author.trim());
+  const additionalReferenceWarning =
+    rowsMissingTitleOrAuthor.length === 0
+      ? null
+      : rowsMissingTitleOrAuthor.length === 1
+        ? "One additional reference is missing a title or author."
+        : `${rowsMissingTitleOrAuthor.length} additional references are missing a title or author.`;
 
   const statusChanged = status !== baselineStatus;
   const statusWarning = statusChanged
@@ -177,6 +285,10 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
       if (missingArea) missing.add("area");
       if (missingStatement) missing.add("statement");
       if (missingCommitMessage) missing.add("commitMessage");
+      if (canonicalKeyProblem) missing.add("canonicalReferenceKey");
+      for (const row of references) {
+        if (rowKeyProblem(row)) missing.add(`referenceKey-${row.localId}`);
+      }
       setInvalidFields(missing);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
@@ -191,6 +303,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
       area,
       impact,
       canonical_reference: {
+        key: refKey.trim() || undefined,
         title: refTitle,
         author: refAuthor,
         venue: refVenue || undefined,
@@ -198,13 +311,21 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
         link: refLink || undefined,
         doi: refDoi || undefined,
       },
+      references: nonBlankRows.map((r) => ({
+        key: r.key.trim(),
+        title: r.title,
+        author: r.author,
+        venue: r.venue || undefined,
+        year: r.year ? Number(r.year) : undefined,
+        link: r.link || undefined,
+        doi: r.doi || undefined,
+      })),
     };
     const bodyContent = joinSections({
       statement,
       definitions,
       partialResults,
       claimedProofs,
-      additionalReferences,
       notes,
     });
     const effectiveCommitMessage = commitMessage.trim() || `New problem proposal: ${name}`;
@@ -268,7 +389,18 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   const areaInvalid = invalidFields.has("area") && missingArea;
   const statementInvalid = invalidFields.has("statement") && missingStatement;
   const commitMessageInvalid = invalidFields.has("commitMessage") && missingCommitMessage;
-  const showValidationSummary = nameInvalid || areaInvalid || statementInvalid || commitMessageInvalid;
+  // Unlike the other required-field highlights above (gated to "since the
+  // last submit attempt"), reference-key problems highlight live — they're
+  // cheap to check and catching a duplicate/malformed key immediately is
+  // more useful than waiting for a failed submit.
+  const canonicalKeyInvalid = canonicalKeyProblem;
+  const showValidationSummary =
+    nameInvalid ||
+    areaInvalid ||
+    statementInvalid ||
+    commitMessageInvalid ||
+    (invalidFields.has("canonicalReferenceKey") && canonicalKeyProblem) ||
+    references.some((r) => invalidFields.has(`referenceKey-${r.localId}`) && rowKeyProblem(r));
 
   return (
     <form className="problem-editor" onSubmit={handleSubmit} noValidate>
@@ -300,7 +432,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
         </div>
         <div className="editor-left" id="editor-panel-edit" role="tabpanel" aria-labelledby="editor-tab-edit">
           <div className="editor-header-fields">
-            {(showValidationSummary || statusWarning || referenceWarning) && (
+            {(showValidationSummary || statusWarning || referenceWarning || additionalReferenceWarning) && (
               <div className="editor-messages">
                 {showValidationSummary && (
                   <p
@@ -310,7 +442,8 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                     tabIndex={-1}
                     ref={errorSummaryRef}
                   >
-                    <strong>Error:</strong> One or more required fields are blank.
+                    <strong>Error:</strong> One or more required fields are blank, or a reference key is
+                    missing, invalid, or duplicated.
                   </p>
                 )}
                 {statusWarning && (
@@ -321,6 +454,11 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 {referenceWarning && (
                   <p className="editor-warning-box" role="status">
                     <strong>Warning:</strong> {referenceWarning}
+                  </p>
+                )}
+                {additionalReferenceWarning && (
+                  <p className="editor-warning-box" role="status">
+                    <strong>Warning:</strong> {additionalReferenceWarning}
                   </p>
                 )}
               </div>
@@ -383,7 +521,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                   {([3, 2, 1] as const).map((n) => (
                     <option key={n} value={n} title={IMPACT_RUBRIC[n]}>
                       {IMPACT_LABELS[n]}
-                      {"  "}
+                      {"  "}
                       {IMPACT_SHORT_LABELS[n]}
                     </option>
                   ))}
@@ -404,9 +542,74 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             />
           </div>
 
-          <details className={`editor-collapsible${referenceWarning ? " editor-collapsible-warning" : ""}`}>
+          <div className="editor-field">
+            <label htmlFor="editor-definitions">Definitions (optional)</label>
+            <textarea
+              id="editor-definitions"
+              value={definitions}
+              onChange={(e) => setDefinitions(e.target.value)}
+              rows={5}
+            />
+          </div>
+          <div className="editor-field">
+            <label htmlFor="editor-partial-results">Known Partial Results (optional)</label>
+            <textarea
+              id="editor-partial-results"
+              value={partialResults}
+              onChange={(e) => setPartialResults(e.target.value)}
+              rows={5}
+            />
+          </div>
+          <div className="editor-field">
+            <label htmlFor="editor-claimed-proofs">Claimed Proofs (optional)</label>
+            <textarea
+              id="editor-claimed-proofs"
+              value={claimedProofs}
+              onChange={(e) => setClaimedProofs(e.target.value)}
+              rows={5}
+            />
+          </div>
+          <div className="editor-field">
+            <label htmlFor="editor-notes">Notes (optional)</label>
+            <textarea
+              id="editor-notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={4}
+              placeholder="e.g. This was first noted in [^smith2020]."
+            />
+          </div>
+
+          <details
+            className={`editor-collapsible${referenceWarning || canonicalKeyInvalid ? (canonicalKeyInvalid ? " editor-collapsible-invalid" : " editor-collapsible-warning") : ""}`}
+          >
             <summary>Reference for the problem statement</summary>
             <div className="editor-collapsible-body">
+              <div className="editor-reference-row-header">
+                <div className={`editor-field${canonicalKeyInvalid ? " editor-field-invalid" : ""}`}>
+                  <label htmlFor="editor-ref-key">Key</label>
+                  <input
+                    id="editor-ref-key"
+                    type="text"
+                    maxLength={200}
+                    placeholder="e.g. smith2020"
+                    value={refKey}
+                    onChange={(e) => setRefKey(e.target.value)}
+                    aria-invalid={canonicalKeyInvalid || undefined}
+                    aria-describedby={canonicalKeyInvalid ? "editor-error-summary" : undefined}
+                  />
+                </div>
+                <div className="editor-reference-row-actions">
+                  <button
+                    type="button"
+                    className="link-button editor-copy-citation"
+                    disabled={!refKey.trim()}
+                    onClick={() => copyCitation(refKey, "canonical")}
+                  >
+                    {copiedId === "canonical" ? "Copied!" : "Copy citation"}
+                  </button>
+                </div>
+              </div>
               <div className="editor-field">
                 <label htmlFor="editor-ref-title">Title (optional)</label>
                 <input
@@ -472,44 +675,120 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
           </details>
 
           <div className="editor-field">
-            <label htmlFor="editor-definitions">Definitions (optional)</label>
-            <textarea
-              id="editor-definitions"
-              value={definitions}
-              onChange={(e) => setDefinitions(e.target.value)}
-              rows={5}
-            />
-          </div>
-          <div className="editor-field">
-            <label htmlFor="editor-partial-results">Known Partial Results (optional)</label>
-            <textarea
-              id="editor-partial-results"
-              value={partialResults}
-              onChange={(e) => setPartialResults(e.target.value)}
-              rows={5}
-            />
-          </div>
-          <div className="editor-field">
-            <label htmlFor="editor-claimed-proofs">Claimed Proofs (optional)</label>
-            <textarea
-              id="editor-claimed-proofs"
-              value={claimedProofs}
-              onChange={(e) => setClaimedProofs(e.target.value)}
-              rows={5}
-            />
-          </div>
-          <div className="editor-field">
-            <label htmlFor="editor-notes">Notes (optional)</label>
-            <textarea id="editor-notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} />
-          </div>
-          <div className="editor-field">
-            <label htmlFor="editor-additional-references">Additional References (optional)</label>
-            <textarea
-              id="editor-additional-references"
-              value={additionalReferences}
-              onChange={(e) => setAdditionalReferences(e.target.value)}
-              rows={4}
-            />
+            <label>Additional References (optional)</label>
+            <div className="editor-reference-list">
+              {references.map((row) => {
+                const rowInvalid = rowKeyProblem(row);
+                const summaryLabel =
+                  row.title.trim() || (row.key.trim() ? `[${row.key.trim()}]` : "New reference");
+                return (
+                  <details
+                    key={row.localId}
+                    className={`editor-collapsible${rowInvalid ? " editor-collapsible-invalid" : ""}`}
+                  >
+                    <summary>{summaryLabel}</summary>
+                    <div className="editor-collapsible-body">
+                      <div className="editor-reference-row-header">
+                        <div className={`editor-field${rowInvalid ? " editor-field-invalid" : ""}`}>
+                          <label htmlFor={`editor-ref-key-${row.localId}`}>Key</label>
+                          <input
+                            id={`editor-ref-key-${row.localId}`}
+                            type="text"
+                            maxLength={200}
+                            placeholder="e.g. smith2020"
+                            value={row.key}
+                            onChange={(e) => updateReferenceRow(row.localId, { key: e.target.value })}
+                            aria-invalid={rowInvalid || undefined}
+                            aria-describedby={rowInvalid ? "editor-error-summary" : undefined}
+                          />
+                        </div>
+                        <div className="editor-reference-row-actions">
+                          <button
+                            type="button"
+                            className="link-button editor-copy-citation"
+                            disabled={!row.key.trim()}
+                            onClick={() => copyCitation(row.key, row.localId)}
+                          >
+                            {copiedId === row.localId ? "Copied!" : "Copy citation"}
+                          </button>
+                          <button
+                            type="button"
+                            className="link-button editor-reference-remove"
+                            onClick={() => removeReferenceRow(row.localId)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                      <div className="editor-field">
+                        <label htmlFor={`editor-ref-title-${row.localId}`}>Title</label>
+                        <input
+                          id={`editor-ref-title-${row.localId}`}
+                          type="text"
+                          maxLength={500}
+                          value={row.title}
+                          onChange={(e) => updateReferenceRow(row.localId, { title: e.target.value })}
+                        />
+                      </div>
+                      <div className="editor-field">
+                        <label htmlFor={`editor-ref-author-${row.localId}`}>Author(s)</label>
+                        <input
+                          id={`editor-ref-author-${row.localId}`}
+                          type="text"
+                          maxLength={500}
+                          value={row.author}
+                          onChange={(e) => updateReferenceRow(row.localId, { author: e.target.value })}
+                        />
+                      </div>
+                      <div className="editor-field">
+                        <label htmlFor={`editor-ref-venue-${row.localId}`}>Venue (optional)</label>
+                        <input
+                          id={`editor-ref-venue-${row.localId}`}
+                          type="text"
+                          maxLength={500}
+                          value={row.venue}
+                          onChange={(e) => updateReferenceRow(row.localId, { venue: e.target.value })}
+                        />
+                      </div>
+                      <div className="editor-field">
+                        <label htmlFor={`editor-ref-year-${row.localId}`}>Year (optional)</label>
+                        <input
+                          id={`editor-ref-year-${row.localId}`}
+                          type="number"
+                          min={1800}
+                          max={new Date().getFullYear() + 1}
+                          value={row.year}
+                          onChange={(e) => updateReferenceRow(row.localId, { year: e.target.value })}
+                        />
+                      </div>
+                      <div className="editor-field">
+                        <label htmlFor={`editor-ref-link-${row.localId}`}>Link (optional)</label>
+                        <input
+                          id={`editor-ref-link-${row.localId}`}
+                          type="url"
+                          maxLength={500}
+                          value={row.link}
+                          onChange={(e) => updateReferenceRow(row.localId, { link: e.target.value })}
+                        />
+                      </div>
+                      <div className="editor-field">
+                        <label htmlFor={`editor-ref-doi-${row.localId}`}>DOI (optional)</label>
+                        <input
+                          id={`editor-ref-doi-${row.localId}`}
+                          type="text"
+                          maxLength={500}
+                          value={row.doi}
+                          onChange={(e) => updateReferenceRow(row.localId, { doi: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </details>
+                );
+              })}
+              <button type="button" className="editor-add-reference" onClick={addReferenceRow}>
+                + Add reference
+              </button>
+            </div>
           </div>
 
           {mode === "edit" && (
@@ -553,6 +832,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               impact={impact}
               area={area}
               canonicalReference={{
+                key: refKey || undefined,
                 title: refTitle,
                 author: refAuthor,
                 venue: refVenue || undefined,
@@ -560,11 +840,19 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 link: refLink || undefined,
                 doi: refDoi || undefined,
               }}
+              references={nonBlankRows.map((r) => ({
+                key: r.key,
+                title: r.title,
+                author: r.author,
+                venue: r.venue || undefined,
+                year: r.year ? Number(r.year) : undefined,
+                link: r.link || undefined,
+                doi: r.doi || undefined,
+              }))}
               statementHtml={previewHtml.statement}
               definitionsHtml={previewHtml.definitions}
               partialResultsHtml={previewHtml.partialResults}
               claimedProofsHtml={previewHtml.claimedProofs}
-              additionalReferencesHtml={previewHtml.additionalReferences}
               notesHtml={previewHtml.notes}
               sectionHeadingTag="h3"
             />

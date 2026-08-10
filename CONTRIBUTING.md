@@ -35,19 +35,34 @@ status: open                   # open | claimed-proof-no-consensus | closed
 area: [model-theory]            # one or more of the areas listed below
 impact: 3                      # 1, 2, or 3 — see the FAQ for what these mean
 canonical_reference:
+  key: "vaught1961"            # required once title/author are non-blank; letters, digits, and hyphens only
   title: "Denumerable models of complete theories"
   author: "Robert L. Vaught"
   venue: "Infinitistic Methods (Proc. Symposium on Foundations of Mathematics, Warsaw)"  # optional
   year: 1961                   # optional
   link: "https://example.com"  # optional
   doi: "10.1000/example"       # optional
+references:                    # optional — additional references beyond canonical_reference above
+  - key: "steel1978"           # required, same rules as canonical_reference's key
+    title: "On Vaught's conjecture"
+    author: "Steel, J."
+    venue: "Cabal Seminar 76-77, Lecture Notes in Mathematics"  # optional
+    year: 1978                 # optional
+    link: "https://example.com"  # optional
+    doi: "10.1000/example"       # optional
 ```
 
 Valid `area` values: `computability-theory`, `set-theory`, `model-theory`,
 `descriptive-set-theory`, `proof-theory`, `categorical-logic`.
 
 `canonical_reference.title` and `.author` can be left as empty strings in unusual cases
-where no reference is available, but a reference should be included whenever possible.
+where no reference is available, but a reference should be included whenever possible. Every
+key (canonical or additional) must be unique within the file.
+
+Any reference — canonical or additional — can be cited from within the body by writing
+`[^key]` (e.g. `[^vaught1961]`), which renders as a link reading `[key]` pointing at that
+reference's entry. A key that doesn't match any reference in the file renders as plain red
+text instead of a link, so a typo is easy to spot.
 
 ### Body
 
@@ -74,10 +89,6 @@ Optional. Only relevant if `status` is `claimed-proof-no-consensus`.
 ## Notes
 
 Optional.
-
-## Additional References
-
-Optional. References beyond the `canonical_reference` above.
 ```
 
 Only "Statement" is required; the rest can be omitted entirely if there's nothing to put there. See any file under `problems/` for a real example.

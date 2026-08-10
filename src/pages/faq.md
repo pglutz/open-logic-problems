@@ -61,7 +61,7 @@ Additionally, most problem pages have one or more of the following sections.
 - **Known partial results.** A not-necessarily-comprehensive summary of what's known about the problem.
 - **Claimed proofs.** A place to record credible claimed resolutions of the problem before they are widely accepted by the community.
 - **Notes.** Comments about the problem's motivations, history, relationship to other problems or anything else that seems relevant.
-- **Additional references.** Other papers related to the problem aside from the reference above.
+- **Additional references.** Other papers related to the problem aside from the reference above. Any reference on the page, including the one for the problem statement, can be cited from elsewhere on the page — citations like `[smith2020]` link down to the matching entry.
 
 ### If I want to leave a comment on a problem page, what should I do?
 

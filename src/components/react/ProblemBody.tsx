@@ -2,18 +2,65 @@ import StatusBadge from "./StatusBadge";
 import ImpactMarks from "./ImpactMarks";
 import AreaTags from "./AreaTags";
 import type { ProblemStatus } from "../../lib/problems";
-import type { CanonicalReference } from "../../lib/problemSchema";
+import type { CanonicalReference, Reference } from "../../lib/problemSchema";
+
+// Author/title/venue/year join with ", " only between parts that are
+// actually present, so a partially- or fully-blank reference never leaves a
+// stray comma. Link/DOI stay as unconditional parenthetical suffixes. Shared
+// by the canonical reference and every entry of the additional-references
+// list below.
+function referenceParts(ref: { title: string; author: string; venue?: string; year?: number }) {
+  const parts: React.ReactNode[] = [];
+  if (ref.author) parts.push(ref.author);
+  if (ref.title) parts.push(<em key="title">{ref.title}</em>);
+  if (ref.venue) parts.push(ref.venue);
+  if (ref.year) parts.push(String(ref.year));
+  return parts;
+}
+
+function ReferenceEntry({
+  reference,
+  id,
+}: {
+  reference: CanonicalReference | Reference;
+  id?: string;
+}) {
+  const parts = referenceParts(reference);
+  return (
+    <p id={id}>
+      {reference.key && <span className="reference-key-prefix">[{reference.key}]</span>}
+      {parts.map((part, i) => (
+        <span key={i}>
+          {i > 0 && ", "}
+          {part}
+        </span>
+      ))}
+      {reference.link && (
+        <>
+          {" "}
+          [<a href={reference.link}>link</a>]
+        </>
+      )}
+      {reference.doi && (
+        <>
+          {" "}
+          [<a href={`https://doi.org/${reference.doi}`}>doi</a>]
+        </>
+      )}
+    </p>
+  );
+}
 
 interface ProblemBodyProps {
   status: ProblemStatus;
   impact: 1 | 2 | 3;
   area: string[];
   canonicalReference: CanonicalReference;
+  references: Reference[];
   statementHtml: string;
   definitionsHtml?: string;
   partialResultsHtml?: string;
   claimedProofsHtml?: string;
-  additionalReferencesHtml?: string;
   notesHtml?: string;
   // Omitted entirely in the suggest-an-edit live preview, where a link back
   // to the edit page it's already inside of wouldn't make sense.
@@ -35,27 +82,19 @@ export default function ProblemBody({
   impact,
   area,
   canonicalReference,
+  references,
   statementHtml,
   definitionsHtml,
   partialResultsHtml,
   claimedProofsHtml,
-  additionalReferencesHtml,
   notesHtml,
   suggestEditHref,
   sectionHeadingTag = "h2",
 }: ProblemBodyProps) {
   const SectionHeading = sectionHeadingTag;
 
-  // Author/title/venue/year join with ", " only between parts that are
-  // actually present, so a partially- or fully-blank reference never leaves
-  // a stray comma. Link/DOI stay as unconditional parenthetical suffixes.
-  const referenceParts: React.ReactNode[] = [];
-  if (canonicalReference.author) referenceParts.push(canonicalReference.author);
-  if (canonicalReference.title) referenceParts.push(<em key="title">{canonicalReference.title}</em>);
-  if (canonicalReference.venue) referenceParts.push(canonicalReference.venue);
-  if (canonicalReference.year) referenceParts.push(String(canonicalReference.year));
-  const hasReference =
-    referenceParts.length > 0 || !!canonicalReference.link || !!canonicalReference.doi;
+  const hasCanonicalReference =
+    referenceParts(canonicalReference).length > 0 || !!canonicalReference.link || !!canonicalReference.doi;
 
   return (
     <>
@@ -74,32 +113,6 @@ export default function ProblemBody({
           )}
         </div>
       </div>
-
-      {hasReference && (
-        <details className="problem-section reference-box">
-          <summary className="reference-summary">Reference for the problem statement</summary>
-          <p>
-            {referenceParts.map((part, i) => (
-              <span key={i}>
-                {i > 0 && ", "}
-                {part}
-              </span>
-            ))}
-            {canonicalReference.link && (
-              <>
-                {" "}
-                [<a href={canonicalReference.link}>link</a>]
-              </>
-            )}
-            {canonicalReference.doi && (
-              <>
-                {" "}
-                [<a href={`https://doi.org/${canonicalReference.doi}`}>doi</a>]
-              </>
-            )}
-          </p>
-        </details>
-      )}
 
       {definitionsHtml && (
         <section className="problem-section">
@@ -129,10 +142,22 @@ export default function ProblemBody({
         </section>
       )}
 
-      {additionalReferencesHtml && (
+      {hasCanonicalReference && (
+        <section className="problem-section">
+          <SectionHeading className="section-heading">Reference for the problem statement</SectionHeading>
+          <ReferenceEntry
+            reference={canonicalReference}
+            id={canonicalReference.key ? `ref-${canonicalReference.key}` : undefined}
+          />
+        </section>
+      )}
+
+      {references.length > 0 && (
         <section className="problem-section">
           <SectionHeading className="section-heading">Additional References</SectionHeading>
-          <div dangerouslySetInnerHTML={{ __html: additionalReferencesHtml }} />
+          {references.map((ref) => (
+            <ReferenceEntry key={ref.key} reference={ref} id={`ref-${ref.key}`} />
+          ))}
         </section>
       )}
     </>

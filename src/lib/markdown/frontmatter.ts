@@ -17,15 +17,30 @@ import {
 // YAML's double-quote escaping).
 const q = (s: string) => JSON.stringify(s);
 
+// Writes one reference's fields (key, title, author, then whichever of
+// venue/year/link/doi are present) at the given indent — shared by
+// canonical_reference and each entry of the references array below.
+function referenceLines(ref: ProblemFrontmatter["canonical_reference"], indent: string): string[] {
+  const lines: string[] = [];
+  if (ref.key) lines.push(`${indent}key: ${q(ref.key)}`);
+  lines.push(`${indent}title: ${q(ref.title)}`, `${indent}author: ${q(ref.author)}`);
+  if (ref.venue) lines.push(`${indent}venue: ${q(ref.venue)}`);
+  if (ref.year) lines.push(`${indent}year: ${ref.year}`);
+  if (ref.link) lines.push(`${indent}link: ${q(ref.link)}`);
+  if (ref.doi) lines.push(`${indent}doi: ${q(ref.doi)}`);
+  return lines;
+}
+
 // Lines shared by an assigned problem and one still awaiting an id: name,
-// status, area, impact, canonical_reference. Excludes `id` (bare int vs.
-// literal `null`) — callers assemble that around this.
+// status, area, impact, canonical_reference, references. Excludes `id` (bare
+// int vs. literal `null`) — callers assemble that around this.
 function coreFrontmatterLines(fm: {
   name: string;
   status: string;
   area: readonly string[];
   impact: number;
   canonical_reference: ProblemFrontmatter["canonical_reference"];
+  references: ProblemFrontmatter["references"];
 }): string[] {
   const lines = [
     `name: ${q(fm.name)}`,
@@ -33,13 +48,15 @@ function coreFrontmatterLines(fm: {
     `area: [${fm.area.join(", ")}]`,
     `impact: ${fm.impact}`,
     `canonical_reference:`,
-    `  title: ${q(fm.canonical_reference.title)}`,
-    `  author: ${q(fm.canonical_reference.author)}`,
+    ...referenceLines(fm.canonical_reference, "  "),
   ];
-  if (fm.canonical_reference.venue) lines.push(`  venue: ${q(fm.canonical_reference.venue)}`);
-  if (fm.canonical_reference.year) lines.push(`  year: ${fm.canonical_reference.year}`);
-  if (fm.canonical_reference.link) lines.push(`  link: ${q(fm.canonical_reference.link)}`);
-  if (fm.canonical_reference.doi) lines.push(`  doi: ${q(fm.canonical_reference.doi)}`);
+  if (fm.references.length > 0) {
+    lines.push(`references:`);
+    for (const ref of fm.references) {
+      const [firstLine, ...restLines] = referenceLines(ref, "    ");
+      lines.push(`  - ${firstLine.trimStart()}`, ...restLines);
+    }
+  }
   return lines;
 }
 

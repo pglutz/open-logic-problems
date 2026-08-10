@@ -4,7 +4,7 @@ import ProblemBody from "../components/react/ProblemBody";
 import CommentSection from "../components/islands/CommentSection";
 import type { Area } from "../lib/areas";
 import type { ProblemStatus } from "../lib/problems";
-import type { CanonicalReference } from "../lib/problemSchema";
+import type { CanonicalReference, Reference } from "../lib/problemSchema";
 
 interface Props {
   id: number;
@@ -13,11 +13,11 @@ interface Props {
   area: Area[];
   impact: 1 | 2 | 3;
   canonicalReference: CanonicalReference;
+  references: Reference[];
   statementHtml: string;
   definitionsHtml?: string;
   partialResultsHtml?: string;
   claimedProofsHtml?: string;
-  additionalReferencesHtml?: string;
   notesHtml?: string;
 }
 
@@ -28,11 +28,11 @@ const {
   area,
   impact,
   canonicalReference,
+  references,
   statementHtml,
   definitionsHtml,
   partialResultsHtml,
   claimedProofsHtml,
-  additionalReferencesHtml,
   notesHtml,
 } = Astro.props;
 
@@ -48,11 +48,11 @@ const title = name;
     impact={impact}
     area={area}
     canonicalReference={canonicalReference}
+    references={references}
     statementHtml={statementHtml}
     definitionsHtml={definitionsHtml}
     partialResultsHtml={partialResultsHtml}
     claimedProofsHtml={claimedProofsHtml}
-    additionalReferencesHtml={additionalReferencesHtml}
     notesHtml={notesHtml}
     suggestEditHref={`/problems/${id}/edit`}
   />
