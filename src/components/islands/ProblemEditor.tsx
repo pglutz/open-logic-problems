@@ -711,7 +711,22 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                     className="editor-collapsible editor-reference-box"
                     open={row.startOpen || undefined}
                   >
-                    <summary>{summaryLabel}</summary>
+                    <summary>
+                      <span className="editor-reference-summary-row">
+                        <span className="editor-reference-summary-title">{summaryLabel}</span>
+                        <button
+                          type="button"
+                          className="editor-reference-remove"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            removeReferenceRow(row.localId);
+                          }}
+                        >
+                          Remove reference
+                        </button>
+                      </span>
+                    </summary>
                     <div className="editor-collapsible-body">
                       <div className="editor-reference-row-header">
                         <div className={`editor-field${rowInvalid ? " editor-field-invalid" : ""}`}>
@@ -799,13 +814,6 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                           onChange={(e) => updateReferenceRow(row.localId, { doi: e.target.value })}
                         />
                       </div>
-                      <button
-                        type="button"
-                        className="editor-reference-remove"
-                        onClick={() => removeReferenceRow(row.localId)}
-                      >
-                        Remove reference
-                      </button>
                     </div>
                   </details>
                 );
