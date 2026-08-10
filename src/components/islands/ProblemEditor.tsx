@@ -559,44 +559,6 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             />
           </div>
 
-          <div className="editor-field">
-            <label htmlFor="editor-definitions">Definitions (optional)</label>
-            <textarea
-              id="editor-definitions"
-              value={definitions}
-              onChange={(e) => setDefinitions(e.target.value)}
-              rows={5}
-            />
-          </div>
-          <div className="editor-field">
-            <label htmlFor="editor-partial-results">Known Partial Results (optional)</label>
-            <textarea
-              id="editor-partial-results"
-              value={partialResults}
-              onChange={(e) => setPartialResults(e.target.value)}
-              rows={5}
-            />
-          </div>
-          <div className="editor-field">
-            <label htmlFor="editor-claimed-proofs">Claimed Proofs (optional)</label>
-            <textarea
-              id="editor-claimed-proofs"
-              value={claimedProofs}
-              onChange={(e) => setClaimedProofs(e.target.value)}
-              rows={5}
-            />
-          </div>
-          <div className="editor-field">
-            <label htmlFor="editor-notes">Notes (optional)</label>
-            <textarea
-              id="editor-notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={4}
-              placeholder="e.g. This was first noted in [^Smi20]."
-            />
-          </div>
-
           <details
             className={`editor-collapsible editor-reference-box${canonicalReferenceEmpty ? " editor-collapsible-warning" : ""}`}
           >
@@ -694,6 +656,44 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               </div>
             </div>
           </details>
+
+          <div className="editor-field">
+            <label htmlFor="editor-definitions">Definitions (optional)</label>
+            <textarea
+              id="editor-definitions"
+              value={definitions}
+              onChange={(e) => setDefinitions(e.target.value)}
+              rows={5}
+            />
+          </div>
+          <div className="editor-field">
+            <label htmlFor="editor-partial-results">Known Partial Results (optional)</label>
+            <textarea
+              id="editor-partial-results"
+              value={partialResults}
+              onChange={(e) => setPartialResults(e.target.value)}
+              rows={5}
+            />
+          </div>
+          <div className="editor-field">
+            <label htmlFor="editor-claimed-proofs">Claimed Proofs (optional)</label>
+            <textarea
+              id="editor-claimed-proofs"
+              value={claimedProofs}
+              onChange={(e) => setClaimedProofs(e.target.value)}
+              rows={5}
+            />
+          </div>
+          <div className="editor-field">
+            <label htmlFor="editor-notes">Notes (optional)</label>
+            <textarea
+              id="editor-notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={4}
+              placeholder="e.g. This was first noted in [^Smi20]."
+            />
+          </div>
 
           <div className="editor-field">
             <label>Additional References (optional)</label>
