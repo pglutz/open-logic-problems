@@ -18,10 +18,17 @@ interface ChangelogEntry {
 // (rather than sorting by date) is what actually gets same-day entries right.
 const recentChanges = (changelogData as ChangelogEntry[]).slice().reverse().slice(0, 5);
 
-const featuredProblems =
-  (featuredIds as number[]).length > 0
-    ? (await getCollection("problems")).filter((p) => (featuredIds as number[]).includes(p.data.id))
-    : [];
+// getCollection's order isn't numeric-id or featured.json order (it's
+// whatever the glob loader happens to yield), so a plain .filter() left
+// featured problems in an arbitrary order — look each id up instead, which
+// preserves featured.json's own curated order and skips any stale id that
+// no longer matches a problem.
+const featuredProblems = await (async () => {
+  const ids = featuredIds as number[];
+  if (ids.length === 0) return [];
+  const problemsById = new Map((await getCollection("problems")).map((p) => [p.data.id, p]));
+  return ids.map((id) => problemsById.get(id)).filter((p) => p !== undefined);
+})();
 
 function changeTitle(entry: ChangelogEntry): string {
   return entry.name ?? `Problem #${entry.id}`;
