@@ -66,6 +66,23 @@ function referenceToRow(ref: Reference): ReferenceRow {
   };
 }
 
+// Shared by every field label/heading that carries a parenthetical hint
+// ("optional", "recommended") — a single source for that markup so the
+// hint's spacing/styling can't drift out of sync across call sites.
+// A single wrapping <span> (not a fragment) so this renders as one flex
+// item where the parent is a flex container (e.g. the reference box's
+// <summary>) — otherwise that parent's flex `gap` would apply a second,
+// larger gap between the text and the hint on top of the hint's own
+// margin, doubling up.
+function FieldLabel({ text, hint }: { text: string; hint?: string }) {
+  return (
+    <span>
+      {text}
+      {hint && <span className="editor-label-hint">({hint})</span>}
+    </span>
+  );
+}
+
 interface ProblemEditorProps {
   mode?: "edit" | "new";
   // Required in "edit" mode, absent in "new" mode.
@@ -564,7 +581,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             <details
               className={`editor-collapsible editor-reference-box${canonicalReferenceEmpty ? " editor-collapsible-warning" : ""}`}
             >
-              <summary>Reference for the problem statement</summary>
+              <summary>
+                <FieldLabel text="Reference for the problem statement" hint="recommended" />
+              </summary>
               <div className="editor-collapsible-body">
                 <div className="editor-reference-row-header">
                   <div className={`editor-field${canonicalKeyInvalid ? " editor-field-invalid" : ""}`}>
@@ -594,7 +613,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 <div
                   className={`editor-field${referenceTitleBlank && !canonicalReferenceEmpty ? " editor-field-warning" : ""}`}
                 >
-                  <label htmlFor="editor-ref-title">Title (optional)</label>
+                  <label htmlFor="editor-ref-title">Title</label>
                   <input
                     id="editor-ref-title"
                     type="text"
@@ -606,7 +625,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 <div
                   className={`editor-field${referenceAuthorBlank && !canonicalReferenceEmpty ? " editor-field-warning" : ""}`}
                 >
-                  <label htmlFor="editor-ref-author">Author(s) (optional)</label>
+                  <label htmlFor="editor-ref-author">Author(s)</label>
                   <input
                     id="editor-ref-author"
                     type="text"
@@ -616,7 +635,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                   />
                 </div>
                 <div className="editor-field">
-                  <label htmlFor="editor-ref-venue">Venue (optional)</label>
+                  <label htmlFor="editor-ref-venue">
+                    <FieldLabel text="Venue" hint="optional" />
+                  </label>
                   <input
                     id="editor-ref-venue"
                     type="text"
@@ -626,7 +647,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                   />
                 </div>
                 <div className="editor-field">
-                  <label htmlFor="editor-ref-year">Year (optional)</label>
+                  <label htmlFor="editor-ref-year">
+                    <FieldLabel text="Year" hint="optional" />
+                  </label>
                   <input
                     id="editor-ref-year"
                     type="number"
@@ -637,7 +660,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                   />
                 </div>
                 <div className="editor-field">
-                  <label htmlFor="editor-ref-link">Link (optional)</label>
+                  <label htmlFor="editor-ref-link">
+                    <FieldLabel text="Link" hint="optional" />
+                  </label>
                   <input
                     id="editor-ref-link"
                     type="url"
@@ -647,7 +672,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                   />
                 </div>
                 <div className="editor-field">
-                  <label htmlFor="editor-ref-doi">DOI (optional)</label>
+                  <label htmlFor="editor-ref-doi">
+                    <FieldLabel text="DOI" hint="optional" />
+                  </label>
                   <input
                     id="editor-ref-doi"
                     type="text"
@@ -661,7 +688,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
           </div>
 
           <div className="editor-field">
-            <label htmlFor="editor-definitions">Definitions (optional)</label>
+            <label htmlFor="editor-definitions">
+              <FieldLabel text="Definitions" hint="optional" />
+            </label>
             <textarea
               id="editor-definitions"
               value={definitions}
@@ -670,7 +699,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             />
           </div>
           <div className="editor-field">
-            <label htmlFor="editor-partial-results">Known Partial Results (optional)</label>
+            <label htmlFor="editor-partial-results">
+              <FieldLabel text="Known Partial Results" hint="optional" />
+            </label>
             <textarea
               id="editor-partial-results"
               value={partialResults}
@@ -679,7 +710,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             />
           </div>
           <div className="editor-field">
-            <label htmlFor="editor-claimed-proofs">Claimed Proofs (optional)</label>
+            <label htmlFor="editor-claimed-proofs">
+              <FieldLabel text="Claimed Proofs" hint="optional" />
+            </label>
             <textarea
               id="editor-claimed-proofs"
               value={claimedProofs}
@@ -688,7 +721,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             />
           </div>
           <div className="editor-field">
-            <label htmlFor="editor-notes">Notes (optional)</label>
+            <label htmlFor="editor-notes">
+              <FieldLabel text="Notes" hint="optional" />
+            </label>
             <textarea
               id="editor-notes"
               value={notes}
@@ -699,7 +734,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
           </div>
 
           <div className="editor-field">
-            <label>Additional References (optional)</label>
+            <label>
+              <FieldLabel text="Additional References" hint="optional" />
+            </label>
             <div className="editor-reference-list">
               {references.map((row) => {
                 const rowInvalid = rowKeyProblem(row);
@@ -777,7 +814,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                         />
                       </div>
                       <div className="editor-field">
-                        <label htmlFor={`editor-ref-venue-${row.localId}`}>Venue (optional)</label>
+                        <label htmlFor={`editor-ref-venue-${row.localId}`}>
+                          <FieldLabel text="Venue" hint="optional" />
+                        </label>
                         <input
                           id={`editor-ref-venue-${row.localId}`}
                           type="text"
@@ -787,7 +826,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                         />
                       </div>
                       <div className="editor-field">
-                        <label htmlFor={`editor-ref-year-${row.localId}`}>Year (optional)</label>
+                        <label htmlFor={`editor-ref-year-${row.localId}`}>
+                          <FieldLabel text="Year" hint="optional" />
+                        </label>
                         <input
                           id={`editor-ref-year-${row.localId}`}
                           type="number"
@@ -798,7 +839,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                         />
                       </div>
                       <div className="editor-field">
-                        <label htmlFor={`editor-ref-link-${row.localId}`}>Link (optional)</label>
+                        <label htmlFor={`editor-ref-link-${row.localId}`}>
+                          <FieldLabel text="Link" hint="optional" />
+                        </label>
                         <input
                           id={`editor-ref-link-${row.localId}`}
                           type="url"
@@ -808,7 +851,9 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                         />
                       </div>
                       <div className="editor-field">
-                        <label htmlFor={`editor-ref-doi-${row.localId}`}>DOI (optional)</label>
+                        <label htmlFor={`editor-ref-doi-${row.localId}`}>
+                          <FieldLabel text="DOI" hint="optional" />
+                        </label>
                         <input
                           id={`editor-ref-doi-${row.localId}`}
                           type="text"

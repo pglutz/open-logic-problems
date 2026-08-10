@@ -591,8 +591,9 @@ main:has(.faq-item) h2 {
    the box open/closed. */
 .editor-reference-box > summary {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.3rem 0.6rem;
   list-style: none;
 }
 .editor-reference-box > summary::-webkit-details-marker {
@@ -606,6 +607,18 @@ main:has(.faq-item) h2 {
 }
 .editor-reference-box[open] > summary::before {
   transform: rotate(90deg);
+}
+/* Lighter-weight styling for parenthetical hints in labels/headings —
+   "(optional)", "(recommended)" — so they read as secondary to the
+   label/heading text itself rather than matching its full boldness. The
+   gap before it is margin (not a text-node space) so it's identical
+   everywhere FieldLabel is used, regardless of whether the parent happens
+   to be a flex container (like the reference box's <summary>) or a plain
+   block (like a <label>). */
+.editor-label-hint {
+  margin-left: 0.4rem;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--color-text-muted) 75%, transparent);
 }
 .editor-reference-summary-row {
   display: flex;
@@ -642,6 +655,7 @@ main:has(.faq-item) h2 {
   font-size: 0.9rem;
   font-weight: 600;
   padding: 0.4rem 0.9rem;
+  margin-bottom: 0.5rem;
   border-radius: var(--radius-md);
   border: var(--border-width) solid var(--color-link);
   background: transparent;
