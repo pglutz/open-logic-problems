@@ -424,7 +424,7 @@ main:has(.faq-item) h2 {
   gap: 1.25rem;
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: 1.25rem;
+  padding: 0.9rem 1.25rem 1.25rem;
 }
 .editor-header-fields {
   display: flex;

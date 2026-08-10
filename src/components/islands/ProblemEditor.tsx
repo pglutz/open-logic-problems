@@ -292,7 +292,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   let referenceWarning: string | null = null;
   if (canonicalReferenceEmpty) {
     referenceWarning =
-      "No reference has been provided. Most problems should include a reference to a reliable published source — leave this blank only in unusual cases.";
+      "No reference has been provided. Most problems should include a reference to a reliable published source which contains a precise statement of the problem.";
   } else if (referenceTitleBlank) {
     referenceWarning = "This reference is missing a title.";
   } else if (referenceAuthorBlank) {
@@ -575,6 +575,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 rows={8}
                 aria-invalid={statementInvalid || undefined}
                 aria-describedby={statementInvalid ? "editor-error-summary" : undefined}
+                placeholder="A precise statement of the problem. *Markdown* and $\LaTeX$ are supported."
               />
             </div>
 
@@ -707,6 +708,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               value={partialResults}
               onChange={(e) => setPartialResults(e.target.value)}
               rows={5}
+              placeholder="e.g. This was proven in the finite case by [^Smi20]."
             />
           </div>
           <div className="editor-field">
@@ -729,7 +731,6 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={4}
-              placeholder="e.g. This was first noted in [^Smi20]."
             />
           </div>
 
