@@ -101,6 +101,29 @@ export function renderIfPresent(
 }
 
 /**
+ * Math-only pipeline for reference titles (e.g. "On vector spaces over
+ * $\mathbb{F}_2$ without choice") — no GFM/citations, since a title is a
+ * single-line field, not body prose. `processSync` is safe here because
+ * every plugin in this pipeline (remark-parse/math/rehype, rehype-katex,
+ * rehype-stringify) is synchronous, which lets titles render inline inside
+ * `ProblemBody` itself instead of needing async plumbing through every page
+ * and the live editor preview that renders it.
+ */
+const titleProcessor = unified()
+  .use(remarkParse)
+  .use(remarkMath)
+  .use(remarkRehype)
+  .use(rehypeKatex)
+  .use(rehypeStringify);
+
+/** Renders a reference title's math, unwrapping the single `<p>` remark-rehype always wraps a one-line input in. */
+export function renderReferenceTitle(title: string): string {
+  if (!title.trim()) return "";
+  const html = String(titleProcessor.processSync(title));
+  return html.replace(/^<p>([\s\S]*)<\/p>\n?$/, "$1");
+}
+
+/**
  * Comments are authored by any signed-in user and shown to everyone as soon
  * as they're posted (no PR review, unlike problem content), so this
  * sanitizes the parsed tree before rendering. Sanitizing runs *before*

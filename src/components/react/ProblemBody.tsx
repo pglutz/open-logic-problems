@@ -3,16 +3,20 @@ import ImpactMarks from "./ImpactMarks";
 import AreaTags from "./AreaTags";
 import type { ProblemStatus } from "../../lib/problems";
 import type { CanonicalReference, Reference } from "../../lib/problemSchema";
+import { renderReferenceTitle } from "../../lib/markdown/pipeline";
 
 // Author/title/venue/year join with ", " only between parts that are
 // actually present, so a partially- or fully-blank reference never leaves a
 // stray comma. Link/DOI stay as unconditional parenthetical suffixes. Shared
 // by the canonical reference and every entry of the additional-references
-// list below.
+// list below. Title supports LaTeX (e.g. a field name in the title), so it's
+// rendered through the math pipeline rather than inserted as plain text.
 function referenceParts(ref: { title: string; author: string; venue?: string; year?: number }) {
   const parts: React.ReactNode[] = [];
   if (ref.author) parts.push(ref.author);
-  if (ref.title) parts.push(<em key="title">{ref.title}</em>);
+  if (ref.title) {
+    parts.push(<em key="title" dangerouslySetInnerHTML={{ __html: renderReferenceTitle(ref.title) }} />);
+  }
   if (ref.venue) parts.push(ref.venue);
   if (ref.year) parts.push(String(ref.year));
   return parts;
