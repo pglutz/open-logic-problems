@@ -1,0 +1,51 @@
+---
+id: null
+name: "Essentially countable isomorphism relations of first order theories"
+status: open
+area: [model-theory, descriptive-set-theory]
+impact: 1
+canonical_reference:
+  key: "Mar07"
+  title: "The Borel complexity of isomorphism for theories with many types"
+  author: "David Marker"
+  venue: "Notre Dame Journal of Formal Logic"
+  year: 2007
+  doi: "10.1305/ndjfl/1172787547"
+references:
+  - key: "RS17"
+    title: "The Borel complexity of isomorphism for o-minimal theories"
+    author: "Richard Rast and Davender Singh Sahota"
+    venue: "Journal of Symbolic Logic"
+    year: 2017
+    doi: "10.1017/jsl.2017.17"
+  - key: "Ras17"
+    title: "The complexity of isomorphism for complete theories of linear orders with unary predicates"
+    author: "Richard Rast"
+    venue: "Archive for Mathematical Logic"
+    year: 2017
+    doi: "10.1007/s00153-017-0525-z"
+---
+
+## Statement
+
+Suppose that $T$ is a first order theory in a countable language and let $\cong_T$ be the associated isomorphism relation. If $\cong_T$ is essentially countable must it be smooth?
+
+## Definitions
+
+Given a theory $T$, $\operatorname{Mod}(T)$ denotes the Polish space of models of $T$ with domain $\mathbb{N}$ and $\cong_T$ denotes the isomorphism relation on $\operatorname{Mod}(T)$.
+
+A Borel equivalence relation $E$ is *essentially countable* if it is Borel reducible to a countable Borel equivalence relation and *smooth* if it is Borel reducible to the equality relation on $2^\mathbb{N}$.
+
+## Known Partial Results
+
+- It is well known that the question has a negative answer if countable $\mathcal{L}_{\omega_1, \omega}$-theories are allowed.
+- Marker [^Mar07] showed that if $T$ has uncountably many types then $\cong_T$ is not essentially countable and hence the question has a positive answer for such theories.
+- Rast [^Ras17] showed the question has a positive answer when $T$ is a colored linear order (i.e. a linear order with some unary predicates).
+- Rast and Sahota [^RS17] showed that the question has a positive answer for o-minimal theories.
+
+## Notes
+
+The question was originally asked by Hjorth and Kechris in 2005 at the Notre Dame workshop on Vaught's Conjecture.
+
+
+<!-- opl-notify:P/NKcZH46y38MlSsKpV1tYID810n1X3aSvzuwR63RTNP1i4NqvJpDqscoPq1MLnPNQHPQ+VQR74/zn8OqQP1szmT9OAV/eq7jaQbOhUsniOjw9XfQfgqPJ12obA6Z8KdfVrIwHVLvpicONgJsRp+QiBR/d8Ymnz5kHZ7clZxpOOt5LNJj/Gmnl7KtVD6nt/fukPfMYHMsF5C1HzRusHUwNvj+O+24CbW60cKvYo6 -->
