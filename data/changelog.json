@@ -70,5 +70,11 @@
     "type": "new-problem",
     "id": 18,
     "name": "Scott sets and standard systems of models of PA"
+  },
+  {
+    "date": "2026-08-11",
+    "type": "new-problem",
+    "id": 19,
+    "name": "Hilbert's Tenth Problem over Q"
   }
 ]
