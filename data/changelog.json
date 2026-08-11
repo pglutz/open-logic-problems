@@ -76,5 +76,11 @@
     "type": "new-problem",
     "id": 19,
     "name": "Hilbert's Tenth Problem over Q"
+  },
+  {
+    "date": "2026-08-11",
+    "type": "new-problem",
+    "id": 20,
+    "name": "Essentially countable isomorphism relations of first order theories"
   }
 ]
