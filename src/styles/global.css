@@ -486,6 +486,41 @@ main:has(.faq-item) h2 {
   max-width: 12rem;
 }
 
+.editor-draft-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  padding: 0.6rem 0.8rem;
+  border: var(--border-width) solid var(--color-border);
+  background: color-mix(in srgb, var(--color-border) 12%, transparent);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+}
+.editor-draft-banner p {
+  margin: 0;
+}
+.editor-draft-banner-actions {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+.editor-draft-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.editor-draft-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
 .editor-messages {
   display: flex;
   flex-direction: column;
@@ -673,6 +708,30 @@ main:has(.faq-item) h2 {
 
 .editor-commit-message {
   font-family: inherit;
+}
+.editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+.editor-save-draft {
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-link);
+  background: transparent;
+  color: var(--color-link);
+  cursor: pointer;
+}
+.editor-save-draft:hover {
+  background: color-mix(in srgb, var(--color-link) 12%, transparent);
+}
+.editor-save-draft:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 .editor-submit {
   align-self: flex-start;

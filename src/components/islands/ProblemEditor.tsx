@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase/client";
 import { useSigninHref } from "../../lib/signinHref";
 import { renderMarkdown, renderIfPresent } from "../../lib/markdown/pipeline";
-import { joinSections, type ProblemSections } from "../../lib/markdown/sections";
+import { joinSections, splitSections, type ProblemSections } from "../../lib/markdown/sections";
 import { AREAS, type Area } from "../../lib/areas";
 import {
   STATUS_LABELS,
@@ -81,6 +81,28 @@ function FieldLabel({ text, hint }: { text: string; hint?: string }) {
       {hint && <span className="editor-label-hint">({hint})</span>}
     </span>
   );
+}
+
+// Shape stored in problem_drafts.payload — exactly the request body
+// handleSubmit builds (minus the id/problemId wrapper), so a draft can be
+// re-hydrated with the same logic that seeds the editor's initial state.
+interface DraftPayload {
+  frontmatter: {
+    name: string;
+    status: ProblemStatus;
+    area: Area[];
+    impact: 1 | 2 | 3;
+    canonical_reference: CanonicalReference;
+    references: Reference[];
+  };
+  body: string;
+  commitMessage: string;
+}
+
+interface DraftListItem {
+  id: string;
+  name: string;
+  updated_at: string;
 }
 
 interface ProblemEditorProps {
@@ -171,6 +193,22 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   const [result, setResult] = useState<{ prUrl: string } | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  // Drafts. Edit mode has at most one draft (per user per problem), so it's
+  // tracked as a single optional row; new-problem mode allows several, shown
+  // as a list. `draftId` is the row (if any) this in-progress "new" session
+  // is now tied to — set once resumed or first saved — so repeat saves
+  // update that row instead of piling up duplicates; it isn't needed in edit
+  // mode, where every save just upserts onto the one (author, problem) row.
+  const [editDraft, setEditDraft] = useState<DraftListItem | null>(null);
+  const [editDraftBannerDismissed, setEditDraftBannerDismissed] = useState(false);
+  const [newDrafts, setNewDrafts] = useState<DraftListItem[]>([]);
+  const [newDraftsLoaded, setNewDraftsLoaded] = useState(false);
+  const [newDraftsListDismissed, setNewDraftsListDismissed] = useState(false);
+  const [draftId, setDraftId] = useState<string | null>(null);
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [draftError, setDraftError] = useState<string | null>(null);
+
   function copyCitation(key: string, id: string) {
     if (!key.trim()) return;
     navigator.clipboard.writeText(`[^${key.trim()}]`);
@@ -201,6 +239,172 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
     });
     return () => subscription.subscription.unsubscribe();
   }, []);
+
+  // Look up any saved draft(s) once signed in — RLS already restricts these
+  // queries to the current user's own rows, so no author_id filter is
+  // needed. Doesn't auto-load the content; it only surfaces a resume
+  // banner/list, so a fresh page load never silently overwrites what's
+  // already on disk (edit mode) or gets in the way of starting a genuinely
+  // new proposal (new mode).
+  useEffect(() => {
+    if (!session) return;
+    let cancelled = false;
+    if (mode === "edit") {
+      supabase
+        .from("problem_drafts")
+        .select("id, name, updated_at")
+        .eq("kind", "edit")
+        .eq("problem_id", problem!.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (!cancelled && data) setEditDraft(data);
+        });
+    } else {
+      supabase
+        .from("problem_drafts")
+        .select("id, name, updated_at")
+        .eq("kind", "new_problem")
+        .order("updated_at", { ascending: false })
+        .then(({ data }) => {
+          if (!cancelled) {
+            setNewDrafts(data ?? []);
+            setNewDraftsLoaded(true);
+          }
+        });
+    }
+    return () => {
+      cancelled = true;
+    };
+    // problem is only present (and only relevant) in edit mode, where its id never changes across renders.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, mode]);
+
+  function applyDraftPayload(payload: DraftPayload) {
+    const fm = payload.frontmatter;
+    setName(fm.name);
+    setStatus(fm.status);
+    setArea(fm.area);
+    setImpact(fm.impact);
+    setRefKey(fm.canonical_reference.key ?? "");
+    setRefTitle(fm.canonical_reference.title);
+    setRefAuthor(fm.canonical_reference.author);
+    setRefVenue(fm.canonical_reference.venue ?? "");
+    setRefYear(fm.canonical_reference.year ? String(fm.canonical_reference.year) : "");
+    setRefLink(fm.canonical_reference.link ?? "");
+    setRefDoi(fm.canonical_reference.doi ?? "");
+    setReferences(fm.references.map(referenceToRow));
+    const sections = splitSections(payload.body);
+    setStatement(sections.statement ?? "");
+    setDefinitions(sections.definitions ?? "");
+    setPartialResults(sections.partialResults ?? "");
+    setClaimedProofs(sections.claimedProofs ?? "");
+    setNotes(sections.notes ?? "");
+    setCommitMessage(payload.commitMessage);
+  }
+
+  async function resumeEditDraft() {
+    if (!editDraft) return;
+    const { data } = await supabase.from("problem_drafts").select("payload").eq("id", editDraft.id).single();
+    if (data) applyDraftPayload(data.payload as DraftPayload);
+    setEditDraftBannerDismissed(true);
+  }
+
+  async function discardEditDraft() {
+    if (!editDraft) return;
+    await supabase.from("problem_drafts").delete().eq("id", editDraft.id);
+    setEditDraft(null);
+  }
+
+  async function resumeNewDraft(id: string) {
+    const { data } = await supabase.from("problem_drafts").select("payload").eq("id", id).single();
+    if (data) {
+      applyDraftPayload(data.payload as DraftPayload);
+      setDraftId(id);
+    }
+    setNewDraftsListDismissed(true);
+  }
+
+  async function discardNewDraft(id: string) {
+    await supabase.from("problem_drafts").delete().eq("id", id);
+    setNewDrafts((prev) => prev.filter((d) => d.id !== id));
+    if (draftId === id) setDraftId(null);
+  }
+
+  // Shared with handleSubmit, so a saved draft's payload and a real
+  // submission are always built from the exact same logic.
+  function buildFrontmatterAndBody() {
+    const commonFrontmatter = {
+      name,
+      status,
+      area,
+      impact,
+      canonical_reference: {
+        key: refKey.trim() || undefined,
+        title: refTitle,
+        author: refAuthor,
+        venue: refVenue || undefined,
+        year: refYear ? Number(refYear) : undefined,
+        link: refLink || undefined,
+        doi: refDoi || undefined,
+      },
+      references: nonBlankRows.map((r) => ({
+        key: r.key.trim(),
+        title: r.title,
+        author: r.author,
+        venue: r.venue || undefined,
+        year: r.year ? Number(r.year) : undefined,
+        link: r.link || undefined,
+        doi: r.doi || undefined,
+      })),
+    };
+    const bodyContent = joinSections({
+      statement,
+      definitions,
+      partialResults,
+      claimedProofs,
+      notes,
+    });
+    return { commonFrontmatter, bodyContent };
+  }
+
+  async function saveDraft() {
+    if (!session) return;
+    setSavingDraft(true);
+    setDraftError(null);
+    const { commonFrontmatter, bodyContent } = buildFrontmatterAndBody();
+    const row = {
+      author_id: session.user.id,
+      kind: mode === "new" ? ("new_problem" as const) : ("edit" as const),
+      problem_id: mode === "edit" ? problem!.id : null,
+      name: name.trim(),
+      payload: { frontmatter: commonFrontmatter, body: bodyContent, commitMessage } satisfies DraftPayload,
+      updated_at: new Date().toISOString(),
+    };
+    const query =
+      mode === "edit"
+        ? supabase
+            .from("problem_drafts")
+            .upsert(row, { onConflict: "author_id,problem_id" })
+            .select("id, name, updated_at")
+            .single()
+        : draftId
+          ? supabase.from("problem_drafts").update(row).eq("id", draftId).select("id, name, updated_at").single()
+          : supabase.from("problem_drafts").insert(row).select("id, name, updated_at").single();
+    const { data, error: saveError } = await query;
+    setSavingDraft(false);
+    if (saveError || !data) {
+      setDraftError(saveError?.message ?? "Could not save draft.");
+      return;
+    }
+    if (mode === "edit") {
+      setEditDraft(data);
+      setEditDraftBannerDismissed(true);
+    } else {
+      setDraftId(data.id);
+      setNewDrafts((prev) => [data, ...prev.filter((d) => d.id !== data.id)]);
+    }
+    setDraftSavedAt(data.updated_at);
+  }
 
   const validKeys = new Set(
     [refKey, ...references.map((r) => r.key)].map((k) => k.trim()).filter(Boolean),
@@ -335,37 +539,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
     setSubmitting(true);
     setError(null);
 
-    const commonFrontmatter = {
-      name,
-      status,
-      area,
-      impact,
-      canonical_reference: {
-        key: refKey.trim() || undefined,
-        title: refTitle,
-        author: refAuthor,
-        venue: refVenue || undefined,
-        year: refYear ? Number(refYear) : undefined,
-        link: refLink || undefined,
-        doi: refDoi || undefined,
-      },
-      references: nonBlankRows.map((r) => ({
-        key: r.key.trim(),
-        title: r.title,
-        author: r.author,
-        venue: r.venue || undefined,
-        year: r.year ? Number(r.year) : undefined,
-        link: r.link || undefined,
-        doi: r.doi || undefined,
-      })),
-    };
-    const bodyContent = joinSections({
-      statement,
-      definitions,
-      partialResults,
-      claimedProofs,
-      notes,
-    });
+    const { commonFrontmatter, bodyContent } = buildFrontmatterAndBody();
     const effectiveCommitMessage = commitMessage.trim() || `New problem proposal: ${name}`;
 
     const endpoint = mode === "new" ? "/api/submit-new-problem" : "/api/submit-problem";
@@ -398,6 +572,14 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
       return;
     }
     setResult({ prUrl: data.prUrl });
+    // Best-effort cleanup, not blocking the success screen on it — a
+    // now-submitted draft superseded by a real PR shouldn't keep showing up
+    // as "resume your draft".
+    if (mode === "edit") {
+      supabase.from("problem_drafts").delete().eq("kind", "edit").eq("problem_id", problem!.id);
+    } else if (draftId) {
+      supabase.from("problem_drafts").delete().eq("id", draftId);
+    }
   }
 
   if (!session) {
@@ -463,6 +645,53 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
           </button>
         </div>
         <div className="editor-left" id="editor-panel-edit" role="tabpanel" aria-labelledby="editor-tab-edit">
+          {mode === "edit" && editDraft && !editDraftBannerDismissed && (
+            <div className="editor-draft-banner" role="status">
+              <span>
+                You have a saved draft from {new Date(editDraft.updated_at).toLocaleString()}.
+              </span>
+              <span className="editor-draft-banner-actions">
+                <button type="button" className="link-button" onClick={resumeEditDraft}>
+                  Resume draft
+                </button>
+                <button type="button" className="link-button" onClick={discardEditDraft}>
+                  Discard
+                </button>
+                <button type="button" className="link-button" onClick={() => setEditDraftBannerDismissed(true)}>
+                  Dismiss
+                </button>
+              </span>
+            </div>
+          )}
+
+          {mode === "new" && newDraftsLoaded && newDrafts.length > 0 && !newDraftsListDismissed && !draftId && (
+            <div className="editor-draft-banner" role="status">
+              <p>
+                You have {newDrafts.length} saved draft{newDrafts.length > 1 ? "s" : ""}:
+              </p>
+              <ul className="editor-draft-list">
+                {newDrafts.map((d) => (
+                  <li key={d.id}>
+                    <span>
+                      {d.name.trim() || "(untitled proposal)"} — saved {new Date(d.updated_at).toLocaleString()}
+                    </span>
+                    <span className="editor-draft-banner-actions">
+                      <button type="button" className="link-button" onClick={() => resumeNewDraft(d.id)}>
+                        Resume
+                      </button>
+                      <button type="button" className="link-button" onClick={() => discardNewDraft(d.id)}>
+                        Discard
+                      </button>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <button type="button" className="link-button" onClick={() => setNewDraftsListDismissed(true)}>
+                Start a new proposal instead
+              </button>
+            </div>
+          )}
+
           {(showValidationSummary ||
             hasReferenceKeyErrors ||
             statusWarning ||
@@ -889,9 +1118,20 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             </div>
           )}
 
-          <button type="submit" className="editor-submit" disabled={submitting}>
-            {submitting ? "Submitting…" : mode === "new" ? "Submit new problem proposal" : "Submit suggested edit"}
-          </button>
+          <div className="editor-actions">
+            <button type="button" className="editor-save-draft" onClick={saveDraft} disabled={savingDraft}>
+              {savingDraft ? "Saving…" : "Save draft"}
+            </button>
+            <button type="submit" className="editor-submit" disabled={submitting}>
+              {submitting ? "Submitting…" : mode === "new" ? "Submit new problem proposal" : "Submit suggested edit"}
+            </button>
+          </div>
+          {draftSavedAt && !draftError && (
+            <p className="muted" aria-live="polite">
+              Draft saved.
+            </p>
+          )}
+          {draftError && <p className="comment-error">{draftError}</p>}
           {error && <p className="comment-error">{error}</p>}
         </div>
 
