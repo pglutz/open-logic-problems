@@ -843,6 +843,15 @@ main:has(.faq-item) h2 {
 .editor-commit-message {
   font-family: inherit;
 }
+/* Wraps the submit/save-draft row together with the status message that can
+   follow a click — its own tighter gap keeps that message visually attached
+   to the buttons, rather than inheriting .editor-left's much larger
+   between-section gap (1.25rem), which read as orphaned, oversized space. */
+.editor-submit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 .editor-actions {
   display: flex;
   align-items: center;
@@ -850,18 +859,17 @@ main:has(.faq-item) h2 {
   flex-wrap: wrap;
 }
 .editor-save-draft {
-  font: inherit;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 600;
-  padding: 0.6rem 1.1rem;
+  padding: 0.65rem 1.5rem;
   border-radius: var(--radius-md);
   border: var(--border-width) solid var(--color-link);
-  background: transparent;
-  color: var(--color-link);
+  background: var(--color-link);
+  color: #fff;
   cursor: pointer;
 }
 .editor-save-draft:hover {
-  background: color-mix(in srgb, var(--color-link) 12%, transparent);
+  opacity: 0.92;
 }
 .editor-save-draft:disabled {
   opacity: 0.6;

@@ -529,6 +529,21 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
       : "You're changing this problem's status — status changes will receive extra scrutiny during review, so please make sure the status change is correct and is backed by reliable evidence."
     : null;
 
+  // "Draft saved." should only claim the *current* form state is saved —
+  // clear it (and any stale save error) the moment anything actually
+  // changes, rather than leaving it visible while the user keeps editing.
+  // buildFrontmatterAndBody() already assembles almost exactly what a save
+  // sends (only commitMessage is layered on separately in saveDraft), so
+  // stringifying it plus commitMessage is a single signature covering every
+  // saved field — including reference rows — without listing each one as a
+  // dependency.
+  const formSnapshot = JSON.stringify({ ...buildFrontmatterAndBody(), commitMessage });
+  useEffect(() => {
+    setDraftSavedAt(null);
+    setDraftError(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formSnapshot]);
+
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!session) return;
@@ -1129,21 +1144,27 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
             </div>
           )}
 
-          <div className="editor-actions">
-            <button type="button" className="editor-save-draft" onClick={saveDraft} disabled={savingDraft}>
-              {savingDraft ? "Saving…" : "Save draft"}
-            </button>
-            <button type="submit" className="editor-submit" disabled={submitting}>
-              {submitting ? "Submitting…" : mode === "new" ? "Submit new problem proposal" : "Submit suggested edit"}
-            </button>
+          <div className="editor-submit-group">
+            <div className="editor-actions">
+              <button type="button" className="editor-save-draft" onClick={saveDraft} disabled={savingDraft}>
+                {savingDraft ? "Saving…" : "Save draft"}
+              </button>
+              <button type="submit" className="editor-submit" disabled={submitting}>
+                {submitting
+                  ? "Submitting…"
+                  : mode === "new"
+                    ? "Submit new problem proposal"
+                    : "Submit suggested edit"}
+              </button>
+            </div>
+            {draftSavedAt && !draftError && (
+              <p className="muted" aria-live="polite">
+                Draft saved.
+              </p>
+            )}
+            {draftError && <p className="comment-error">{draftError}</p>}
+            {error && <p className="comment-error">{error}</p>}
           </div>
-          {draftSavedAt && !draftError && (
-            <p className="muted" aria-live="polite">
-              Draft saved.
-            </p>
-          )}
-          {draftError && <p className="comment-error">{draftError}</p>}
-          {error && <p className="comment-error">{error}</p>}
         </div>
 
         <div
