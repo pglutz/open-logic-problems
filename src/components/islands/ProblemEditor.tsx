@@ -320,12 +320,6 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
     setEditDraftBannerDismissed(true);
   }
 
-  async function discardEditDraft() {
-    if (!editDraft) return;
-    await supabase.from("problem_drafts").delete().eq("id", editDraft.id);
-    setEditDraft(null);
-  }
-
   async function resumeNewDraft(id: string) {
     const { data } = await supabase.from("problem_drafts").select("payload").eq("id", id).single();
     if (data) {
@@ -333,12 +327,6 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
       setDraftId(id);
     }
     setNewDraftsListDismissed(true);
-  }
-
-  async function discardNewDraft(id: string) {
-    await supabase.from("problem_drafts").delete().eq("id", id);
-    setNewDrafts((prev) => prev.filter((d) => d.id !== id));
-    if (draftId === id) setDraftId(null);
   }
 
   // Shared with handleSubmit, so a saved draft's payload and a real
@@ -673,17 +661,16 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
         <div className="editor-left" id="editor-panel-edit" role="tabpanel" aria-labelledby="editor-tab-edit">
           {mode === "edit" && editDraft && !editDraftBannerDismissed && (
             <div className="editor-draft-banner" role="status">
-              <span>
-                You have a saved draft from {new Date(editDraft.updated_at).toLocaleString()}.
-              </span>
+              <span>You have a saved draft for this problem.</span>
               <span className="editor-draft-banner-actions">
-                <button type="button" className="link-button" onClick={() => resumeEditDraft(editDraft.id)}>
-                  Resume draft
-                </button>
-                <button type="button" className="link-button" onClick={discardEditDraft}>
-                  Discard
-                </button>
-                <button type="button" className="link-button" onClick={() => setEditDraftBannerDismissed(true)}>
+                <a href="/account" className="editor-draft-banner-button">
+                  See saved drafts
+                </a>
+                <button
+                  type="button"
+                  className="editor-draft-banner-button"
+                  onClick={() => setEditDraftBannerDismissed(true)}
+                >
                   Dismiss
                 </button>
               </span>
@@ -692,29 +679,21 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
 
           {mode === "new" && newDraftsLoaded && newDrafts.length > 0 && !newDraftsListDismissed && !draftId && (
             <div className="editor-draft-banner" role="status">
-              <p>
-                You have {newDrafts.length} saved draft{newDrafts.length > 1 ? "s" : ""}:
-              </p>
-              <ul className="editor-draft-list">
-                {newDrafts.map((d) => (
-                  <li key={d.id}>
-                    <span>
-                      {d.name.trim() || "(untitled proposal)"} — saved {new Date(d.updated_at).toLocaleString()}
-                    </span>
-                    <span className="editor-draft-banner-actions">
-                      <button type="button" className="link-button" onClick={() => resumeNewDraft(d.id)}>
-                        Resume
-                      </button>
-                      <button type="button" className="link-button" onClick={() => discardNewDraft(d.id)}>
-                        Discard
-                      </button>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <button type="button" className="link-button" onClick={() => setNewDraftsListDismissed(true)}>
-                Start a new proposal instead
-              </button>
+              <span>
+                You have {newDrafts.length} saved new problem draft{newDrafts.length > 1 ? "s" : ""}.
+              </span>
+              <span className="editor-draft-banner-actions">
+                <a href="/account" className="editor-draft-banner-button">
+                  See saved drafts
+                </a>
+                <button
+                  type="button"
+                  className="editor-draft-banner-button"
+                  onClick={() => setNewDraftsListDismissed(true)}
+                >
+                  Dismiss
+                </button>
+              </span>
             </div>
           )}
 

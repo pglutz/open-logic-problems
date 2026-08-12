@@ -621,38 +621,60 @@ main:has(.faq-item) h2 {
 }
 
 .editor-draft-banner {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 0.8rem;
-  padding: 0.6rem 0.8rem;
-  border: var(--border-width) solid var(--color-border);
-  background: color-mix(in srgb, var(--color-border) 12%, transparent);
-  border-radius: var(--radius-md);
-  font-size: 0.9rem;
-}
-.editor-draft-banner p {
-  margin: 0;
-}
-.editor-draft-banner-actions {
-  display: flex;
-  gap: 0.9rem;
-  flex-wrap: wrap;
-}
-.editor-draft-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-.editor-draft-list li {
+  /* A darker step down from --color-closed-border, shared by this box's own
+     border and the buttons below (rather than touching the shared token,
+     which also drives actual "closed" status styling elsewhere) so both
+     use the exact same green instead of two subtly different shades.
+     Light-theme-only: --color-closed-border is deliberately identical in
+     both themes already (tuned for contrast against both), so darkening it
+     further here is skipped in dark mode below, where the base token is
+     kept as-is. */
+  --draft-banner-accent: color-mix(in srgb, var(--color-closed-border) 78%, black 22%);
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
+  gap: 0.4rem 0.8rem;
+  /* .editor-left's own 1.25rem flex gap already applies below this box —
+     no extra margin needed on top of it. */
+  margin-bottom: 0;
+  padding: 0.5rem 0.7rem;
+  border: var(--border-width) solid var(--draft-banner-accent);
+  background: color-mix(in srgb, var(--color-closed-bg) 95%, var(--color-closed-border) 5%);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+}
+@media (prefers-color-scheme: dark) {
+  .editor-draft-banner {
+    --draft-banner-accent: var(--color-closed-border);
+  }
+}
+.editor-draft-banner-actions {
+  display: flex;
   gap: 0.6rem;
+  flex-wrap: wrap;
+}
+/* Same outline-button recipe as .account-action-button, sized to sit inside
+   this more compact banner. */
+.editor-draft-banner-button {
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--draft-banner-accent);
+  background: transparent;
+  color: var(--draft-banner-accent);
+  cursor: pointer;
+  text-decoration: none;
+}
+.editor-draft-banner-button:hover {
+  /* Explicit color, not just background — "See saved drafts" is an <a>,
+     and the site-wide a:hover rule (specificity 0,1,1) otherwise beats this
+     element's own color (0,1,0) and repaints it link-hover red/orange. Same
+     bug as the drafts-panel icons earlier; pinning it here too. */
+  color: var(--draft-banner-accent);
+  background: color-mix(in srgb, var(--draft-banner-accent) 12%, transparent);
 }
 
 .editor-messages {
