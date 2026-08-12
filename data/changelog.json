@@ -82,5 +82,11 @@
     "type": "new-problem",
     "id": 20,
     "name": "Essentially countable isomorphism relations of first order theories"
+  },
+  {
+    "date": "2026-08-12",
+    "type": "new-problem",
+    "id": 21,
+    "name": "Sacks's Conjecture on embedding partial orders in the Turing degrees"
   }
 ]
