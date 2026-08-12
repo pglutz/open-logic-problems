@@ -242,13 +242,18 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
 
   // Look up any saved draft(s) once signed in — RLS already restricts these
   // queries to the current user's own rows, so no author_id filter is
-  // needed. Doesn't auto-load the content; it only surfaces a resume
-  // banner/list, so a fresh page load never silently overwrites what's
-  // already on disk (edit mode) or gets in the way of starting a genuinely
-  // new proposal (new mode).
+  // needed. Doesn't auto-load the content by default; it only surfaces a
+  // resume banner/list, so a fresh page load never silently overwrites
+  // what's already on disk (edit mode) or gets in the way of starting a
+  // genuinely new proposal (new mode). The exception is a `?resume=` link
+  // from the Account page's drafts list — that's an explicit request to load
+  // a specific draft, so it's applied immediately instead of just shown as
+  // an option (`?resume=1` for edit mode, since there's at most one; the
+  // draft's own id for new-problem mode, since there can be several).
   useEffect(() => {
     if (!session) return;
     let cancelled = false;
+    const autoResumeParam = new URLSearchParams(window.location.search).get("resume");
     if (mode === "edit") {
       supabase
         .from("problem_drafts")
@@ -257,7 +262,12 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
         .eq("problem_id", problem!.id)
         .maybeSingle()
         .then(({ data }) => {
-          if (!cancelled && data) setEditDraft(data);
+          if (cancelled || !data) return;
+          if (autoResumeParam) {
+            resumeEditDraft(data.id);
+          } else {
+            setEditDraft(data);
+          }
         });
     } else {
       supabase
@@ -266,9 +276,11 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
         .eq("kind", "new_problem")
         .order("updated_at", { ascending: false })
         .then(({ data }) => {
-          if (!cancelled) {
-            setNewDrafts(data ?? []);
-            setNewDraftsLoaded(true);
+          if (cancelled) return;
+          setNewDrafts(data ?? []);
+          setNewDraftsLoaded(true);
+          if (autoResumeParam && data?.some((d) => d.id === autoResumeParam)) {
+            resumeNewDraft(autoResumeParam);
           }
         });
     }
@@ -302,9 +314,8 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
     setCommitMessage(payload.commitMessage);
   }
 
-  async function resumeEditDraft() {
-    if (!editDraft) return;
-    const { data } = await supabase.from("problem_drafts").select("payload").eq("id", editDraft.id).single();
+  async function resumeEditDraft(id: string) {
+    const { data } = await supabase.from("problem_drafts").select("payload").eq("id", id).single();
     if (data) applyDraftPayload(data.payload as DraftPayload);
     setEditDraftBannerDismissed(true);
   }
@@ -651,7 +662,7 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
                 You have a saved draft from {new Date(editDraft.updated_at).toLocaleString()}.
               </span>
               <span className="editor-draft-banner-actions">
-                <button type="button" className="link-button" onClick={resumeEditDraft}>
+                <button type="button" className="link-button" onClick={() => resumeEditDraft(editDraft.id)}>
                   Resume draft
                 </button>
                 <button type="button" className="link-button" onClick={discardEditDraft}>

@@ -486,6 +486,16 @@ main:has(.faq-item) h2 {
   max-width: 12rem;
 }
 
+.account-identity {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.account-identity p {
+  margin: 0;
+}
+
 .editor-draft-banner {
   display: flex;
   flex-direction: column;

@@ -1,0 +1,9 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AccountPage from "../components/islands/AccountPage";
+---
+
+<BaseLayout title="Account" excludeFromSearch>
+  <h1>Account</h1>
+  <AccountPage client:load />
+</BaseLayout>

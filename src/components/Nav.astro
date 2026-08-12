@@ -203,15 +203,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 <style is:global>
   /* AuthWidget is a React island; its markup is rendered client-side, so
      Astro's scoped-style attribute never reaches it — this rule must be
-     global. Both "Sign In" and "Sign Out" are <a> tags (not a <button> for
-     Sign Out, despite it not navigating anywhere) specifically so both get
-     true `display: inline` behavior: vertical padding/border paint at full
-     visual size without counting toward the row's layout height, unlike a
-     <button> (default inline-block, and browsers won't let it be downgraded
-     via CSS) which would inflate the nav row. This keeps the border looking
-     the same size in both states while keeping the row itself short — a
-     deliberate anti-pattern (a non-navigating <a>), accepted on purpose;
-     see AuthWidget.tsx's role="button" mitigation. */
+     global. Both "Sign In" and "Account" are <a> tags, styled identically,
+     so they get true `display: inline` behavior: vertical padding/border
+     paint at full visual size without counting toward the row's layout
+     height, unlike a <button> (default inline-block, and browsers won't let
+     it be downgraded via CSS) which would inflate the nav row. */
   .nav-signin-button {
     /* line-height comes after font: inherit deliberately — font is a
        shorthand that resets line-height too, so ordering it first would

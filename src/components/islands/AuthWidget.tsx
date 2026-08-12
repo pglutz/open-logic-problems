@@ -16,20 +16,11 @@ export default function AuthWidget() {
   }, []);
 
   if (session) {
-    // Deliberately an <a>, not a <button> — see the sizing comment on
-    // .nav-signin-button in Nav.astro. role="button" tells assistive tech
-    // this behaves as an action, not a navigation, despite the tag.
+    // Signing out itself now lives on the Account page, not here — this is
+    // a genuine navigation link, unlike the old sign-out button.
     return (
-      <a
-        href="#"
-        role="button"
-        className="nav-signin-button"
-        onClick={(e) => {
-          e.preventDefault();
-          supabase.auth.signOut();
-        }}
-      >
-        Sign Out
+      <a href="/account" className="nav-signin-button">
+        Account
       </a>
     );
   }
