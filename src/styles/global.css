@@ -559,11 +559,21 @@ main:has(.faq-item) h2 {
 .draft-time-col {
   font-size: 0.9rem;
 }
+/* Grid `gap` applies the same column-gap everywhere, so uneven spacing
+   between specific column pairs (more after the title, less between
+   type/date/trash) is layered on top of it with margins instead. */
+.draft-type-col {
+  margin-left: 0.5rem;
+}
+.draft-time-col {
+  margin-left: -0.3rem;
+}
 .draft-actions-col {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   justify-self: end;
+  margin-left: -0.3rem;
 }
 .draft-action-icon {
   display: inline-flex;
@@ -587,8 +597,8 @@ main:has(.faq-item) h2 {
     grid-template-columns: 1fr auto;
     grid-template-areas:
       "title actions"
-      "type actions"
-      "time actions";
+      "type type"
+      "time time";
   }
   .draft-title-col {
     grid-area: title;
@@ -596,12 +606,16 @@ main:has(.faq-item) h2 {
   }
   .draft-type-col {
     grid-area: type;
+    margin-left: 0;
   }
   .draft-time-col {
     grid-area: time;
+    margin-left: 0;
   }
   .draft-actions-col {
+    margin-left: 0;
     grid-area: actions;
+    align-self: start;
   }
 }
 
