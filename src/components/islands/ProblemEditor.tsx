@@ -542,6 +542,25 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formSnapshot]);
 
+  // The "you have a saved draft" banner should disappear once the user
+  // actually starts editing — otherwise it keeps advertising a draft that no
+  // longer matches what's on screen. Skips its own first run: that fires on
+  // mount, before the draft-detection effect's async query has had a chance
+  // to even set editDraft/newDrafts, and dismissing the banner sight-unseen
+  // would mean it can never show up at all (unlike the effect above, which
+  // is safe to run on mount since clearing an already-null value is a
+  // no-op).
+  const skipBannerDismissOnMount = useRef(true);
+  useEffect(() => {
+    if (skipBannerDismissOnMount.current) {
+      skipBannerDismissOnMount.current = false;
+      return;
+    }
+    setEditDraftBannerDismissed(true);
+    setNewDraftsListDismissed(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formSnapshot]);
+
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!session) return;
