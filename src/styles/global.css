@@ -576,18 +576,6 @@ main:has(.faq-item) h2 {
   cursor: pointer;
   border-radius: var(--radius-md);
 }
-.draft-action-open {
-  color: var(--color-closed-border);
-}
-.draft-action-open:hover {
-  /* Explicit color, not just background — the site-wide a:hover rule
-     (specificity 0,1,1) otherwise beats this element's own .draft-action-open
-     color (0,1,0) and repaints it the generic link-hover red/orange, since
-     Open is an <a> (Discard isn't, which is why it doesn't have this
-     problem). */
-  color: var(--color-closed-border);
-  background: color-mix(in srgb, var(--color-closed-border) 15%, transparent);
-}
 .draft-action-discard {
   color: var(--color-error-text);
 }

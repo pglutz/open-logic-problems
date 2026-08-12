@@ -26,30 +26,6 @@ function draftLabel(draft: Draft): string {
   return draft.name.trim() || "(untitled proposal)";
 }
 
-function OpenIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-      <path
-        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <polyline
-        points="15 3 21 3 21 9"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <line x1="10" y1="14" x2="21" y2="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function TrashIcon() {
   return (
     <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -106,6 +82,7 @@ export default function AccountPage() {
   }, [session]);
 
   async function discardDraft(id: string) {
+    if (!window.confirm("Are you sure you want to delete this draft? This action can't be undone.")) return;
     await supabase.from("problem_drafts").delete().eq("id", id);
     setDrafts((prev) => prev?.filter((d) => d.id !== id) ?? null);
   }
@@ -156,15 +133,14 @@ export default function AccountPage() {
           <ul className="draft-list draft-panel">
             {drafts.map((d) => (
               <li key={d.id} className="draft-item">
-                <span className="draft-title-col">{draftLabel(d)}</span>
+                <a href={draftHref(d)} className="draft-title-col">
+                  {draftLabel(d)}
+                </a>
                 <span className="draft-type-col muted">
                   {d.kind === "edit" ? "Suggested edit" : "New problem proposal"}
                 </span>
                 <span className="draft-time-col muted">{new Date(d.updated_at).toLocaleString()}</span>
                 <span className="draft-actions-col">
-                  <a href={draftHref(d)} className="draft-action-icon draft-action-open" aria-label="Open draft" title="Open">
-                    <OpenIcon />
-                  </a>
                   <button
                     type="button"
                     className="draft-action-icon draft-action-discard"
