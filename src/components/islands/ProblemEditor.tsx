@@ -250,8 +250,18 @@ export default function ProblemEditor({ mode = "edit", problem, sections }: Prob
   // a specific draft, so it's applied immediately instead of just shown as
   // an option (`?resume=1` for edit mode, since there's at most one; the
   // draft's own id for new-problem mode, since there can be several).
+  // Supabase hands back a new `session` object (same user, refreshed token)
+  // whenever the tab/app regains focus after being backgrounded long enough
+  // — routine, not a sign-in/out event. Without this guard, that reference
+  // change alone would re-run the effect below on every such refresh,
+  // including its `?resume=` auto-apply branch, silently overwriting
+  // in-progress edits with the last-saved draft. Keyed on user id (not the
+  // session object) so a genuine account switch still re-runs it.
+  const draftLookupDoneForUser = useRef<string | null>(null);
   useEffect(() => {
     if (!session) return;
+    if (draftLookupDoneForUser.current === session.user.id) return;
+    draftLookupDoneForUser.current = session.user.id;
     let cancelled = false;
     const autoResumeParam = new URLSearchParams(window.location.search).get("resume");
     if (mode === "edit") {
