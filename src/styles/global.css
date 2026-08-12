@@ -489,11 +489,132 @@ main:has(.faq-item) h2 {
 .account-identity {
   display: flex;
   align-items: center;
-  gap: 1.2rem;
-  margin-bottom: 1.5rem;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 .account-identity p {
   margin: 0;
+}
+.account-identity-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-shrink: 0;
+}
+/* Same outline-button look as .editor-save-draft, just smaller — these are
+   secondary page-level actions, not a form's primary action. */
+.account-action-button {
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-link);
+  background: transparent;
+  color: var(--color-link);
+  cursor: pointer;
+}
+.account-action-button:hover {
+  background: color-mix(in srgb, var(--color-link) 12%, transparent);
+}
+
+/* Saved-drafts list on the Account page — same panel-box/list treatment as
+   the homepage's Featured Problems list, but laid out as explicit columns
+   (title / type / saved-at / actions) via grid rather than that list's
+   wrapping flex row, since each column here needs to line up across rows. */
+.draft-panel {
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 0.25rem 1.25rem;
+  background: rgba(128, 128, 128, 0.06);
+}
+.draft-list {
+  /* No padding rule here on purpose — .draft-panel's padding lives on this
+     same <ul> (both classes are always applied together), and a `padding: 0`
+     here would win the cascade over .draft-panel's padding since they'd have
+     equal specificity and this rule comes later in the sheet, silently
+     cancelling the box's inset margin. */
+  list-style: none;
+  margin: 0;
+}
+.draft-item {
+  display: grid;
+  grid-template-columns: 1fr 11rem 12rem auto;
+  align-items: center;
+  gap: 0.4rem 1rem;
+  padding: 0.6rem 0;
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+.draft-item:last-child {
+  border-bottom: none;
+}
+.draft-title-col {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.draft-type-col,
+.draft-time-col {
+  font-size: 0.9rem;
+}
+.draft-actions-col {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-self: end;
+}
+.draft-action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  padding: 0.3rem;
+  border: var(--border-width) solid currentColor;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+}
+.draft-action-open {
+  color: var(--color-closed-border);
+}
+.draft-action-open:hover {
+  /* Explicit color, not just background — the site-wide a:hover rule
+     (specificity 0,1,1) otherwise beats this element's own .draft-action-open
+     color (0,1,0) and repaints it the generic link-hover red/orange, since
+     Open is an <a> (Discard isn't, which is why it doesn't have this
+     problem). */
+  color: var(--color-closed-border);
+  background: color-mix(in srgb, var(--color-closed-border) 15%, transparent);
+}
+.draft-action-discard {
+  color: var(--color-error-text);
+}
+.draft-action-discard:hover {
+  background: color-mix(in srgb, var(--color-error-text) 15%, transparent);
+}
+@media (max-width: 47.6rem) {
+  .draft-item {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "title actions"
+      "type actions"
+      "time actions";
+  }
+  .draft-title-col {
+    grid-area: title;
+    white-space: normal;
+  }
+  .draft-type-col {
+    grid-area: type;
+  }
+  .draft-time-col {
+    grid-area: time;
+  }
+  .draft-actions-col {
+    grid-area: actions;
+  }
 }
 
 .editor-draft-banner {
