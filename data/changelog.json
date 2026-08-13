@@ -88,5 +88,11 @@
     "type": "new-problem",
     "id": 21,
     "name": "Sacks's Conjecture on embedding partial orders in the Turing degrees"
+  },
+  {
+    "date": "2026-08-13",
+    "type": "new-problem",
+    "id": 22,
+    "name": "Borel Ruziewicz problem"
   }
 ]
