@@ -94,5 +94,11 @@
     "type": "new-problem",
     "id": 22,
     "name": "Borel Ruziewicz problem"
+  },
+  {
+    "date": "2026-08-14",
+    "type": "new-problem",
+    "id": 23,
+    "name": "Superpolynomial bounds on Frege proofs"
   }
 ]
