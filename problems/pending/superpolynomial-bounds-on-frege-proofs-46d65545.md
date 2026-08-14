@@ -1,0 +1,33 @@
+---
+id: null
+name: "Superpolynomial bounds on Frege proofs"
+status: open
+area: [proof-theory]
+impact: 2
+canonical_reference:
+  key: "CR79"
+  title: "The relative efficiency of propositional proof systems"
+  author: "Stephen A. Cook and Robert A. Reckhow"
+  venue: "Journal of Symbolic Logic"
+  year: 1979
+  doi: "10.2307/2273702 "
+---
+
+## Statement
+
+Are Frege proof systems polynomially bounded?
+
+## Definitions
+
+A *proof system for propositional logic* is a function $f\colon \{0, 1\}^* \to \mathsf{TAUT}$ (where $\mathsf{TAUT}$ is the set of propositional tautologies) which is surjective and computable in polynomial time. A proof system $f$ is *polynomially bounded* if there is a polynomial $p$ such that for all $x \in \mathsf{TAUT}$, there is some $y \in \{0, 1\}^*$ such that $f(y) = x$ and $|y| \leq p(|x|)$.
+
+A *Frege proof system* is any complete proof system for propositional logic which is defined by a finite list of axiom schemas and rules of inference.
+
+## Notes
+
+The question was first asked by Cook and Reckhow in the 1970s [^CR79]. They conjectured that no propositional proof system is polynomially bounded and noted that this conjecture implies that $\mathsf{NP} \neq \mathsf{coNP}$ (and hence also that $\mathsf{P} \neq \mathsf{NP}$). In light of this, they suggested the program of proving that various natural proof systems are not polynomially bounded. Frege proof systems are among the simplest and most natural proof systems for which this question is still open.
+
+In the same paper, Cook and Reckhow showed that all Frege proof systems are equivalent, in the sense that for any two Frege systems $F_1$ and $F_2$ there is a constant $C$ such that if a propositional tautology has a proof of length $n$ in $F_1$ then it has a proof of length at most $Cn$ in $F_2$, and vice-versa. Hence the question of whether a Frege system is polynomially bounded does not depend on the particular Frege system chosen. They also showed that all natural deduction systems are equivalent to all Frege systems (and to each other) in the same sense.
+
+
+<!-- opl-notify:oF/lyX+f8FvH4XVbJNpbtc73Lg61i5TW0yiyOGPuMnD8os+8wQzbdpPaKRU+al8W/YbuNV4LESkR03/MJepkzY56z8o8jItd8614uTjjnZmzOT6TC4w+c3cQz3cdzokPQBEw+CAio6b8Wdjszw6E9dgRwogBesCPUt9rifp+EwBaN+IP7sPlJiLpi4Neq/gfiw== -->
