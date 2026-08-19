@@ -100,5 +100,11 @@
     "type": "new-problem",
     "id": 23,
     "name": "Superpolynomial bounds on Frege proofs"
+  },
+  {
+    "date": "2026-08-19",
+    "type": "new-problem",
+    "id": 24,
+    "name": "Is add(N) < add(UN) consistent?"
   }
 ]
