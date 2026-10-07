@@ -120,5 +120,13 @@
     "name": "Stable Forking Conjecture",
     "old_status": "open",
     "new_status": "claimed-proof-no-consensus"
+  },
+  {
+    "date": "2026-10-07",
+    "type": "status-change",
+    "id": 19,
+    "name": "Hilbert's Tenth Problem over Q",
+    "old_status": "open",
+    "new_status": "claimed-proof-no-consensus"
   }
 ]
