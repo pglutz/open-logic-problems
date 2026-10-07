@@ -136,5 +136,13 @@
     "name": "Does the Partition Principle imply the Axiom of Choice?",
     "old_status": "open",
     "new_status": "claimed-proof-no-consensus"
+  },
+  {
+    "date": "2026-10-07",
+    "type": "status-change",
+    "id": 17,
+    "name": "Non-trivial automorphisms of the Turing degrees",
+    "old_status": "open",
+    "new_status": "claimed-proof-no-consensus"
   }
 ]
