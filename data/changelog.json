@@ -144,5 +144,13 @@
     "name": "Non-trivial automorphisms of the Turing degrees",
     "old_status": "open",
     "new_status": "claimed-proof-no-consensus"
+  },
+  {
+    "date": "2026-11-17",
+    "type": "status-change",
+    "id": 22,
+    "name": "Borel Ruziewicz problem",
+    "old_status": "open",
+    "new_status": "claimed-proof-no-consensus"
   }
 ]
